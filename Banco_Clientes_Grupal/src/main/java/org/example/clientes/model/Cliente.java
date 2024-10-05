@@ -1,7 +1,9 @@
-package org.example.models;
+package org.example.clientes.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.example.tarjetas.model.Tarjeta;
+import org.example.usuarios.models.Usuario;
 
 import java.util.List;
 

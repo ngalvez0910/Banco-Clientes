@@ -1,7 +1,7 @@
-package org.example.mappers;
+package org.example.usuarios.mappers;
 
-import org.example.dto.UsuarioDto;
-import org.example.models.Usuario;
+import org.example.usuarios.dto.UsuarioDto;
+import org.example.usuarios.models.Usuario;
 
 public class UsuarioMapper {
     public static Usuario toEntity(UsuarioDto usuarioDto) {
