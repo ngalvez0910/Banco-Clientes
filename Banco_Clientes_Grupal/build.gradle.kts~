@@ -67,7 +67,7 @@ kotlin {
 tasks.jar {
     archiveFileName.set("banco_clientes.jar")
     manifest {
-        attributes["Main-Class"] = "org.example.Main"
+        attributes["Main-Class"] = "org.example.MainKt"
     }
     configurations["compileClasspath"].forEach { file: File ->
         from(zipTree(file.absoluteFile))
