@@ -1,7 +1,9 @@
-package org.example.mappers;
+package org.example.clientes.mapper;
 
-import org.example.dto.ClienteDto;
-import org.example.models.Cliente;
+import org.example.clientes.dto.ClienteDto;
+import org.example.clientes.model.Cliente;
+import org.example.tarjetas.mappers.TarjetaMapper;
+import org.example.usuarios.mappers.UsuarioMapper;
 
 public class ClienteMapper {
     public static Cliente toEntity(ClienteDto clienteDto) {

@@ -1,4 +1,4 @@
-package org.example.models;
+package org.example.usuarios.models;
 
 import lombok.Builder;
 import lombok.Data;

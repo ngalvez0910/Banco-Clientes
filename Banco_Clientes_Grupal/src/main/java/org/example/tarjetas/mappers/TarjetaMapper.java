@@ -1,12 +1,16 @@
-package org.example.mappers;
+package org.example.tarjetas.mappers;
 
-import org.example.dto.TarjetaDto;
-import org.example.models.Tarjeta;
+import org.example.tarjetas.dto.TarjetaDto;
+import org.example.tarjetas.model.Tarjeta;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TarjetaMapper {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     public static Tarjeta toEntity(TarjetaDto tarjetaDto) {
         if (tarjetaDto == null) {
             return null;
@@ -16,7 +20,9 @@ public class TarjetaMapper {
                 .id(tarjetaDto.getId())
                 .nombreTitular(tarjetaDto.getNombreTitular())
                 .numeroTarjeta(tarjetaDto.getNumeroTarjeta())
-                .fechaCaducidad(tarjetaDto.getFechaCaducidad())
+                .fechaCaducidad(tarjetaDto.getFechaCaducidad() != null
+                        ? LocalDate.parse(tarjetaDto.getFechaCaducidad(), formatter)
+                        : null)
                 .build();
     }
 
@@ -29,12 +35,14 @@ public class TarjetaMapper {
                 .id(tarjeta.getId())
                 .nombreTitular(tarjeta.getNombreTitular())
                 .numeroTarjeta(tarjeta.getNumeroTarjeta())
-                .fechaCaducidad(tarjeta.getFechaCaducidad())
+                .fechaCaducidad(tarjeta.getFechaCaducidad() != null
+                        ? tarjeta.getFechaCaducidad().format(formatter)
+                        : null)
                 .build();
     }
 
-    public static List<Tarjeta> toEntityList(List<TarjetaDto> tarjetaDtos) {
-        return tarjetaDtos.stream()
+    public static List<Tarjeta> toEntityList(List<TarjetaDto> tarjetasDto) {
+        return tarjetasDto.stream()
                 .map(TarjetaMapper::toEntity)
                 .collect(Collectors.toList());
     }

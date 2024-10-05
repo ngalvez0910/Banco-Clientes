@@ -1,11 +1,11 @@
-package org.example.models;
+package org.example.tarjetas.dto;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class Tarjeta {
+public class TarjetaDto {
     private Long id;
     private String nombreTitular;
     private String numeroTarjeta;
