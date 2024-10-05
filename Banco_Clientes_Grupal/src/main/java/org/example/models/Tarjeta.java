@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class Tarjeta {
-    //Atributos de la tarjeta
     private Long id;
     private String nombreTitular;
     private String numeroTarjeta;

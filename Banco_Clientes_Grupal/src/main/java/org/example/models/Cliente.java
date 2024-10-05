@@ -5,9 +5,6 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- * Clase que representa un cliente
- */
 @Data
 @Builder
 public class Cliente {
