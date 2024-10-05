@@ -9,6 +9,29 @@ build/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/aws.xml
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+.idea/**/gradle.xml
+.idea/**/sonarlint/
+.idea/**/sonarIssues.xml
+.idea/**/markdown-navigator.xml
+.idea/**/markdown-navigator-enh.xml
+.idea/**/markdown-navigator/
+.idea/$CACHE_FILE$
+.idea/codestream.xml
+.idea/**/azureSettings.xml
 *.iws
 *.iml
 *.ipr
@@ -40,3 +63,36 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Kotlin ###
+*.kotlin_metadata
+*.kotlin_module
+
+### Lombok ###
+*.lombok.config
+
+### SQLite ###
+*.sqlite
+*.sqlite3
+
+### Logs ###
+*.log
+
+### Compiled Java classes ###
+*.class
+
+### Package Files ###
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+### Java heap dumps ###
+*.hprof
+
+### Virtual Machine crash logs ###
+hs_err_pid*
+replay_pid*
