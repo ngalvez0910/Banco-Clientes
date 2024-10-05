@@ -41,7 +41,7 @@ public class TarjetaMapper {
                 .build();
     }
 
-    public static Tarjeta toTarjetaFromCreate(TarjetaGetAll tarjetaGetAll){
+    public static Tarjeta toTarjetaFromCreateAll(TarjetaGetAll tarjetaGetAll){
         return Tarjeta.builder()
                .id(tarjetaGetAll.getId())
                .nombreTitular(tarjetaGetAll.getNombreTitular())
@@ -50,7 +50,7 @@ public class TarjetaMapper {
                .build();
     }
 
-    public static Tarjeta toTarjetaFromCreate(TarjetaGetById tarjetaGetById){
+    public static Tarjeta toTarjetaFromCreateId(TarjetaGetById tarjetaGetById){
         return Tarjeta.builder()
                 .id(tarjetaGetById.getId())
                 .nombreTitular(tarjetaGetById.getNombreTitular())
