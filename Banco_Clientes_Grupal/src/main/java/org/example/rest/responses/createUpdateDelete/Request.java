@@ -1,4 +1,4 @@
-package rest.responses.createUpdateDelete;
+package org.example.rest.responses.createUpdateDelete;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

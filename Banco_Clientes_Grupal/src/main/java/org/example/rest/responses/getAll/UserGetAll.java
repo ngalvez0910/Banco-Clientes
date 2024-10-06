@@ -1,4 +1,4 @@
-package rest.responses.getById;
+package org.example.rest.responses.getAll;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserGetById {
+public class UserGetAll {
 
     @JsonProperty("id")
     private int id;

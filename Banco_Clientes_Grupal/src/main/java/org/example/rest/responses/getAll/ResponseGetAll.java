@@ -1,4 +1,4 @@
-package rest.responses.getAll;
+package org.example.rest.responses.getAll;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

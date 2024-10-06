@@ -1,4 +1,4 @@
-package rest.responses.getById;
+package org.example.rest.responses.getById;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
