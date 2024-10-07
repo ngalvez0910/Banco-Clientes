@@ -1,8 +1,8 @@
-package org.example.tarjetas.repositories;
+package org.example.clientes.repositories;
 
 import io.vavr.control.Either;
-import org.example.tarjetas.mappers.TarjetaMapper;
-import org.example.tarjetas.model.Tarjeta;
+import org.example.clientes.mappers.TarjetaMapper;
+import org.example.clientes.model.Tarjeta;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 

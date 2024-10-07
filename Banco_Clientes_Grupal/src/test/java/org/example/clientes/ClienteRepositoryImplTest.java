@@ -1,4 +1,4 @@
-package org.example.clientes.repositories;
+package org.example.clientes;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
