@@ -2,10 +2,12 @@ package org.example.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.example.config.ConfigProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class LocalDataBaseManager implements AutoCloseable {
     private static LocalDataBaseManager instance = null;
