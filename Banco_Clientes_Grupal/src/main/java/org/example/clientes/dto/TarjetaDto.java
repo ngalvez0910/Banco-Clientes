@@ -1,15 +1,13 @@
-package org.example.tarjetas.model;
+package org.example.clientes.dto;
 
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
 @Builder
-public class Tarjeta {
+public class TarjetaDto {
     private Long id;
     private String nombreTitular;
     private String numeroTarjeta;
-    private LocalDate fechaCaducidad;
+    private String fechaCaducidad;
 }

@@ -1,7 +1,7 @@
-package org.example.tarjetas.repositories;
+package org.example.clientes.repositories;
 
 import io.vavr.control.Either;
-import org.example.tarjetas.model.Tarjeta;
+import org.example.clientes.model.Tarjeta;
 
 import java.util.List;
 
