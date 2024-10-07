@@ -1,7 +1,7 @@
-package org.example.tarjetas.mappers;
+package org.example.clientes.mappers;
 
-import org.example.tarjetas.dto.TarjetaDto;
-import org.example.tarjetas.model.Tarjeta;
+import org.example.clientes.dto.TarjetaDto;
+import org.example.clientes.model.Tarjeta;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
