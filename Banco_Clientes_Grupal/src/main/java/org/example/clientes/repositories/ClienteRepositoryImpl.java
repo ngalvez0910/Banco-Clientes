@@ -2,6 +2,7 @@ package org.example.clientes.repositories;
 
 
 import org.example.clientes.model.Cliente;
+import org.example.database.LocalDataBaseManager;
 import org.example.tarjetas.repositories.TarjetaRemoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                 while (resultSet.next()) {
                     clients.add(Cliente.builder()
                             .usuario(findUserById(resultSet.getObject("usuarioID", UUID.class)))
-                            .tarjetas(findAllCreditCardsByUserId(resultSet.getObject("usuarioID", UUID.class)))
+                            .tarjetas(findAllTarjetasById(resultSet.getObject("usuarioID", UUID.class)))
                             .build());
                 }
             }
@@ -54,7 +55,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                 if (resultSet.next()) {
                     client = Cliente.builder()
                             .usuario(findUserById(resultSet.getObject("usuarioID", UUID.class)))
-                            .tarjetas(findAllCreditCardsByUserId(resultSet.getObject("usuarioID", UUID.class)))
+                            .tarjetas(findAllTarjetasById(resultSet.getObject("usuarioID", UUID.class)))
                             .build();
                 }
             }
@@ -76,7 +77,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                 while (resultSet.next()) {
                     cliente.add(Cliente.builder()
                             .usuario(findUserById(resultSet.getObject("usuarioID", UUID.class)))
-                            .tarjetas(findAllCreditCardsByUserId(resultSet.getObject("usuarioID", UUID.class)))
+                            .tarjetas(findAllTarjetasById(resultSet.getObject("usuarioID", UUID.class)))
                             .build());
                 }
                 return cliente;
@@ -88,18 +89,18 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     }
 
     @Override
-    public Cliente saveCliente(Cliente client) {
-        logger.debug("Guardando el cliente: {}", client);
+    public Cliente saveCliente(Cliente cliente) {
+        logger.debug("Guardando el cliente: {}", cliente);
         String query = "INSERT INTO Cliente (id, usuarioID) VALUES (?, ?)";
         try (Connection connection = localDataBaseManager.connect();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setObject(1, client.getId());
-            statement.setObject(2, client.getUsuario().getId());
+            statement.setObject(1, cliente.getId());
+            statement.setObject(2, cliente.getUsuario().getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error al guardar el cliente: {}", client, e);
+            logger.error("Error al guardar el cliente: {}", cliente, e);
         }
-        return client;
+        return cliente;
     }
 
 
