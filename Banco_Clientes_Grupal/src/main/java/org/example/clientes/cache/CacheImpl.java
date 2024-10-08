@@ -70,4 +70,10 @@ public class CacheImpl<K, V> implements Cache<K, V> {
         logger.debug("Comprobando si la cache no está vacía");
         return !isEmpty();
     }
+
+    @Override
+    public boolean containsKey(K key) {
+        logger.debug("Comprobando si existe la clave en la cache: {}", key);
+        return cache.containsKey(key);
+    }
 }
