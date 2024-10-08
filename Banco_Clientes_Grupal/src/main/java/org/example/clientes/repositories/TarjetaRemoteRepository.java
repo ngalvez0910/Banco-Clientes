@@ -5,4 +5,6 @@ import org.example.common.Repository;
 
 import java.util.List;
 
-public interface TarjetaRemoteRepository extends Repository<Tarjeta, Long> {}
+public interface TarjetaRemoteRepository extends Repository<Tarjeta, Long> {
+
+}

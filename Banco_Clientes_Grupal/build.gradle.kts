@@ -46,6 +46,18 @@ dependencies {
     // Mordant
     implementation("com.github.ajalt.mordant:mordant:2.0.0-beta9")
 
+    // RXJava
+    implementation("io.reactivex.rxjava3:rxjava:3.1.9")
+
+    // Testcontainers
+    testImplementation("org.testcontainers:testcontainers:1.20.2")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.2")
+    testImplementation("org.testcontainers:postgresql:1.20.2")
+
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation(kotlin("stdlib-jdk8"))
+
     // Mockito
     testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
     testImplementation("org.mockito:mockito-core:5.12.0")
