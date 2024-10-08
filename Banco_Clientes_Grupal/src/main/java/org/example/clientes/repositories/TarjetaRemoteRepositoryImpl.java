@@ -25,7 +25,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
         List<Tarjeta> tarjetas = new ArrayList<>();
         String query = "SELECT * FROM tarjetas";
 
-        try (Connection connection = remoteDbManager.connect();
+        try (Connection connection = remoteDbManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
@@ -49,7 +49,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
         logger.info("Obteniendo tarjeta con id: " + id);
         String query = "SELECT * FROM tarjetas WHERE id = ?";
 
-        try (Connection connection = remoteDbManager.connect();
+        try (Connection connection = remoteDbManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setLong(1, id);
                 ResultSet resultSet = statement.executeQuery();
@@ -70,7 +70,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     public Tarjeta create(Tarjeta tarjeta) {
         logger.info("Creando tarjeta...");
         String query = "INSERT INTO tarjetas (nombreTitular, numeroTarjeta, fechaCaducidad) VALUES (?, ?, ?)";
-        try (Connection connection = remoteDbManager.connect();
+        try (Connection connection = remoteDbManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, tarjeta.getNombreTitular());
             statement.setString(2, tarjeta.getNumeroTarjeta());
@@ -96,7 +96,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     public Tarjeta update(Long id, Tarjeta tarjeta) {
         logger.info("Actualizando tarjeta...");
         String query = "UPDATE tarjetas SET nombreTitular = ?, numeroTarjeta = ?, fechaCaducidad = ? WHERE id = ?";
-        try (Connection connection = remoteDbManager.connect();
+        try (Connection connection = remoteDbManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, tarjeta.getNombreTitular());
                 statement.setString(2, tarjeta.getNumeroTarjeta());
@@ -112,7 +112,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     public Boolean delete(Long id) {
         logger.info("Borrando tarjeta...");
         String query = "DELETE FROM tarjetas WHERE id =?";
-        try (Connection connection = remoteDbManager.connect();
+        try (Connection connection = remoteDbManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setLong(1, id);
                 statement.executeUpdate();
