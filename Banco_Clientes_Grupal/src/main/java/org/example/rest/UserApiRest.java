@@ -4,7 +4,6 @@ import org.example.rest.responses.getAll.UserGetAll;
 import org.example.rest.responses.getById.UserGetById;
 import retrofit2.Call;
 import retrofit2.http.*;
-import org.example.rest.responses.getById.ResponseGetById;
 import org.example.rest.responses.createUpdateDelete.Response;
 import org.example.rest.responses.createUpdateDelete.Request;
 
