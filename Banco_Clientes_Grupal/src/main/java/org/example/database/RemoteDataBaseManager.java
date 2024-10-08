@@ -18,7 +18,7 @@ public class RemoteDataBaseManager implements AutoCloseable {
     private String DB_PASSWORD;
     private Connection connection = null;
 
-    private RemoteDataBaseManager() {
+    public RemoteDataBaseManager() {
         loadProperties();
     }
 

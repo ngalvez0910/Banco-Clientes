@@ -10,9 +10,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CacheImplTest {
 
-    private Tarjeta createTarjeta () {
+    private Tarjeta Tarjeta1 () {
         return Tarjeta.builder()
                 .id(1L)
+                .nombreTitular("Juan Pérez")
+                .numeroTarjeta("1234 5678 9012 3456")
+                .fechaCaducidad(LocalDate.of(2025, 12, 31))
+                .build();
+    }
+    private Tarjeta Tarjeta2 () {
+        return Tarjeta.builder()
+                .id(2L)
+                .nombreTitular("Juan Pérez")
+                .numeroTarjeta("1234 5678 9012 3456")
+                .fechaCaducidad(LocalDate.of(2025, 12, 31))
+                .build();
+    }
+    private Tarjeta Tarjeta3 () {
+        return Tarjeta.builder()
+                .id(3L)
+                .nombreTitular("Juan Pérez")
+                .numeroTarjeta("1234 5678 9012 3456")
+                .fechaCaducidad(LocalDate.of(2025, 12, 31))
+                .build();
+    }
+
+    private Tarjeta Tarjeta4 () {
+        return Tarjeta.builder()
+                .id(4L)
                 .nombreTitular("Juan Pérez")
                 .numeroTarjeta("1234 5678 9012 3456")
                 .fechaCaducidad(LocalDate.of(2025, 12, 31))
@@ -22,7 +47,7 @@ class CacheImplTest {
     @Test
     void get() {
         CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(2);
-        Tarjeta tarjeta1 = createTarjeta();
+        Tarjeta tarjeta1 = Tarjeta1();
 
         cache.put(tarjeta1.getId(), tarjeta1);
 
@@ -50,8 +75,8 @@ class CacheImplTest {
     @Test
     void put() {
         CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(2);
-        Tarjeta tarjeta1 = createTarjeta();
-        Tarjeta tarjeta2 = createTarjeta();
+        Tarjeta tarjeta1 = Tarjeta1();
+        Tarjeta tarjeta2 = Tarjeta2();
 
         cache.put(tarjeta1.getId(), tarjeta1);
         cache.put(tarjeta2.getId(), tarjeta2);
@@ -69,10 +94,10 @@ class CacheImplTest {
     @Test
     void putOverrider() {
         CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(2);
-        Tarjeta tarjeta1 = createTarjeta();
-        Tarjeta tarjeta2 = createTarjeta();
-        Tarjeta tarjeta3 = createTarjeta();
-        Tarjeta tarjeta4 = createTarjeta();
+        Tarjeta tarjeta1 =  Tarjeta1();
+        Tarjeta tarjeta2 =  Tarjeta2();
+        Tarjeta tarjeta3 = Tarjeta3();
+        Tarjeta tarjeta4 = Tarjeta4();
 
         cache.put(tarjeta1.getId(), tarjeta1);
         cache.put(tarjeta2.getId(), tarjeta2);
@@ -94,10 +119,10 @@ class CacheImplTest {
     }
 
     @Test
-    void remove() {
+    void containsKey() {
         CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(2);
-        Tarjeta tarjeta1 = createTarjeta();
-        Tarjeta tarjeta2 = createTarjeta();
+        Tarjeta tarjeta1 = Tarjeta1();
+        Tarjeta tarjeta2 = Tarjeta2();
 
         cache.put(tarjeta1.getId(), tarjeta1);
         cache.put(tarjeta2.getId(), tarjeta2);
@@ -115,10 +140,28 @@ class CacheImplTest {
     }
 
     @Test
+    void remove() {
+        CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(3);
+        Tarjeta tarjeta1 = Tarjeta1();
+        Tarjeta tarjeta2 = Tarjeta2();
+
+        cache.put(tarjeta1.getId(), tarjeta1);
+        cache.put(tarjeta2.getId(), tarjeta2);
+
+        cache.remove(tarjeta1.getId());
+
+        assertAll(
+                "Verificar que tarjeta1 ha sido eliminada y tarjeta2 permanece",
+                () -> assertFalse(cache.containsKey(tarjeta1.getId()), "La caché no debería contener tarjeta1"),
+                () -> assertTrue(cache.containsKey(tarjeta2.getId()), "La caché debería contener tarjeta2")
+        );
+    }
+
+    @Test
     void clear() {
         CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(2);
-        Tarjeta tarjeta1 = createTarjeta();
-        Tarjeta tarjeta2 = createTarjeta();
+        Tarjeta tarjeta1 = Tarjeta1();
+        Tarjeta tarjeta2 = Tarjeta2();
 
         cache.put(tarjeta1.getId(), tarjeta1);
         cache.put(tarjeta2.getId(), tarjeta2);
@@ -140,13 +183,12 @@ class CacheImplTest {
         );
     }
 
-
     @Test
     void size() {
         CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(3);
-        Tarjeta tarjeta1 = createTarjeta();
-        Tarjeta tarjeta2 = createTarjeta();
-        Tarjeta tarjeta3 = createTarjeta();
+        Tarjeta tarjeta1 = Tarjeta1();
+        Tarjeta tarjeta2 = Tarjeta2();
+        Tarjeta tarjeta3 = Tarjeta3();
 
         assertEquals(0, cache.size(), "La caché debería estar vacía al inicio");
 
@@ -165,11 +207,11 @@ class CacheImplTest {
 
 
     @Test
-    void valuesDebeDevolverTodosLosElementosDeLaCache() {
+    void values() {
         CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(3);
-        Tarjeta tarjeta1 = createTarjeta();
-        Tarjeta tarjeta2 = createTarjeta();
-        Tarjeta tarjeta3 = createTarjeta();
+        Tarjeta tarjeta1 = Tarjeta1();
+        Tarjeta tarjeta2 = Tarjeta2();
+        Tarjeta tarjeta3 = Tarjeta3();
 
         cache.put(tarjeta1.getId(), tarjeta1);
         cache.put(tarjeta2.getId(), tarjeta2);
@@ -200,9 +242,20 @@ class CacheImplTest {
 
 
     @Test
+    void isNotEmpty() {
+        CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(3);
+        Tarjeta tarjeta1 = Tarjeta1();
+
+        cache.put(tarjeta1.getId(), tarjeta1);
+
+        assertTrue(cache.isNotEmpty(), "La caché debería contener elementos y no estar vacía");
+    }
+
+
+    @Test
     void isEmptyFalse() {
         CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(3);
-        Tarjeta tarjeta1 = createTarjeta();
+        Tarjeta tarjeta1 = Tarjeta1();
 
         cache.put(tarjeta1.getId(), tarjeta1);
 
