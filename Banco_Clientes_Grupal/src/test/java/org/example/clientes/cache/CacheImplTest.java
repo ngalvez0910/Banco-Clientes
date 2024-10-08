@@ -81,7 +81,6 @@ class CacheImplTest {
         cache.put(tarjeta4.getId(), tarjeta4);
         cache.put(tarjeta1.getId(), tarjeta1);
 
-        // Verificaciones
         assertAll(
                 "Verificar que la caché elimina el elemento menos usado cuando se supera el límite",
                 () -> assertEquals(2, cache.size(), "La caché debería tener dos elementos"),
@@ -117,7 +116,7 @@ class CacheImplTest {
 
     @Test
     void clear() {
-        CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(2); // Caché con límite de 2 elementos
+        CacheImpl<Long, Tarjeta> cache = new CacheImpl<>(2);
         Tarjeta tarjeta1 = createTarjeta();
         Tarjeta tarjeta2 = createTarjeta();
 
@@ -186,7 +185,6 @@ class CacheImplTest {
                 () -> assertTrue(finalValores.contains(tarjeta3), "La colección de valores debería contener tarjeta3")
         );
 
-        // Limpiar la caché
         cache.clear();
         valores = cache.values();
         assertEquals(0, valores.size(), "La colección de valores debería estar vacía después de limpiar");
