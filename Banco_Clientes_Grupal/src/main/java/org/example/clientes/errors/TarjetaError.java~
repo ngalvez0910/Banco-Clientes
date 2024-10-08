@@ -28,5 +28,11 @@ public abstract class TarjetaError extends Exception {
             super("El nombre del titular '" + nombreTitular + "' no es válido.");
         }
     }
+
+    public static class TarjetaNoEncontrada extends TarjetaError {
+        public TarjetaNoEncontrada(Long id) {
+            super("No se encontró la tarjeta con ID '" + id + "'.");
+        }
+    }
 }
 

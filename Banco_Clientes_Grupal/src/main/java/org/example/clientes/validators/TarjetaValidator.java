@@ -18,7 +18,7 @@ public class TarjetaValidator {
         return Either.right("El número de tarjeta '" + numeroTarjeta + "' es válido.");
     }
 
-    private boolean esValidoLuhn(String numeroTarjeta) {
+    public boolean esValidoLuhn(String numeroTarjeta) {
         int[] numeros = numeroTarjeta.chars()
                 .map(Character::getNumericValue)
                 .toArray();
@@ -34,12 +34,17 @@ public class TarjetaValidator {
     }
 
     public Either<TarjetaError.FechaCaducidadInvalida, String> validarFechaCaducidad(Tarjeta tarjeta) {
+        LocalDate fechaCaducidad = tarjeta.getFechaCaducidad();
+        if (fechaCaducidad == null) {
+            return Either.left(new TarjetaError.FechaCaducidadInvalida(null));
+        }
         LocalDate fechaActual = LocalDate.now();
-        if (tarjeta.getFechaCaducidad().isBefore(fechaActual)) {
-            return Either.left(new TarjetaError.FechaCaducidadInvalida(tarjeta.getFechaCaducidad()));
+        if (fechaCaducidad.isBefore(fechaActual)) {
+            return Either.left(new TarjetaError.FechaCaducidadInvalida(fechaCaducidad));
         }
         return Either.right("La fecha de caducidad es válida.");
     }
+
 
     public Either<TarjetaError.NombreTitularInvalido, String> validarNombreTitular(Tarjeta tarjeta) {
         String nombreTitular = tarjeta.getNombreTitular();
@@ -50,12 +55,16 @@ public class TarjetaValidator {
     }
 
     public Either<TarjetaError.TarjetaIdInvalido, String> validarIdTarjeta(Tarjeta tarjeta) {
+        if (tarjeta.getId() == null) {
+            return Either.left(new TarjetaError.TarjetaIdInvalido(null));
+        }
         String idTarjeta = String.valueOf(tarjeta.getId());
-        if (idTarjeta == null || idTarjeta.trim().isEmpty()) {
-            return Either.left(new TarjetaError.TarjetaIdInvalido(idTarjeta));
+        if (idTarjeta.trim().isEmpty()) {
+            return Either.left(new TarjetaError.TarjetaIdInvalido("El ID de la tarjeta es vacío."));
         }
         return Either.right("El ID de la tarjeta '" + idTarjeta + "' es válido.");
     }
+
 
     public boolean validate(Tarjeta tarjeta) {
         Either<TarjetaError.TarjetaIdInvalido, String> idResult = validarIdTarjeta(tarjeta);
