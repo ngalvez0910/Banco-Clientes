@@ -9,15 +9,15 @@ import org.slf4j.Logger;
 import java.util.List;
 
 public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
-    private final apiRest apiRest;
+    private final UserService userService;
     private final Logger logger = LoggerFactory.getLogger(TarjetaRemoteRepositoryImpl.class);
 
-    public TarjetaRemoteRepositoryImpl(apiRest apiRest) {
-        this.apiRest = apiRest;
+    public TarjetaRemoteRepositoryImpl(UserService userService) {
+        this.userService = userService;
     }
 
     public Either<String,List<Tarjeta>> getAll() {
-        var llamada = apiRest.getAll();
+        var llamada = userService.getAll();
         try {
             var response = llamada.execute();
             if (!response.isSuccessful()) {
@@ -34,7 +34,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     }
 
     public Either<String,Tarjeta> getById(Long id) {
-        var llamada = apiRest.getById(id);
+        var llamada = userService.getById(id);
         try {
             var response = llamada.get();
             var tarjeta = TarjetaMapper.toTarjetaFromCreateId(response.getData());
@@ -46,7 +46,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     }
 
     public Either<String,Tarjeta> create(Tarjeta tarjeta) {
-        var llamada = apiRest.create(TarjetaMapper.toRequest(tarjeta));
+        var llamada = userService.create(TarjetaMapper.toRequest(tarjeta));
         try {
             var response = llamada.get();
             var nuevaTarjeta = TarjetaMapper.toTarjetaFromCreate(response);
@@ -58,7 +58,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     }
 
     public Either<String,Tarjeta> update(Long id, Tarjeta tarjeta) {
-        var llamada = apiRest.update(id, TarjetaMapper.toRequest(tarjeta));
+        var llamada = userService.update(id, TarjetaMapper.toRequest(tarjeta));
         try {
             var response = llamada.get();
             var tarjetaActualizada = TarjetaMapper.toTarjetaFromUpdate(response, id);
@@ -75,7 +75,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     }
 
     public Either<String,Boolean> delete(Long id) {
-        var llamada = apiRest.delete(id);
+        var llamada = userService.delete(id);
         try {
             llamada.get();
             return Either.right(true);
