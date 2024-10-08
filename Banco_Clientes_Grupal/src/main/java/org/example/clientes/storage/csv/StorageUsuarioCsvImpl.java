@@ -15,13 +15,11 @@ public class StorageUsuarioCsvImpl implements Storage {
     public Observable<Usuario> importFile(File file) {
         return Observable.<Usuario>create(emitter -> {
             List<String> lines = Files.readAllLines(file.toPath());
-
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
                 Usuario usuario = parseLine(line.split(","));
                 emitter.onNext(usuario);
             }
-
             emitter.onComplete();
         })
         .subscribeOn(Schedulers.io());
@@ -29,7 +27,6 @@ public class StorageUsuarioCsvImpl implements Storage {
 
     @Override
     public void exportFile(File file, Observable items) {
-
     }
 
     private Usuario parseLine(String[] parts) {
