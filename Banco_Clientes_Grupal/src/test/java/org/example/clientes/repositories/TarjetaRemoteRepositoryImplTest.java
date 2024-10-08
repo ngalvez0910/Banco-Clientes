@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.shaded.com.trilead.ssh2.Connection;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -39,7 +40,7 @@ public class TarjetaRemoteRepositoryImplTest {
     public static void setUp() throws SQLException {
         dataBaseManager = new RemoteDataBaseManager(){
             @Override
-                public Connection connect() trows SQLException {
+                public Connection getConnection() trows SQLException {
                     return DriverManager.getConnection(
                             postgresContainer.getJdbcUrl(),
                             postgresContainer.getUsername(),
@@ -65,7 +66,7 @@ public class TarjetaRemoteRepositoryImplTest {
 
         assertAll(() -> {
             assertNotNull (tarjeta);
-            assertEquals("Test 01", tarjeta.getFirst().getNombre());
+            assertEquals("Test 01", tarjeta.getFirst().getNombreTitular());
         });
     }
 
@@ -76,7 +77,7 @@ public class TarjetaRemoteRepositoryImplTest {
 
         assertAll(() -> {
             assertTrue(tarjeta.isPresent());
-            assertEquals("Test 01", tarjeta.get().getNombre());
+            assertEquals("Test 01", tarjeta.get().getNombreTitular());
         });
     }
 
@@ -103,7 +104,7 @@ public class TarjetaRemoteRepositoryImplTest {
 
         assertAll(() -> {
             assertNotNull(tarjetaCreada);
-            assertEquals("Test 04", tarjetaCreada.getNombre());
+            assertEquals("Test 04", tarjetaCreada.getNombreTitular());
         });
     }
 
@@ -121,7 +122,7 @@ public class TarjetaRemoteRepositoryImplTest {
 
         assertAll(() -> {
             assertNotNull(tarjetaActualizada);
-            assertEquals("Test 01 Updated", tarjetaActualizada.getNombre());
+            assertEquals("Test 01 Updated", tarjetaActualizada.getNombreTitular());
         });
     }
 
