@@ -2,16 +2,14 @@ package org.example.clientes.storage.csv;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import org.example.clientes.errors.UsuarioError;
 import org.example.clientes.model.Usuario;
 import org.example.common.Storage;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-public class StorageCsvImpl implements Storage {
+public class StorageUsuarioCsvImpl implements Storage {
 
     @Override
     public Observable<Usuario> importFile(File file) {
