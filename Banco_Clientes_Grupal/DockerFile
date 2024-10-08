@@ -1,0 +1,20 @@
+FROM gradle:jdk21-alpine AS build
+WORKDIR /app
+
+COPY build.gradle.kts .
+COPY gradlew .
+COPY gradle gradle
+COPY src src
+
+ARG DOCKER_HOST_ARG=tcp://host.docker.internal:2375
+ENV DOCKER_HOST=$DOCKER_HOST_ARG
+
+RUN ./gradlew build
+
+FROM eclipse-temurin:21-jre-alpine AS run
+
+WORKDIR /app
+
+COPY --from=build /app/build/libs/*SNAPSHOT.jar /app/my-app.jar
+
+ENTRYPOINT ["java","-jar","/app/my-app.jar"]
