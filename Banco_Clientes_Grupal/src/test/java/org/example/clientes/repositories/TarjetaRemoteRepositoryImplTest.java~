@@ -19,7 +19,7 @@ public class TarjetaRemoteRepositoryImplTest {
             .withInitScript("init.sql");
 
     private static RemoteDataBaseManager remoteDbManager;
-    private static TarjetaRemoteRepositoryImpl tarjetaRemoteRepository
+    
 
     @BeforeEach
     void setUp() {
