@@ -10,7 +10,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public abstract class RemoteDataBaseManager implements AutoCloseable {
+public class RemoteDataBaseManager implements AutoCloseable {
     private static RemoteDataBaseManager instance = null;
     private final Logger logger = LoggerFactory.getLogger(RemoteDataBaseManager.class);
     private String DB_URL;
@@ -18,7 +18,7 @@ public abstract class RemoteDataBaseManager implements AutoCloseable {
     private String DB_PASSWORD;
     private Connection connection = null;
 
-    protected RemoteDataBaseManager() {
+    public RemoteDataBaseManager() {
         loadProperties();
     }
 
@@ -77,6 +77,4 @@ public abstract class RemoteDataBaseManager implements AutoCloseable {
     public void close() throws Exception {
         disconnect();
     }
-
-    public abstract Connection connect() throws SQLException;
 }
