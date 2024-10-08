@@ -1,5 +1,7 @@
 package org.example.clientes.errors;
 
+import org.example.clientes.model.Usuario;
+
 public abstract class UsuarioError extends Exception{
     public UsuarioError(String message) {super(message);}
 
@@ -18,6 +20,12 @@ public abstract class UsuarioError extends Exception{
     public static class EmailInvalido extends UsuarioError {
         public EmailInvalido(String email) {
             super("El correo electrónico '" + email + "' no es válido.");
+        }
+    }
+
+    public static class UsuarioStorageError extends UsuarioError{
+        public UsuarioStorageError(String string){
+            super(string);
         }
     }
 }
