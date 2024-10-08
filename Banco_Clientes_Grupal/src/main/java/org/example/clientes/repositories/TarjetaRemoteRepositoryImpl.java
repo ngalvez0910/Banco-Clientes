@@ -1,16 +1,11 @@
 package org.example.clientes.repositories;
 
-import io.vavr.control.Either;
-import org.example.clientes.mappers.TarjetaMapper;
 import org.example.clientes.model.Tarjeta;
 import org.example.database.RemoteDataBaseManager;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -76,12 +71,22 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
         logger.info("Creando tarjeta...");
         String query = "INSERT INTO tarjetas (nombreTitular, numeroTarjeta, fechaCaducidad) VALUES (?, ?, ?)";
         try (Connection connection = remoteDbManager.connect();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setString(1, tarjeta.getNombreTitular());
-                statement.setString(2, tarjeta.getNumeroTarjeta());
-                statement.setObject(3, tarjeta.getFechaCaducidad());
-                statement.executeUpdate();
+             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, tarjeta.getNombreTitular());
+            statement.setString(2, tarjeta.getNumeroTarjeta());
+            statement.setObject(3, tarjeta.getFechaCaducidad());
 
+            statement.executeUpdate();
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    long id = generatedKeys.getLong(1);
+                    tarjeta.setId(id);
+                    return tarjeta;
+                } else {
+                    throw new SQLException("No se pudo obtener la clave generada.");
+                }
+            }
         } catch (SQLException e) {
             logger.error("Error al crear la tarjeta", e);
         }
@@ -89,10 +94,38 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     }
 
     public Tarjeta update(Long id, Tarjeta tarjeta) {
-
+        logger.info("Actualizando tarjeta...");
+        String query = "UPDATE tarjetas SET nombreTitular = ?, numeroTarjeta = ?, fechaCaducidad = ? WHERE id = ?";
+        try (Connection connection = remoteDbManager.connect();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, tarjeta.getNombreTitular());
+                statement.setString(2, tarjeta.getNumeroTarjeta());
+                statement.setObject(3, tarjeta.getFechaCaducidad());
+                statement.setLong(4, id);
+                statement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("Error al actualizar la tarjeta", e);
+        }
+        return null;
     }
 
     public Boolean delete(Long id) {
+        logger.info("Borrando tarjeta...");
+        String query = "DELETE FROM tarjetas WHERE id =?";
+        try (Connection connection = remoteDbManager.connect();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
 
+                if (statement.executeUpdate() > 0) {
+                    return true;
+                } else {
+                    logger.warn("No se ha borrado la tarjeta");
+                    return false;
+                }
+        } catch (SQLException e) {
+            logger.error("Error al borrar la tarjeta", e);
+        }
+        return false;
     }
 }
