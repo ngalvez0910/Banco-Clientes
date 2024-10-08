@@ -148,7 +148,7 @@ class CacheImplTest {
         cache.put(tarjeta1.getId(), tarjeta1);
         cache.put(tarjeta2.getId(), tarjeta2);
 
-        cache.remove(tarjeta1.getId()); // Eliminar tarjeta1 de la caché
+        cache.remove(tarjeta1.getId());
 
         assertAll(
                 "Verificar que tarjeta1 ha sido eliminada y tarjeta2 permanece",
