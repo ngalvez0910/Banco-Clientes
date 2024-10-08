@@ -31,8 +31,8 @@ dependencies {
     // ScriptRunner
     implementation("org.mybatis:mybatis:3.5.13")
 
-    // Gson
-    implementation("com.google.code.gson:gson:2.10.1")
+    // Jackson
+    implementation("com.fasterxml.jackson.core:jackson-core:2.18.0")
 
     // PostgresSQL
     implementation("org.postgresql:postgresql:42.7.4")
@@ -46,6 +46,7 @@ dependencies {
     // Mockito
     testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
     testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("io.projectreactor:reactor-test:3.6.7")
 
     // Testcontainers
     testImplementation("org.testcontainers:testcontainers:1.20.2")
