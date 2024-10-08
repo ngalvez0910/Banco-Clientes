@@ -7,21 +7,21 @@ import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.com.trilead.ssh2.Connection;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @Testcontainers
-@TestMethodOrder(MethodOrderer.OrderAnntotation.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TarjetaRemoteRepositoryImplTest {
 
     @Container
@@ -32,7 +32,7 @@ public class TarjetaRemoteRepositoryImplTest {
             .withInitScript("init.sql");
 
 
-    private RemoteDataBaseManager dataBaseManager;
+    private static RemoteDataBaseManager dataBaseManager;
     private static TarjetaRemoteRepositoryImpl tarjetaRemoteRepository;
 
 
@@ -40,7 +40,7 @@ public class TarjetaRemoteRepositoryImplTest {
     public static void setUp() throws SQLException {
         dataBaseManager = new RemoteDataBaseManager(){
             @Override
-                public Connection getConnection() trows SQLException {
+                public Connection getConnection() throws SQLException {
                     return DriverManager.getConnection(
                             postgresContainer.getJdbcUrl(),
                             postgresContainer.getUsername(),
@@ -49,7 +49,7 @@ public class TarjetaRemoteRepositoryImplTest {
                 }
         };
 
-    tarjetaRemoteRepository = new TarjetaRemoteRepositoryImpl
+    tarjetaRemoteRepository = new TarjetaRemoteRepositoryImpl(dataBaseManager);
     }
 
     @AfterAll
@@ -146,7 +146,7 @@ public class TarjetaRemoteRepositoryImplTest {
     @Test
     @Order(7)
     public void Delete() {
-        var tarjeta= tarjetaRemoteRepository.delete(99);
+        var tarjeta= tarjetaRemoteRepository.delete(99L);
 
         assertAll(() -> {
             assertFalse(tarjeta);
