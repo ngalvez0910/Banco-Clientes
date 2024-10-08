@@ -16,19 +16,15 @@ public class StorageCsvImpl implements Storage {
     @Override
     public Observable<Usuario> importFile(File file) {
         return Observable.<Usuario>create(emitter -> {
-            try {
-                List<String> lines = Files.readAllLines(file.toPath());
+            List<String> lines = Files.readAllLines(file.toPath());
 
-                for (int i = 1; i < lines.size(); i++) {
-                    String line = lines.get(i);
-                    Usuario usuario = parseLine(line.split(","));
-                    emitter.onNext(usuario);
-                }
-
-                emitter.onComplete();
-            } catch (IOException e) {
-                emitter.onError(new UsuarioError.UsuarioStorageError("Error leyendo el archivo: " + e.getMessage()));
+            for (int i = 1; i < lines.size(); i++) {
+                String line = lines.get(i);
+                Usuario usuario = parseLine(line.split(","));
+                emitter.onNext(usuario);
             }
+
+            emitter.onComplete();
         })
         .subscribeOn(Schedulers.io());
     }
