@@ -16,4 +16,6 @@ public interface Cache<K, V> {
     default boolean isNotEmpty() {
         return !isEmpty();
     }
+
+    boolean containsKey(K id);
 }
