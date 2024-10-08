@@ -2,12 +2,12 @@ package org.example.rest.service;
 
 import io.vavr.control.Either;
 
+import org.example.clientes.model.Usuario;
 import org.example.errors.UserError;
 import org.example.errors.UserNoUsersFound;
 import org.example.errors.UserNotFoundError;
 import org.example.exceptions.UserNoUsersFoundException;
 import org.example.rest.repository.UserRemoteRepository;
-import org.example.usuarios.models.Usuario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
