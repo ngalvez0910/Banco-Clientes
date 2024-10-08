@@ -42,9 +42,9 @@ public class TarjetaRemoteRepositoryImplTest {
             @Override
                 public Connection getConnection() throws SQLException {
                     return DriverManager.getConnection(
-                            postgresContainer.getJdbcUrl(),
-                            postgresContainer.getUsername(),
-                            postgresContainer.getPassword()
+                            postgreContainer.getJdbcUrl(),
+                            postgreContainer.getUsername(),
+                            postgreContainer.getPassword()
                     );
                 }
         };
