@@ -31,6 +31,9 @@ dependencies {
     // ScriptRunner
     implementation("org.mybatis:mybatis:3.5.13")
 
+    // Gson
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Jackson
     implementation("com.fasterxml.jackson.core:jackson-core:2.18.0")
 
@@ -68,6 +71,11 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation(kotlin("stdlib-jdk8"))
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.11.0") // Jackson con Retrofit
+
 }
 
 tasks.test {
