@@ -25,7 +25,7 @@ public class UserRemoteRepository {
             if (!response.isSuccessful()) {
                 throw new Exception("Error: " + response.code());
             }
-            return response.body().getData().stream()
+            return response.body().stream()
                     .map(UsuarioMapper::toUserFromCreate)
                     .toList();
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class UserRemoteRepository {
                     throw new Exception("Error: " + response.code());
                 }
             }
-            return UsuarioMapper.toUserFromCreate(response.body().getData());
+            return UsuarioMapper.toUserFromCreate(response.body());
         } catch (Exception e) {
             throw new UserNotFoundException("User not found with id: " + id);
         }

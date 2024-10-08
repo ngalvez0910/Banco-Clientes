@@ -1,5 +1,6 @@
 package org.example.rest.responses.getById;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,22 @@ public class UserGetById {
 
     @JsonProperty("email")
     private String email;
+
+    @JsonIgnore
+    @JsonProperty("address")
+    private String address;
+
+    @JsonIgnore
+    @JsonProperty("phone")
+    private String phone;
+
+    @JsonIgnore
+    @JsonProperty("website")
+    private String website;
+
+    @JsonIgnore
+    @JsonProperty("company")
+    private String company;
 
     public int getId() {  return id;  }
 

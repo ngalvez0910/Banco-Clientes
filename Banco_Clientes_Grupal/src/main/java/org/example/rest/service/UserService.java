@@ -6,7 +6,6 @@ import org.example.errors.UserError;
 import org.example.errors.UserNoUsersFound;
 import org.example.errors.UserNotFoundError;
 import org.example.exceptions.UserNoUsersFoundException;
-import org.example.exceptions.UserNotFoundException;
 import org.example.rest.repository.UserRemoteRepository;
 import org.example.usuarios.models.Usuario;
 import org.slf4j.Logger;
@@ -24,41 +23,28 @@ public class UserService {
 
     public UserService(UserRemoteRepository userRepository) { this.userRepository = userRepository; }
 
-    public Either<UserError, List<Usuario>> getAllAsyncEither() {
+    public Either<UserError, List<Usuario>> getAllAsync() {
         logger.debug("UserService: Recuperando todos los usuarios");
         CompletableFuture<List<Usuario>> completableFuture = CompletableFuture.supplyAsync(()->
                 userRepository.getAllSync());
         try {
-            return Either.right(completableFuture.get(100,MILLISECONDS));
+            return Either.right(completableFuture.get(10000,MILLISECONDS));
         } catch (UserNoUsersFoundException e) {
             return Either.left(new UserNoUsersFound());
         } catch (Exception e) {
             return Either.left(new UserError("Error obteniendo la lista de usuarios", 500));
         }
     }
-    public List<Usuario> getAllAsync() {
-        // Es el Sync pero lanzado con un CompletableFuture
-        CompletableFuture<List<Usuario>> completableFuture = CompletableFuture.supplyAsync(userRepository::getAllSync);
-        // Se debe hacer el try catch y las cosas necesarias
-        try {
-            return completableFuture.get(1000, MILLISECONDS);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
-        }
 
-    }
 
-    public Either<UserError, Usuario> getByIdAsyncEither(int id) {
+    public Either<UserError, Usuario> getByIdAsync(int id) {
         logger.debug("UserService: Recuperando el usuario con id " + id);
         CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(() ->
                 userRepository.getByIdSync(id));
         try {
-            return Either.right(completableFuture.get(100, MILLISECONDS));
-        } catch (UserNotFoundException e) {
-            return Either.left(new UserNotFoundError(id));
+            return Either.right(completableFuture.get(10000, MILLISECONDS));
         } catch (Exception e) {
-            return Either.left(new UserError("Error obteniendo usuario", 500));
+            return Either.left(new UserNotFoundError(id));
         }
     }
 
