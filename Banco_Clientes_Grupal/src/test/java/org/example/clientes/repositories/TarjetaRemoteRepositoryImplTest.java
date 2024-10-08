@@ -1,24 +1,26 @@
 package org.example.clientes.repositories;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.example.clientes.model.Tarjeta;
+import org.example.database.RemoteDataBaseManager;
+import org.junit.jupiter.api.*;
+
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
 
-import static javafx.beans.binding.Bindings.when;
+
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
+
 
 @Testcontainers
-@ExtendWith(MockitoExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnntotation.class)
 public class TarjetaRemoteRepositoryImplTest {
 
     @Container
@@ -28,17 +30,25 @@ public class TarjetaRemoteRepositoryImplTest {
             .withPassword("admin123")
             .withInitScript("init.sql");
 
-    @Mock
-    private UserService userService;
 
-    @InjectMocks
-    private TarjetaRemoteRepositoryImpl tarjetaRemoteRepository;
+    private RemoteDataBaseManager dataBaseManager;
+    private static TarjetaRemoteRepositoryImpl tarjetaRemoteRepository;
 
-    @BeforeEach
-    public void setUp() throws SQLException {
-        tarjetaRemoteRepository = new TarjetaRemoteRepositoryImpl(userService);
-        when(userService.getAll()).thenReturn();
-        when(userService.getById(anyLong())).thenReturn();
+
+    @BeforeAll
+    public static void setUp() throws SQLException {
+        dataBaseManager = new RemoteDataBaseManager(){
+            @Override
+                public Connection connect() trows SQLException {
+                    return DriverManager.getConnection(
+                            postgresContainer.getJdbcUrl(),
+                            postgresContainer.getUsername(),
+                            postgresContainer.getPassword()
+                    );
+                }
+        };
+
+    tarjetaRemoteRepository = new TarjetaRemoteRepositoryImpl
     }
 
     @AfterAll
@@ -49,14 +59,97 @@ public class TarjetaRemoteRepositoryImplTest {
     }
 
     @Test
-    void getAll() throws SQLException {
-        var result = tarjetaRemoteRepository.getAll();
-        assertTrue(result.isRight());
+    @Order(1)
+    void getAll()  {
+        List<Tarjeta> tarjeta =tarjetaRemoteRepository.getAll();
+
+        assertAll(() -> {
+            assertNotNull (tarjeta);
+            assertEquals("Test 01", tarjeta.getFirst().getNombre());
+        });
     }
 
     @Test
-    public void getById() throws SQLException {
-        var result = tarjetaRemoteRepository.getById(1L);
-        assertTrue(result.isRight());
+    @Order(2)
+    public void GetById() {
+        var tarjeta =tarjetaRemoteRepository.getById(1L);
+
+        assertAll(() -> {
+            assertTrue(tarjeta.isPresent());
+            assertEquals("Test 01", tarjeta.get().getNombre());
+        });
     }
+
+    @Test
+    @Order(3)
+    public void GetByIdNotFound() {
+        var tarjeta = tarjetaRemoteRepository.getById(999L);
+
+        assertAll(() -> {
+            assertTrue(tarjeta.isEmpty());
+        });
+    }
+
+    @Test
+    @Order(4)
+    public void Create() {
+        Tarjeta tarjeta = Tarjeta.builder()
+               .nombreTitular("Test 04")
+               .numeroTarjeta("1234567890123456")
+               .fechaCaducidad(LocalDate.of(2022, 12, 31))
+               .build();
+
+        var tarjetaCreada = tarjetaRemoteRepository.create(tarjeta);
+
+        assertAll(() -> {
+            assertNotNull(tarjetaCreada);
+            assertEquals("Test 04", tarjetaCreada.getNombre());
+        });
+    }
+
+    @Test
+    @Order(5)
+    public void Update() {
+        Tarjeta tarjeta = Tarjeta.builder()
+               .id(1L)
+               .nombreTitular("Test 01 Updated")
+               .numeroTarjeta("1234567890123456")
+               .fechaCaducidad(LocalDate.of(2022, 12, 31))
+               .build();
+
+        var tarjetaActualizada = tarjetaRemoteRepository.update(1L, tarjeta);
+
+        assertAll(() -> {
+            assertNotNull(tarjetaActualizada);
+            assertEquals("Test 01 Updated", tarjetaActualizada.getNombre());
+        });
+    }
+
+    @Test
+    @Order(6)
+    public void UpdateNotFound() {
+        Tarjeta tarjeta = Tarjeta.builder()
+               .id(999L)
+               .nombreTitular("Test 01 Updated")
+               .numeroTarjeta("1234567890123456")
+               .fechaCaducidad(LocalDate.of(2022, 12, 31))
+               .build();
+
+        var tarjetaActualizada = tarjetaRemoteRepository.update(999L, tarjeta);
+
+        assertAll(() -> {
+            assertNull(tarjetaActualizada);
+        });
+    }
+
+    @Test
+    @Order(7)
+    public void Delete() {
+        var tarjeta= tarjetaRemoteRepository.delete(99);
+
+        assertAll(() -> {
+            assertFalse(tarjeta);
+        });
+    }
+
 }
