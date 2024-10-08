@@ -1,14 +1,24 @@
 package org.example.clientes.repositories;
 
-import org.example.database.RemoteDataBaseManager;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.sql.SQLException;
+
+import static javafx.beans.binding.Bindings.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+
 @Testcontainers
+@ExtendWith(MockitoExtension.class)
 public class TarjetaRemoteRepositoryImplTest {
 
     @Container
@@ -18,34 +28,35 @@ public class TarjetaRemoteRepositoryImplTest {
             .withPassword("admin123")
             .withInitScript("init.sql");
 
-    private static RemoteDataBaseManager remoteDbManager;
-    private static TarjetaRemoteRepositoryImpl tarjetaRemoteRepository
+    @Mock
+    private UserService userService;
+
+    @InjectMocks
+    private TarjetaRemoteRepositoryImpl tarjetaRemoteRepository;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() throws SQLException {
+        tarjetaRemoteRepository = new TarjetaRemoteRepositoryImpl(userService);
+        when(userService.getAll()).thenReturn();
+        when(userService.getById(anyLong())).thenReturn();
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void getAll() {
-    }
-
-    @Test
-    void getById() {
-    }
-
-    @Test
-    void create() {
+    @AfterAll
+    public static void tearDown() {
+        if (postgreContainer != null) {
+            postgreContainer.stop();
+        }
     }
 
     @Test
-    void update() {
+    void getAll() throws SQLException {
+        var result = tarjetaRemoteRepository.getAll();
+        assertTrue(result.isRight());
     }
 
     @Test
-    void delete() {
+    public void getById() throws SQLException {
+        var result = tarjetaRemoteRepository.getById(1L);
+        assertTrue(result.isRight());
     }
 }
