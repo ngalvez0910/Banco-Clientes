@@ -1,13 +1,15 @@
 package org.example.common;
 
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Repository<T, ID> {
-    Either<String, List<T>> getAll();
-    Either<String, T> getById(ID id);
-    Either<String, T> create(T entity);
-    Either<String, T> update(ID id, T entity);
-    Either<String, Boolean> delete(ID id);
+    List<T> getAll();
+    Optional<T> getById(ID id);
+    T create(T entity);
+    T update(ID id, T entity);
+    Boolean delete(ID id);
 }
