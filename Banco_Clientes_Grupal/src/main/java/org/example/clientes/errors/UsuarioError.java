@@ -1,7 +1,5 @@
 package org.example.clientes.errors;
 
-import org.example.clientes.model.Usuario;
-
 public abstract class UsuarioError extends Exception{
     public UsuarioError(String message) {super(message);}
 
@@ -24,8 +22,8 @@ public abstract class UsuarioError extends Exception{
     }
 
     public static class StorageError extends UsuarioError {
-        public StorageError(String action) {
-            super("Error al " + action + " el archivo");
+        public StorageError(String action, String nombreArchivo) {
+            super("Error al " + action + " el archivo : " + nombreArchivo);
         }
     }
 }

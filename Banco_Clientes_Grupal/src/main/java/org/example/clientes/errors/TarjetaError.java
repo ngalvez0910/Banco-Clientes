@@ -32,8 +32,8 @@ public abstract class TarjetaError extends Exception {
     }
 
     public static class StorageError extends TarjetaError {
-        public StorageError(String action) {
-            super("Error al " + action + " el archivo");
+        public StorageError(String action, String nombreArchivo) {
+            super("Error al " + action + " el archivo: " + nombreArchivo);
         }
     }
 }
