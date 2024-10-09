@@ -1,7 +1,6 @@
 package org.example.common;
 
 import io.reactivex.rxjava3.core.Observable;
-
 import java.io.File;
 
 public interface Storage<T> {

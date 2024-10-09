@@ -3,7 +3,9 @@ package org.example.clientes.errors;
 import java.time.LocalDate;
 
 public abstract class TarjetaError extends Exception {
-    public TarjetaError(String message) {super(message);}
+    public TarjetaError(String message) {
+        super(message);
+    }
 
     public static class TarjetaIdInvalido extends TarjetaError {
         public TarjetaIdInvalido(String id) {
@@ -28,5 +30,10 @@ public abstract class TarjetaError extends Exception {
             super("El nombre del titular '" + nombreTitular + "' no es válido.");
         }
     }
-}
 
+    public static class StorageError extends TarjetaError {
+        public StorageError(String action, String nombreArchivo) {
+            super("Error al " + action + " el archivo: " + nombreArchivo);
+        }
+    }
+}
