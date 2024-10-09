@@ -14,6 +14,8 @@ public class Tarjeta {
     private String nombreTitular;
     private String numeroTarjeta;
     private LocalDate fechaCaducidad;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MM/yy");
 

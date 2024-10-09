@@ -23,6 +23,12 @@ public class TarjetaMapper {
                 .fechaCaducidad(tarjetaDto.getFechaCaducidad() != null
                         ? LocalDate.parse(tarjetaDto.getFechaCaducidad(), formatter)
                         : null)
+                .createdAt(tarjetaDto.getCreatedAt() != null
+                        ? LocalDate.parse(tarjetaDto.getCreatedAt(), formatter)
+                        : null)
+                .updatedAt(tarjetaDto.getUpdatedAt() != null
+                        ? LocalDate.parse(tarjetaDto.getUpdatedAt(), formatter)
+                        : null)
                 .build();
     }
 
@@ -37,6 +43,12 @@ public class TarjetaMapper {
                 .numeroTarjeta(tarjeta.getNumeroTarjeta())
                 .fechaCaducidad(tarjeta.getFechaCaducidad() != null
                         ? tarjeta.getFechaCaducidad().format(formatter)
+                        : null)
+                .createdAt(tarjeta.getCreatedAt()!= null
+                        ? tarjeta.getCreatedAt().format(formatter)
+                        : null)
+                .updatedAt(tarjeta.getUpdatedAt()!= null
+                        ? tarjeta.getUpdatedAt().format(formatter)
                         : null)
                 .build();
     }
