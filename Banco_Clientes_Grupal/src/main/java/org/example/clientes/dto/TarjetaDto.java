@@ -10,4 +10,6 @@ public class TarjetaDto {
     private String nombreTitular;
     private String numeroTarjeta;
     private String fechaCaducidad;
+    private String createdAt;
+    private String updatedAt;
 }
