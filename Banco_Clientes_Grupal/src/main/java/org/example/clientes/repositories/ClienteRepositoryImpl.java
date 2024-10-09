@@ -1,11 +1,14 @@
 package org.example.clientes.repositories;
 
 import org.example.clientes.model.Cliente;
+import org.example.clientes.model.Tarjeta;
+import org.example.clientes.model.Usuario;
 import org.example.database.LocalDataBaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +34,10 @@ public class ClienteRepositoryImpl implements ClienteRepository {
             while (resultSet.next()) {
                 Cliente cliente = Cliente.builder()
                         .id(resultSet.getLong("id"))
-                        .uuid((java.util.UUID) resultSet.getObject("uuid"))
-                        .nombre(resultSet.getString("nombre"))
-                        .createdAt(resultSet.getObject("created_at", LocalDateTime.class))
-                        .updatedAt(resultSet.getObject("updated_at", LocalDateTime.class))
+                        .usuario(resultSet.getObject("usuario", Usuario.class))
+                        .tarjeta(resultSet.getObject("tarjeta", Tarjeta.class))
+                        .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
+                        .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
                         .build();
                 clientes.add(cliente);
             }
@@ -48,19 +51,42 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     @Override
     public Optional<Cliente> getById(long id) {
         logger.info("Obteniendo cliente por id...");
-        String query = "SELECT * FROM clientes WHERE id = ?";
+        String query = "SELECT u.id AS usuarioId, u.nombre, u.userName, u.email, u.createdAt AS usuarioCreatedAt, u.updatedAt AS usuarioUpdatedAt," +
+                        "t.id AS tarjetaId, t.numeroTarjeta, t.nombreTitular, t.fechaCaducidad, t.createdAt AS tarjetaCreatedAt, t.updatedAt AS tarjetaUpdatedAt " +
+                        "FROM Usuario u LEFT JOIN Tarjeta t ON u.nombre = t.nombreTitular WHERE u.id = ?";
 
         try (Connection connection = dataBaseManager.connect();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
+                    Usuario usuario = Usuario.builder()
+                            .id(resultSet.getLong("usuarioId"))
+                            .nombre(resultSet.getString("nombre"))
+                            .userName(resultSet.getString("userName"))
+                            .email(resultSet.getString("email"))
+                            .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class).toLocalDate())
+                            .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class).toLocalDate())
+                            .build();
+
+                    Tarjeta tarjeta = null;
+                    if (resultSet.getString("tarjetaId") != null) {
+                        tarjeta = Tarjeta.builder()
+                                .id(Long.valueOf(resultSet.getString("tarjetaId")))
+                                .numeroTarjeta(resultSet.getString("numeroTarjeta"))
+                                .nombreTitular(resultSet.getString("nombreTitular"))
+                                .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
+                                .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class).toLocalDate())
+                                .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class).toLocalDate())
+                                .build();
+                    }
+
                     return Optional.of(Cliente.builder()
                             .id(resultSet.getLong("id"))
-                            .uuid((java.util.UUID) resultSet.getObject("uuid"))
-                            .nombre(resultSet.getString("nombre"))
-                            .createdAt(resultSet.getObject("created_at", LocalDateTime.class))
-                            .updatedAt(resultSet.getObject("updated_at", LocalDateTime.class))
+                            .usuario(resultSet.getObject("usuario", Usuario.class))
+                            .tarjeta(resultSet.getObject("tarjeta", Tarjeta.class))
+                            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
+                            .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
                             .build());
                 }
             }
@@ -73,34 +99,64 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     @Override
     public Cliente create(Cliente cliente) {
         logger.info("Creando cliente...");
-        String query = "INSERT INTO clientes (uuid, nombre, created_at, updated_at) VALUES (?, ?, ?, ?)";
-        var uuid = java.util.UUID.randomUUID();
-        var timeStamp = LocalDateTime.now();
 
-        try (Connection connection = dataBaseManager.connect();
+        String userQuery = "INSERT INTO Usuario (id, nombre, userName, email, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)";
+        String tarjetaQuery = "INSERT INTO Tarjeta (id, numeroTarjeta, nombreTitular, fechaCaducidad, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)";
 
-             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        LocalDateTime timeStamp = LocalDateTime.now();
 
+        try (Connection connection = dataBaseManager.connect()) {
 
-            statement.setObject(1, uuid);
-            statement.setString(2, cliente.getNombre());
-            statement.setObject(3, timeStamp);
-            statement.setObject(4, timeStamp);
+            connection.prepareStatement("BEGIN TRANSACTION").execute();
 
-            statement.executeUpdate();
+            try (PreparedStatement statementUsuario = connection.prepareStatement(userQuery)) {
+                statementUsuario.setLong(1, cliente.getUsuario().getId());
+                statementUsuario.setString(2, cliente.getUsuario().getNombre());
+                statementUsuario.setString(3, cliente.getUsuario().getUserName());
+                statementUsuario.setString(4, cliente.getUsuario().getEmail());
+                statementUsuario.setObject(5, timeStamp);
+                statementUsuario.setObject(6, timeStamp);
 
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    long id = generatedKeys.getLong(1);
-                    cliente.setId(id);
-                    cliente.setUuid(uuid);
-                    cliente.setCreatedAt(timeStamp);
-                    cliente.setUpdatedAt(timeStamp);
-                    return cliente;
-                } else {
-                    throw new SQLException("No se pudo obtener la clave generada.");
+                statementUsuario.executeUpdate();
+
+                try (ResultSet generatedKeys = statementUsuario.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        long clienteId = generatedKeys.getLong(1);
+                        cliente.getUsuario().setId(clienteId);
+                        cliente.setId(clienteId);
+                    } else {
+                        throw new SQLException("No se pudo obtener la clave generada para Usuario.");
+                    }
                 }
             }
+
+            if (cliente.getTarjeta() != null) {
+                try (PreparedStatement statementTarjeta = connection.prepareStatement(tarjetaQuery)) {
+                    statementTarjeta.setLong(1, cliente.getTarjeta().getId());
+                    statementTarjeta.setString(2, cliente.getTarjeta().getNumeroTarjeta());
+                    statementTarjeta.setString(3, cliente.getTarjeta().getNombreTitular());
+                    statementTarjeta.setObject(4, cliente.getTarjeta().getFechaCaducidad());
+                    statementTarjeta.setObject(5, timeStamp);
+                    statementTarjeta.setObject(6, timeStamp);
+
+                    statementTarjeta.executeUpdate();
+
+                    try (ResultSet generatedKeys = statementTarjeta.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            cliente.getTarjeta().setId(generatedKeys.getLong(1));
+                        } else {
+                            throw new SQLException("No se pudo obtener la clave generada para Tarjeta.");
+                        }
+                    }
+                }
+            }
+
+            connection.prepareStatement("COMMIT").execute();
+
+            cliente.setCreatedAt(timeStamp.toLocalDate());
+            cliente.setUpdatedAt(timeStamp.toLocalDate());
+            return cliente;
+
         } catch (SQLException e) {
             logger.error("Error al crear cliente", e);
         }
@@ -111,21 +167,41 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     @Override
     public Cliente update(long id, Cliente cliente) {
         logger.info("Actualizando cliente...");
-        String query = "UPDATE clientes SET nombre = ?, updated_at = ? WHERE id = ?";
+
+        String userQuery = "UPDATE Usuario SET nombre = ?, userName = ?, email = ?, updatedAt = ? WHERE id = ?";
+        String tarjetaQuery = "UPDATE Tarjeta SET numeroTarjeta = ?, nombreTitular = ?, fechaCaducidad = ?, updatedAt = ? WHERE clientID = ?";
+
         LocalDateTime timeStamp = LocalDateTime.now();
 
-        try (Connection connection = dataBaseManager.connect();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        try (Connection connection = dataBaseManager.connect()) {
 
-            statement.setString(1, cliente.getNombre());
-            statement.setObject(2, timeStamp);
-            statement.setLong(3, id);
+            connection.prepareStatement("BEGIN TRANSACTION").execute();
 
-            int rows = statement.executeUpdate();
-            if (rows > 0) {
-                cliente.setUpdatedAt(timeStamp);
-                return cliente;
+            try (PreparedStatement statementUsuario = connection.prepareStatement(userQuery)) {
+                statementUsuario.setString(1, cliente.getUsuario().getNombre());
+                statementUsuario.setString(2, cliente.getUsuario().getUserName());
+                statementUsuario.setString(3, cliente.getUsuario().getEmail());
+                statementUsuario.setObject(4, timeStamp);
+                statementUsuario.setLong(5, id);
+                statementUsuario.executeUpdate();
             }
+
+            if (cliente.getTarjeta() != null) {
+                try (PreparedStatement statementTarjeta = connection.prepareStatement(tarjetaQuery)) {
+                    statementTarjeta.setString(1, cliente.getTarjeta().getNumeroTarjeta());
+                    statementTarjeta.setString(2, cliente.getTarjeta().getNombreTitular());
+                    statementTarjeta.setObject(3, cliente.getTarjeta().getFechaCaducidad());
+                    statementTarjeta.setObject(4, timeStamp);
+                    statementTarjeta.setLong(5, id);
+                    statementTarjeta.executeUpdate();
+                }
+            }
+
+            connection.prepareStatement("COMMIT").execute();
+
+            cliente.setUpdatedAt(timeStamp.toLocalDate());
+            return cliente;
+
         } catch (SQLException e) {
             logger.error("Error al actualizar cliente", e);
         }
@@ -136,24 +212,35 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     @Override
     public boolean delete(long id) {
         logger.info("Borrando cliente...");
-        String query = "DELETE FROM clientes WHERE id = ?";
-        try (Connection connection = dataBaseManager.connect();
-             PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setLong(1, id);
+        String deleteUsuarioQuery = "DELETE FROM Usuario WHERE id = ?";
+        String deleteTarjetaQuery = "DELETE FROM Tarjeta WHERE clientID = ?";
 
-            int rows = statement.executeUpdate();
-            if (rows > 0) {
-                return true;
-            } else {
-                logger.warn("No se ha borrado ninguna cliente");
-                return false;
+        try (Connection connection = dataBaseManager.connect()) {
+            connection.prepareStatement("BEGIN TRANSACTION").execute();
+
+            try (PreparedStatement statementTarjeta = connection.prepareStatement(deleteTarjetaQuery)) {
+                statementTarjeta.setLong(1, id);
+                statementTarjeta.executeUpdate();
             }
+
+            try (PreparedStatement statementUsuario = connection.prepareStatement(deleteUsuarioQuery)) {
+                statementUsuario.setLong(1, id);
+                int rows = statementUsuario.executeUpdate();
+
+                if (rows > 0) {
+                    connection.prepareStatement("COMMIT").execute();
+                    return true;
+                } else {
+                    logger.warn("No se ha borrado ningún cliente");
+                    return false;
+                }
+            }
+
         } catch (SQLException e) {
             logger.error("Error al borrar cliente", e);
         }
 
         return false;
     }
-
 }
