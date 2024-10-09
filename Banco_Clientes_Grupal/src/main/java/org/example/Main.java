@@ -57,7 +57,19 @@ public class Main {
                 .peek(userCreated-> { System.out.println("Usuario creado correctamente: " + userCreated);})
                 .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
 
+        System.out.println(".............................");
+        System.out.println("Eliminando Usuario 1 en la API-REST");
+        userService.deleteUserAsync(1)
+                .peek(userDeleted-> { System.out.println("Usuario " + id + " eliminado correctamente");})
+                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
 
+        System.out.println(".............................");
+        System.out.println("Eliminando Usuario inexistente en la API-REST");
+        userService.deleteUserAsync(100)
+                .peek(userDeleted-> { System.out.println("Usuario " + id + " eliminado correctamente");})
+                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+
+        System.exit(0);
 
     }
 }

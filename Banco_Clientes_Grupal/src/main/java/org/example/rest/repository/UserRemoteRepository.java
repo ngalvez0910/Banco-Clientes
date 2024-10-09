@@ -64,4 +64,33 @@ public class UserRemoteRepository {
 
 
     }
+
+    public Usuario updateUser(int id, Usuario user) {
+        var call = userApiRest.updateUser(id, UsuarioMapper.toRequest(user));
+        try {
+            var response = call.get();
+            return UsuarioMapper.toUserFromUpdate(response, id);
+        } catch (Exception e) {
+            if (e.getCause().getMessage().contains("404")) {
+                throw new UserNotFoundException("Usuario no encontrado al actualizar, con id: " + id);
+            } else {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+    public void deleteUser(int id) {
+        var call = userApiRest.deleteUser(id);
+        try {
+            call.get();
+        } catch (Exception e) {
+            if (e.getCause().getMessage().contains("404")) {
+                throw new UserNotFoundException("Usuario no encontrado al eliminar, con id: " + id);
+            } else {
+                e.printStackTrace();
+            }
+
+        }
+    }
 }

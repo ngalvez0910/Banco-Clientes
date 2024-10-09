@@ -60,4 +60,15 @@ public class UserService {
         }
     }
 
+    public Either<UserError, Usuario> deleteUserAsync(int id){
+        logger.debug("UserService: Eliminando el usuario con id " + id);
+        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(
+                ()-> userRepository.deleteUser(id));
+        try{
+            completableFuture.get(10000, MILLISECONDS);
+            return Either.right(null);
+        } catch (Exception e) {
+            return Either.left(new UserNotFoundError(id));
+        }
+    }
 }
