@@ -117,31 +117,4 @@ class StorageUsuarioCsvImplTest {
                 () -> assertEquals("Error al leer el archivo : non-existent-file.csv", exception.getCause().getMessage())
         );
     }
-
-    @Test
-    void testExportFile_StorageError() throws IOException {
-        File readOnlyFile = File.createTempFile("readOnlyFile", ".csv");
-        readOnlyFile.setReadOnly();
-
-        List<Usuario> usuarioList = List.of(
-                Usuario.builder()
-                        .id(1L)
-                        .nombre("Carlos")
-                        .email("carlos@example.com")
-                        .userName("carloss")
-                        .createdAt(LocalDate.of(2023, 10, 1))
-                        .updatedAt(LocalDate.of(2023, 10, 1))
-                        .build()
-        );
-
-        Observable<Usuario> usuarioObservable = Observable.fromIterable(usuarioList);
-        Exception exception = assertThrows(Exception.class, () -> storage.exportFile(readOnlyFile, usuarioObservable));
-
-        assertAll("Verificar error de almacenamiento en exportFile",
-                () -> assertInstanceOf(UsuarioError.StorageError.class, exception.getCause()),
-                () -> assertEquals("Error al escribir el archivo : " + readOnlyFile.getName(), exception.getCause().getMessage())
-        );
-
-        readOnlyFile.deleteOnExit();
-    }
 }

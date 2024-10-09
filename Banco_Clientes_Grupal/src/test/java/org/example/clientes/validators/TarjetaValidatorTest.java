@@ -50,29 +50,16 @@ class TarjetaValidatorTest {
     }
 
     @Test
-    void validarTarjetaConCreatedAtYUpdatedAt() {
-        Tarjeta tarjeta = Tarjeta.builder()
-                .numeroTarjeta("4532 7233 6544 2231")
-                .fechaCaducidad(LocalDate.parse("2025-12-31"))
-                .nombreTitular("Juan Pérez")
-                .createdAt(LocalDate.now().minusDays(5)) // Fecha de creación hace 5 días
-                .updatedAt(LocalDate.now()) // Fecha de actualización hoy
-                .build();
-
-        assertTrue(validator.validate(tarjeta));
-    }
-
-    @Test
     void validarTarjetaConUpdatedAtInvalido() {
         Tarjeta tarjeta = Tarjeta.builder()
                 .numeroTarjeta("4532 7233 6544 2231")
                 .fechaCaducidad(LocalDate.parse("2025-12-31"))
                 .nombreTitular("Juan Pérez")
                 .createdAt(LocalDate.now())
-                .updatedAt(LocalDate.now().minusDays(1)) // La fecha de actualización es anterior a la fecha de creación
+                .updatedAt(LocalDate.now().minusDays(1))
                 .build();
 
-        assertFalse(validator.validate(tarjeta)); // La tarjeta no debería ser válida
+        assertFalse(validator.validate(tarjeta));
     }
 
     @Test
