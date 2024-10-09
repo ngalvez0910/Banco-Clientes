@@ -4,7 +4,6 @@ import org.example.clientes.model.Tarjeta;
 import org.example.database.RemoteDataBaseManager;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,7 +33,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                         .id(resultSet.getLong("id"))
                         .nombreTitular(resultSet.getString("nombreTitular"))
                         .numeroTarjeta(resultSet.getString("numeroTarjeta"))
-                        .fechaCaducidad(LocalDate.from(resultSet.getObject("fechaCaducidad", LocalDateTime.class)))
+                        .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDateTime.class).toLocalDate())
                         .build();
                 tarjetas.add(tarjeta);
             }
@@ -58,7 +57,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                             .id(resultSet.getLong("id"))
                             .nombreTitular(resultSet.getString("nombreTitular"))
                             .numeroTarjeta(resultSet.getString("numeroTarjeta"))
-                            .fechaCaducidad(LocalDate.from(resultSet.getObject("fechaCaducidad", LocalDateTime.class)))
+                            .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDateTime.class).toLocalDate())
                             .build());
                 }
         } catch (SQLException e) {
@@ -122,9 +121,9 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
         try (Connection connection = remoteDbManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setLong(1, id);
-                statement.executeUpdate();
+                int rows = statement.executeUpdate();
 
-                if (statement.executeUpdate() > 0) {
+                if (rows > 0) {
                     return true;
                 } else {
                     logger.warn("No se ha borrado la tarjeta");
