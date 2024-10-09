@@ -34,10 +34,10 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
     @Override
     public void exportFile(File file, Observable<Usuario> items) {
         items.subscribeOn(Schedulers.io())
-                .subscribe(usuario -> {
+                .blockingSubscribe(usuario -> {
                     try (FileWriter writer = new FileWriter(file, true)) {
                         if (file.length() == 0) {
-                            writer.write("ID,Nombre,UserName,Email%n");
+                            writer.write("ID,Nombre,UserName,Email\n");
                         }
                         String formattedUsuario = String.format("%d,%s,%s,%s%n",
                                 usuario.getId(),

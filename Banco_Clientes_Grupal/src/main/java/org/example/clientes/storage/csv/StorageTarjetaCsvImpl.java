@@ -35,12 +35,11 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
     @Override
     public void exportFile(File file, Observable<Tarjeta> items) {
         items.subscribeOn(Schedulers.io())
-                .subscribe(tarjeta -> {
+                .blockingSubscribe(tarjeta -> {
                     try (FileWriter writer = new FileWriter(file, true)) {
                         if (file.length() == 0) {
-                            writer.write("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad%n");
+                            writer.write("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad\n");
                         }
-
                         String formattedTarjeta = String.format("%d,%s,%s,%s%n",
                                 tarjeta.getId(),
                                 tarjeta.getNombreTitular(),
