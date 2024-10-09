@@ -35,13 +35,11 @@ public class UserRemoteRepository {
     }
 
     public Usuario getByIdSync(int id) {
-        logger.debug("UserRemoteRepository: Recuperando el usuario con id" + id);
+        logger.debug("UserRemoteRepository: Recuperando el usuario con id " + id);
         var call = userApiRest.getByIdSync(id);
         try {
             var response = call.execute();
             if (!response.isSuccessful()) {
-                // con el codigo podemos saber que ha pasado
-                // throw new Exception("Error: " + response.code()); // Aquí deberíamos lanzar una excepción
                 if (response.code() == 404) {
                     throw new UserNotFoundException("User not found with id: " + id);
                 } else {
@@ -52,5 +50,18 @@ public class UserRemoteRepository {
         } catch (Exception e) {
             throw new UserNotFoundException("User not found with id: " + id);
         }
+    }
+
+    public Usuario createUser(Usuario user) {
+        var call = userApiRest.createUser(UsuarioMapper.toRequest(user));
+        try {
+            var response = call.get();
+            return UsuarioMapper.toUserFromCreate(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
     }
 }
