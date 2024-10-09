@@ -103,6 +103,13 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                 statement.setObject(3, tarjeta.getFechaCaducidad());
                 statement.setLong(4, id);
                 statement.executeUpdate();
+
+            if (statement.executeUpdate() == 0) {
+                logger.warn("No se encontró ninguna tarjeta con el ID especificado: " + id);
+                return null;
+            }
+
+            return getById(id).orElse(null);
         } catch (SQLException e) {
             logger.error("Error al actualizar la tarjeta", e);
         }
