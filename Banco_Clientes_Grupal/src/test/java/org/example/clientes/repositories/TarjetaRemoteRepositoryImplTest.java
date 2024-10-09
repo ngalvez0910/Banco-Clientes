@@ -10,18 +10,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TarjetaRemoteRepositoryImplTest {
 
     @Container
-    public static PostgreSQLContainer<?> postgreContainer = new PostgreSQLContainer<>("postgres:17-alpine")
+    public static PostgreSQLContainer<?> postgreContainer = new PostgreSQLContainer<>("postgres:12-alpine")
             .withDatabaseName("tarjetas_db")
             .withUsername("admin")
             .withPassword("admin123")
@@ -34,16 +34,15 @@ public class TarjetaRemoteRepositoryImplTest {
     public static void setUp() throws SQLException {
         dataBaseManager = new RemoteDataBaseManager(){
             @Override
-                public Connection getConnection() throws SQLException {
-                    return DriverManager.getConnection(
-                            postgreContainer.getJdbcUrl(),
-                            postgreContainer.getUsername(),
-                            postgreContainer.getPassword()
-                    );
-                }
+            public Connection getConnection() throws SQLException {
+                return DriverManager.getConnection(
+                        postgreContainer.getJdbcUrl(),
+                        postgreContainer.getUsername(),
+                        postgreContainer.getPassword()
+                );
+            }
         };
-
-    tarjetaRemoteRepository = new TarjetaRemoteRepositoryImpl(dataBaseManager);
+        tarjetaRemoteRepository = new TarjetaRemoteRepositoryImpl(dataBaseManager);
     }
 
     @AfterAll
@@ -55,13 +54,12 @@ public class TarjetaRemoteRepositoryImplTest {
 
     @Test
     @Order(1)
-    void getAll() {
-        List<Tarjeta> tarjetaTest = tarjetaRemoteRepository.getAll();
+    void getAll()  {
+        List<Tarjeta> tarjeta =tarjetaRemoteRepository.getAll();
 
         assertAll(() -> {
-            assertNotNull(tarjetaTest);
-            assertFalse(tarjetaTest.isEmpty(), "La lista de tarjetas no debe estar vacía");
-            assertEquals("Ana", tarjetaTest.get(0).getNombreTitular());
+            assertNotNull (tarjeta);
+            assertEquals("Ana", tarjeta.getFirst().getNombreTitular());
         });
     }
 
@@ -76,13 +74,14 @@ public class TarjetaRemoteRepositoryImplTest {
         });
     }
 
+
     @Test
     @Order(3)
     public void GetByIdNotFound() {
         var tarjeta = tarjetaRemoteRepository.getById(999L);
 
         assertAll(() -> {
-            assertFalse(tarjeta.isPresent());
+            assertTrue(tarjeta.isEmpty());
         });
     }
 
@@ -91,7 +90,7 @@ public class TarjetaRemoteRepositoryImplTest {
     public void Create() {
         Tarjeta tarjeta = Tarjeta.builder()
                 .nombreTitular("Juan")
-                .numeroTarjeta("0987654321098765")
+                .numeroTarjeta("098765432123456")
                 .fechaCaducidad(LocalDate.of(2022, 12, 31))
                 .build();
 
@@ -108,16 +107,16 @@ public class TarjetaRemoteRepositoryImplTest {
     public void Update() {
         Tarjeta tarjeta = Tarjeta.builder()
                 .id(1L)
-                .nombreTitular("Ana Updated")
+                .nombreTitular("Ana Actualizada")
                 .numeroTarjeta("1234567890123456")
-                .fechaCaducidad(LocalDate.of(2022, 12, 31))
+                .fechaCaducidad(LocalDate.parse("01/25"))
                 .build();
 
         var tarjetaActualizada = tarjetaRemoteRepository.update(1L, tarjeta);
 
         assertAll(() -> {
             assertNotNull(tarjetaActualizada);
-            assertEquals("Ana Updated", tarjetaActualizada.getNombreTitular());
+            assertEquals("Ana Actualizada", tarjetaActualizada.getNombreTitular());
         });
     }
 
@@ -126,7 +125,7 @@ public class TarjetaRemoteRepositoryImplTest {
     public void UpdateNotFound() {
         Tarjeta tarjeta = Tarjeta.builder()
                 .id(999L)
-                .nombreTitular("Ana Updated")
+                .nombreTitular("Ana Actualizada")
                 .numeroTarjeta("1234567890123456")
                 .fechaCaducidad(LocalDate.of(2022, 12, 31))
                 .build();
@@ -141,10 +140,10 @@ public class TarjetaRemoteRepositoryImplTest {
     @Test
     @Order(7)
     public void Delete() {
-        var tarjetaEliminada = tarjetaRemoteRepository.delete(99L);
+        var tarjeta= tarjetaRemoteRepository.delete(99L);
 
         assertAll(() -> {
-            assertFalse(tarjetaEliminada, "La tarjeta no debería existir");
+            assertFalse(tarjeta);
         });
     }
 }
