@@ -4,7 +4,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.example.clientes.errors.TarjetaError;
 import org.example.clientes.model.Tarjeta;
-import org.example.common.Storage;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -13,7 +12,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 
-public class StorageTarjetaCsvImpl implements Storage<Tarjeta> {
+public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
 
     @Override
     public Observable<Tarjeta> importFile(File file) {

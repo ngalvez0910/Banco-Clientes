@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-public class StorageUsuarioCsvImpl implements Storage<Usuario> {
+public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
 
     @Override
     public Observable<Usuario> importFile(File file) {
