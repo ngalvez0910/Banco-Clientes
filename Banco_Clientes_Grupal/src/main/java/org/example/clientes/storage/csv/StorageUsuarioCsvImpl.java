@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.List;
 
 public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
@@ -43,13 +44,15 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
                 .blockingSubscribe(usuario -> {
                     try (FileWriter writer = new FileWriter(file, true)) {
                         if (file.length() == 0) {
-                            writer.write("ID,Nombre,UserName,Email\n");
+                            writer.write("ID,Nombre,UserName,Email,createdAt,updatedAt\n");
                         }
-                        String formattedUsuario = String.format("%d,%s,%s,%s%n",
+                        String formattedUsuario = String.format("%d,%s,%s,%s,%s,%s%n",
                                 usuario.getId(),
                                 usuario.getNombre(),
                                 usuario.getUserName(),
-                                usuario.getEmail());
+                                usuario.getEmail(),
+                                usuario.getCreatedAt(),
+                                usuario.getUpdatedAt());
                         writer.write(formattedUsuario);
                     } catch (IOException e) {
                         throw new UsuarioError.StorageError("escribir", file.getName());
@@ -63,6 +66,8 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
                 .nombre(parts[1])
                 .userName(parts[2])
                 .email(parts[3])
+                .createdAt(LocalDate.parse(parts[4]))
+                .updatedAt(LocalDate.parse(parts[5]))
                 .build();
     }
 }

@@ -22,9 +22,7 @@ class StorageTarjetaCsvImplTest {
         storage = new StorageTarjetaCsvImpl();
         testFile = File.createTempFile("StorageTarjetaCsvImplTest", ".csv");
         Files.write(testFile.toPath(),
-                ("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n" +
-                        "1,John Doe,1234567890123456,2025-12-31,2024-01-01,2024-01-02\n" +
-                        "2,Jane Smith,6543210987654321,2024-11-30,2024-01-03,2024-01-04").getBytes());
+                ("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n1,John Doe,1234567890123456,2025-12-31,2024-01-01,2024-01-02\n2,Jane Smith,6543210987654321,2024-11-30,2024-01-03,2024-01-04").getBytes());
     }
 
     @AfterEach
@@ -39,10 +37,10 @@ class StorageTarjetaCsvImplTest {
 
         assertAll("tarjetas",
                 () -> assertEquals(2, tarjetaList.size()),
-                () -> assertEquals(1L, tarjetaList.get(0).getId()),
-                () -> assertEquals("John Doe", tarjetaList.get(0).getNombreTitular()),
-                () -> assertEquals(LocalDate.parse("2024-01-01"), tarjetaList.get(0).getCreatedAt()),
-                () -> assertEquals(LocalDate.parse("2024-01-02"), tarjetaList.get(0).getUpdatedAt()),
+                () -> assertEquals(1L, tarjetaList.getFirst().getId()),
+                () -> assertEquals("John Doe", tarjetaList.getFirst().getNombreTitular()),
+                () -> assertEquals(LocalDate.parse("2024-01-01"), tarjetaList.getFirst().getCreatedAt()),
+                () -> assertEquals(LocalDate.parse("2024-01-02"), tarjetaList.getFirst().getUpdatedAt()),
                 () -> assertEquals(2L, tarjetaList.get(1).getId()),
                 () -> assertEquals("Jane Smith", tarjetaList.get(1).getNombreTitular()),
                 () -> assertEquals(LocalDate.parse("2024-01-03"), tarjetaList.get(1).getCreatedAt()),
@@ -81,8 +79,8 @@ class StorageTarjetaCsvImplTest {
         List<String> lines = Files.readAllLines(exportFile.toPath());
 
         assertAll("exportedTarjetas",
-                () -> assertEquals(3, lines.size()), // Header + 2 rows
-                () -> assertEquals("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt", lines.get(0)),
+                () -> assertEquals(3, lines.size()),
+                () -> assertEquals("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt", lines.getFirst()),
                 () -> assertEquals("1,John Shena,1234567890123456,2025-12-31,2024-01-01,2024-01-02", lines.get(1)),
                 () -> assertEquals("2,Will Smith,6543210987654321,2024-11-30,2024-01-03,2024-01-04", lines.get(2))
         );

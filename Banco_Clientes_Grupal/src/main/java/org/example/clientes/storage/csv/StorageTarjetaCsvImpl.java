@@ -38,7 +38,6 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
                 .blockingSubscribe(tarjeta -> {
                     try (FileWriter writer = new FileWriter(file, true)) {
                         if (file.length() == 0) {
-                            // Agregamos las columnas de createdAt y updatedAt
                             writer.write("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n");
                         }
                         String formattedTarjeta = String.format("%d,%s,%s,%s,%s,%s%n",
