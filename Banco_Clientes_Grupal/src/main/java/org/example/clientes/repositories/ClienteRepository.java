@@ -1,4 +1,18 @@
 package org.example.clientes.repositories;
 
-public class ClienteRepository {
+import org.example.clientes.model.Cliente;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ClienteRepository {
+    List<Cliente> getAll();
+
+    Optional<Cliente> getById(long id);
+
+    Cliente create(Cliente cliente);
+
+    Cliente update(long id, Cliente cliente);
+
+    boolean delete(long id);
 }
