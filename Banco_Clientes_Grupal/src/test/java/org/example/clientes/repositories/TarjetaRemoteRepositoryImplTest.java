@@ -10,12 +10,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TarjetaRemoteRepositoryImplTest {
@@ -65,7 +65,7 @@ public class TarjetaRemoteRepositoryImplTest {
 
     @Test
     @Order(2)
-    public void GetById() {
+    public void getById() {
         var tarjeta = tarjetaRemoteRepository.getById(1L);
 
         assertAll(() -> {
@@ -74,10 +74,9 @@ public class TarjetaRemoteRepositoryImplTest {
         });
     }
 
-
     @Test
     @Order(3)
-    public void GetByIdNotFound() {
+    public void getByIdNotFound() {
         var tarjeta = tarjetaRemoteRepository.getById(999L);
 
         assertAll(() -> {
@@ -87,7 +86,7 @@ public class TarjetaRemoteRepositoryImplTest {
 
     @Test
     @Order(4)
-    public void Create() {
+    public void create() {
         Tarjeta tarjeta = Tarjeta.builder()
                 .nombreTitular("Juan")
                 .numeroTarjeta("098765432123456")
@@ -99,17 +98,19 @@ public class TarjetaRemoteRepositoryImplTest {
         assertAll(() -> {
             assertNotNull(tarjetaCreada);
             assertEquals("Juan", tarjetaCreada.getNombreTitular());
+            assertEquals("098765432123456", tarjetaCreada.getNumeroTarjeta());
+            assertEquals(LocalDate.of(2022, 12, 31), tarjetaCreada.getFechaCaducidad());
         });
     }
 
     @Test
     @Order(5)
-    public void Update() {
+    public void update() {
         Tarjeta tarjeta = Tarjeta.builder()
                 .id(1L)
                 .nombreTitular("Ana Actualizada")
                 .numeroTarjeta("1234567890123456")
-                .fechaCaducidad(LocalDate.parse("01/25"))
+                .fechaCaducidad(LocalDate.of(2025, 1, 1))
                 .build();
 
         var tarjetaActualizada = tarjetaRemoteRepository.update(1L, tarjeta);
@@ -122,7 +123,7 @@ public class TarjetaRemoteRepositoryImplTest {
 
     @Test
     @Order(6)
-    public void UpdateNotFound() {
+    public void updateNotFound() {
         Tarjeta tarjeta = Tarjeta.builder()
                 .id(999L)
                 .nombreTitular("Ana Actualizada")
@@ -139,8 +140,18 @@ public class TarjetaRemoteRepositoryImplTest {
 
     @Test
     @Order(7)
-    public void Delete() {
-        var tarjeta= tarjetaRemoteRepository.delete(99L);
+    public void delete() {
+        var tarjeta= tarjetaRemoteRepository.delete(1L);
+
+        assertAll(() -> {
+            assertTrue(tarjeta);
+        });
+    }
+
+    @Test
+    @Order(8)
+    public void deleteNotFound() {
+        var tarjeta= tarjetaRemoteRepository.delete(100L);
 
         assertAll(() -> {
             assertFalse(tarjeta);
