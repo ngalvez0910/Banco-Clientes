@@ -52,7 +52,20 @@ public class UserRemoteRepository {
         }
     }
 
-    public Usuario createUser(Usuario user) {
+    public Usuario createUserSync(Usuario user) {
+        var call = userApiRest.createUserSync(UsuarioMapper.toRequest(user));
+        try {
+            var response = call.execute();
+            if (!response.isSuccessful()) {
+                throw new Exception("Error: " + response.code());
+            }
+            return UsuarioMapper.toUserFromCreate(response.body());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public Usuario createAsyncUser(Usuario user) {
         var call = userApiRest.createUser(UsuarioMapper.toRequest(user));
         try {
             var response = call.get();
@@ -61,8 +74,6 @@ public class UserRemoteRepository {
             e.printStackTrace();
             return null;
         }
-
-
     }
 
     public Usuario updateUser(int id, Usuario user) {
@@ -93,4 +104,5 @@ public class UserRemoteRepository {
 
         }
     }
+
 }

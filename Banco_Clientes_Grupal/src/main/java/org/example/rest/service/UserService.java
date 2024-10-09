@@ -52,7 +52,7 @@ public class UserService {
     public Either<UserError, Usuario> createUserAsync (Usuario user){
         logger.debug("UserService: Guardando el usuario con id " + user.getId());
         CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(
-                ()-> userRepository.createUser(user));
+                ()-> userRepository.createUserSync(user));
         try{
             return Either.right(completableFuture.get(10000,MILLISECONDS));
         } catch (Exception e) {

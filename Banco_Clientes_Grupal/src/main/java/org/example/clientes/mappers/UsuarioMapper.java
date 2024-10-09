@@ -3,6 +3,7 @@ package org.example.clientes.mappers;
 import org.example.clientes.dto.UsuarioDto;
 import org.example.clientes.model.Usuario;
 
+import org.example.rest.responses.createUpdateDelete.UserCreate;
 import org.example.rest.responses.getAll.UserGetAll;
 import org.example.rest.responses.getById.UserGetById;
 import org.example.rest.responses.createUpdateDelete.Request;
@@ -40,6 +41,14 @@ public class UsuarioMapper {
                 .nombre (userGetAll.getName())
                 .userName(userGetAll.getUsername())
                 .email(userGetAll.getEmail())
+                .build();
+    }
+
+    public static Usuario toUserFromCreate(UserCreate userCreate) {
+        return Usuario.builder()
+                .nombre (userCreate.getName())
+                .userName(userCreate.getUsername())
+                .email(userCreate.getEmail())
                 .build();
     }
 

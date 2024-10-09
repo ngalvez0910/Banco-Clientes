@@ -1,5 +1,6 @@
 package org.example.rest;
 
+import org.example.rest.responses.createUpdateDelete.UserCreate;
 import org.example.rest.responses.getAll.UserGetAll;
 import org.example.rest.responses.getById.UserGetById;
 import retrofit2.Call;
@@ -20,6 +21,10 @@ public interface UserApiRest {
     @GET("users/{id}")
     Call<UserGetById> getByIdSync(@Path("id") int id);
 
+    @POST("users")
+    Call<UserCreate> createUserSync(@Body Request user);
+
+    // Este es asíncrono, al usar CompletableFuture
     @POST("users")
     CompletableFuture<Response> createUser(@Body Request user);
 
