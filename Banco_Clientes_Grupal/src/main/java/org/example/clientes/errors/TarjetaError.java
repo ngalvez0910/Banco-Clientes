@@ -3,7 +3,9 @@ package org.example.clientes.errors;
 import java.time.LocalDate;
 
 public abstract class TarjetaError extends Exception {
-    public TarjetaError(String message) {super(message);}
+    public TarjetaError(String message) {
+        super(message);
+    }
 
     public static class TarjetaIdInvalido extends TarjetaError {
         public TarjetaIdInvalido(String id) {
@@ -29,4 +31,3 @@ public abstract class TarjetaError extends Exception {
         }
     }
 }
-
