@@ -5,6 +5,7 @@ import io.vavr.control.Either;
 import org.example.clientes.model.Usuario;
 import org.example.errors.UserError;
 import org.example.errors.UserNoUsersFound;
+import org.example.errors.UserNotCreated;
 import org.example.errors.UserNotFoundError;
 import org.example.exceptions.UserNoUsersFoundException;
 import org.example.rest.repository.UserRemoteRepository;
@@ -45,6 +46,17 @@ public class UserService {
             return Either.right(completableFuture.get(10000, MILLISECONDS));
         } catch (Exception e) {
             return Either.left(new UserNotFoundError(id));
+        }
+    }
+
+    public Either<UserError, Usuario> createUserAsync (Usuario user){
+        logger.debug("UserService: Guardando el usuario con id " + user.getId());
+        CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(
+                ()-> userRepository.createUser(user));
+        try{
+            return Either.right(completableFuture.get(10000,MILLISECONDS));
+        } catch (Exception e) {
+            return Either.left(new UserNotCreated(user.getId()));
         }
     }
 
