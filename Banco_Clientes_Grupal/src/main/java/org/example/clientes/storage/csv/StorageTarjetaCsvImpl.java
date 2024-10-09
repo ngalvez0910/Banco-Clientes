@@ -51,7 +51,7 @@ public class StorageTarjetaCsvImpl implements Storage<Tarjeta> {
 
                         writer.write(formattedTarjeta);
                     } catch (IOException e) {
-                        throw new UsuarioError.StorageError("escribir");
+                        throw new TarjetaError.StorageError("escribir");
                     }
                 }, Throwable::printStackTrace);
     }

@@ -22,4 +22,10 @@ public abstract class UsuarioError extends Exception{
             super("El correo electrónico '" + email + "' no es válido.");
         }
     }
+
+    public static class StorageError extends UsuarioError {
+        public StorageError(String action) {
+            super("Error al " + action + " el archivo");
+        }
+    }
 }

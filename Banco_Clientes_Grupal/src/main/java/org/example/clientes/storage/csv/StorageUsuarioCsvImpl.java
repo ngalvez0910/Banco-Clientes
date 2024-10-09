@@ -3,6 +3,7 @@ package org.example.clientes.storage.csv;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.example.clientes.errors.TarjetaError;
+import org.example.clientes.errors.UsuarioError;
 import org.example.clientes.model.Usuario;
 import org.example.common.Storage;
 
@@ -26,7 +27,7 @@ public class StorageUsuarioCsvImpl implements Storage<Usuario> {
                 }
                 emitter.onComplete();
             } catch (IOException e) {
-                emitter.onError(new TarjetaError.StorageError("leer"));
+                emitter.onError(new UsuarioError.StorageError("leer"));
             }
         }).subscribeOn(Schedulers.io());
     }
@@ -46,7 +47,7 @@ public class StorageUsuarioCsvImpl implements Storage<Usuario> {
                                 usuario.getEmail());
                         writer.write(formattedUsuario);
                     } catch (IOException e) {
-                        throw new TarjetaError.StorageError("escribir");
+                        throw new UsuarioError.StorageError("escribir");
                     }
                 }, Throwable::printStackTrace);
     }

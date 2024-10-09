@@ -30,4 +30,10 @@ public abstract class TarjetaError extends Exception {
             super("El nombre del titular '" + nombreTitular + "' no es válido.");
         }
     }
+
+    public static class StorageError extends TarjetaError {
+        public StorageError(String action) {
+            super("Error al " + action + " el archivo");
+        }
+    }
 }
