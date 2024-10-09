@@ -4,7 +4,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.example.clientes.errors.UsuarioError;
 import org.example.clientes.model.Usuario;
-import org.example.common.Storage;
+import org.example.clientes.validators.UsuarioValidator;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,6 +14,8 @@ import java.util.List;
 
 public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
 
+    private final UsuarioValidator usuarioValidator = new UsuarioValidator();
+
     @Override
     public Observable<Usuario> importFile(File file) {
         return Observable.<Usuario>create(emitter -> {
@@ -22,6 +24,10 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
                 for (int i = 1; i < lines.size(); i++) {
                     String line = lines.get(i);
                     Usuario usuario = parseLine(line.split(","));
+                    if (!usuarioValidator.validarUsuario(usuario)) {
+                        System.err.println("Usuario no válido: " + usuario);
+                        continue;
+                    }
                     emitter.onNext(usuario);
                 }
                 emitter.onComplete();
