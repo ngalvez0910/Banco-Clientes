@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -59,6 +60,7 @@ public class TarjetaRemoteRepositoryImplTest {
 
         assertAll(() -> {
             assertNotNull (tarjeta);
+            assertEquals(2, tarjeta.size());
             assertEquals("Ana", tarjeta.getFirst().getNombreTitular());
         });
     }
@@ -129,6 +131,8 @@ public class TarjetaRemoteRepositoryImplTest {
                 .nombreTitular("Ana Actualizada")
                 .numeroTarjeta("1234567890123456")
                 .fechaCaducidad(LocalDate.of(2022, 12, 31))
+                .createdAt(LocalDateTime.now().toLocalDate())
+                .updatedAt(LocalDateTime.now().toLocalDate())
                 .build();
 
         var tarjetaActualizada = tarjetaRemoteRepository.update(999L, tarjeta);

@@ -34,8 +34,8 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                         .nombreTitular(resultSet.getString("nombreTitular"))
                         .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                         .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDateTime.class).toLocalDate())
-                        .createdAt(resultSet.getObject("created_at", LocalDateTime.class).toLocalDate())
-                        .updatedAt(resultSet.getObject("updated_at", LocalDateTime.class).toLocalDate())
+                        .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
+                        .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
                         .build();
                 tarjetas.add(tarjeta);
             }
@@ -60,8 +60,8 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                             .nombreTitular(resultSet.getString("nombreTitular"))
                             .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                             .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDateTime.class).toLocalDate())
-                            .createdAt(resultSet.getObject("created_at", LocalDateTime.class).toLocalDate())
-                            .updatedAt(resultSet.getObject("updated_at", LocalDateTime.class).toLocalDate())
+                            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
+                            .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
                             .build());
                 }
         } catch (SQLException e) {
@@ -72,7 +72,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
 
     public Tarjeta create(Tarjeta tarjeta) {
         logger.info("Creando tarjeta...");
-        String query = "INSERT INTO tarjetas (nombreTitular, numeroTarjeta, fechaCaducidad, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO tarjetas (nombreTitular, numeroTarjeta, fechaCaducidad, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
         var timeStamp = LocalDateTime.now();
         try (Connection connection = remoteDbManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -103,7 +103,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
 
     public Tarjeta update(Long id, Tarjeta tarjeta) {
         logger.info("Actualizando tarjeta...");
-        String query = "UPDATE tarjetas SET nombreTitular = ?, numeroTarjeta = ?, fechaCaducidad = ?, updated_at = ? WHERE id = ?";
+        String query = "UPDATE tarjetas SET nombreTitular = ?, numeroTarjeta = ?, fechaCaducidad = ?, updatedAt = ? WHERE id = ?";
         var timeStamp = LocalDateTime.now();
         try (Connection connection = remoteDbManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
