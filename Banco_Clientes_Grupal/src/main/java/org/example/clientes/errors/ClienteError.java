@@ -22,7 +22,7 @@ public class ClienteError {
 
     public static class ClienteNotFound extends ClienteError {
         public ClienteNotFound() {
-            super("No se pudo encontrar el cliente con id: ", 404);
+            super("No se pudo encontrar ningún cliente: ", 404);
         }
     }
 

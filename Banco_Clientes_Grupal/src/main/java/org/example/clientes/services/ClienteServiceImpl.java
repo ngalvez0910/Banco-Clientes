@@ -6,7 +6,6 @@ import org.example.clientes.model.Cliente;
 import org.example.clientes.model.Tarjeta;
 import org.example.clientes.model.Usuario;
 import org.example.clientes.repositories.ClienteRepository;
-import org.example.clientes.repositories.TarjetaRemoteRepository;
 import org.example.clientes.repositories.TarjetaRemoteRepositoryImpl;
 import org.example.rest.repository.UserRemoteRepository;
 import org.slf4j.Logger;
@@ -45,9 +44,15 @@ public class ClienteServiceImpl implements ClienteService {
                 }
                 Cliente cliente = new Cliente(1L, usuario, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
                 clientes.add(cliente);
+
+                clienteRepository.create(cliente);
             }
         }
-        return null;
+        if (clientes.isEmpty()) {
+            return Either.left(new ClienteError.ClienteNotFound());
+        } else {
+            return Either.right(clientes);
+        }
     }
 
     @Override
