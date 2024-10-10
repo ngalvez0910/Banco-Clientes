@@ -58,25 +58,25 @@ public class UserService {
         }
     }
 
-    public Either<UserError, Usuario> updateUserAsync (int id, Usuario user){
+    public Either<UserApiError, Usuario> updateUserAsync (int id, Usuario user){
         logger.debug("UserService: Actualizando el usuario con id " + id);
         CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(() ->
                 userRepository.updateUserSync(id, user));
         try{
             return Either.right(completableFuture.get(10000, MILLISECONDS));
         } catch (Exception e) {
-            return Either.left(new UserNotUpdatedError(id));
+            return Either.left(new UserApiError.UserApiNotUpdatedError(id));
         }
     }
 
-    public Either<UserError, Usuario> deleteUserAsync(int id){
+    public Either<UserApiError, Usuario> deleteUserAsync(int id){
         logger.debug("UserService: Eliminando el usuario con id " + id);
         CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(
                 ()-> userRepository.deleteUserSync(id));
         try{
             return Either.right(completableFuture.get(10000, MILLISECONDS));
         } catch (Exception e) {
-            return Either.left(new UserNotDeletedError(id));
+            return Either.left(new UserApiError.UserApiNotDeletedError(id));
         }
     }
 }

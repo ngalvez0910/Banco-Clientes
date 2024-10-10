@@ -83,6 +83,7 @@ public class Main {
                 .userName("Username actualizado")
                 .email("emailActualizado@mail.com")
                 .build();
+
         userService.updateUserAsync( (Integer.parseInt(updateUser2.getId().toString())), updateUser)
                 .peek(userUpdated-> { System.out.println("Usuario "+ userUpdated.getId() +" Actualizado: " + userUpdated);})
                 .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
@@ -99,5 +100,6 @@ public class Main {
                 .peek(userDeleted-> { System.out.println("Usuario 100 eliminado correctamente");})
                 .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
 
+    System.exit(0);
     }
 }
