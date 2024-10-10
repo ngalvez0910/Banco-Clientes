@@ -1,12 +1,12 @@
 package org.example.clientes.services;
 
 import io.vavr.control.Either;
+import org.example.clientes.cache.CacheClienteImpl;
 import org.example.clientes.errors.ClienteError;
 import org.example.clientes.model.Cliente;
 import org.example.clientes.model.Tarjeta;
 import org.example.clientes.model.Usuario;
 import org.example.clientes.repositories.ClienteRepository;
-import org.example.clientes.repositories.TarjetaRemoteRepository;
 import org.example.clientes.repositories.TarjetaRemoteRepositoryImpl;
 import org.example.rest.repository.UserRemoteRepository;
 import org.slf4j.Logger;
@@ -20,12 +20,14 @@ public class ClienteServiceImpl implements ClienteService {
     private final UserRemoteRepository userRepository;
     private final TarjetaRemoteRepositoryImpl tarjetaRepository;
     private final ClienteRepository clienteRepository;
+    private final CacheClienteImpl cacheCliente;
     private final Logger logger = LoggerFactory.getLogger(ClienteServiceImpl.class);
 
-    public ClienteServiceImpl(UserRemoteRepository userRepository, TarjetaRemoteRepositoryImpl tarjetaRemoteRepository, ClienteRepository clienteRepository) {
+    public ClienteServiceImpl(UserRemoteRepository userRepository, TarjetaRemoteRepositoryImpl tarjetaRemoteRepository, ClienteRepository clienteRepository, CacheClienteImpl cacheCliente) {
         this.userRepository = userRepository;
         this.tarjetaRepository = tarjetaRemoteRepository;
         this.clienteRepository = clienteRepository;
+        this.cacheCliente = cacheCliente;
     }
 
     @Override
@@ -45,9 +47,15 @@ public class ClienteServiceImpl implements ClienteService {
                 }
                 Cliente cliente = new Cliente(1L, usuario, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
                 clientes.add(cliente);
+
+                clienteRepository.create(cliente);
             }
         }
-        return null;
+        if (clientes.isEmpty()) {
+            return Either.left(new ClienteError.ClienteNotFound());
+        } else {
+            return Either.right(clientes);
+        }
     }
 
     @Override

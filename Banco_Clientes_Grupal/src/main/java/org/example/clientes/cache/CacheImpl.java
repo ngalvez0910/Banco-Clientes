@@ -25,7 +25,7 @@ public class CacheImpl<K, V> implements Cache<K, V> {
 
     @Override
     public V get(K key) {
-        logger.debug("Obteniendo el valor de la clave: {}", key);
+        logger.error("Obteniendo el valor de la clave: {}", key);
         return cache.get(key);
     }
 
