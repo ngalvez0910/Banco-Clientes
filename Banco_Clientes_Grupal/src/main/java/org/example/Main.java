@@ -57,7 +57,49 @@ public class Main {
                 .peek(userCreated-> { System.out.println("Usuario creado correctamente: " + userCreated);})
                 .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
 
+        System.out.println(".............................");
+        System.out.println("Eliminando Usuario 1 en la API-REST");
+        userService.deleteUserAsync(1)
+                .peek(userDeleted-> { System.out.println("Usuario " + id + " eliminado correctamente");})
+                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
 
+        System.out.println(".............................");
+        System.out.println("Actualizando Usuario 4 en la API-REST");
+        Usuario updateUser = Usuario.builder()
+                .id(4L)
+                .nombre("Nombre actualizado")
+                .userName("Username actualizado")
+                .email("emailActualizado@mail.com")
+                .build();
+        userService.updateUserAsync( (Integer.parseInt(updateUser.getId().toString())), updateUser)
+                .peek(userUpdated-> { System.out.println("Usuario "+ userUpdated.getId() +" Actualizado: " + userUpdated);})
+                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
 
+        System.out.println(".............................");
+        System.out.println("Actualizando Usuario NO existente 2124 en la API-REST");
+        Usuario updateUser2 = Usuario.builder()
+                .id(2124L)
+                .nombre("Nombre actualizado")
+                .userName("Username actualizado")
+                .email("emailActualizado@mail.com")
+                .build();
+
+        userService.updateUserAsync( (Integer.parseInt(updateUser2.getId().toString())), updateUser)
+                .peek(userUpdated-> { System.out.println("Usuario "+ userUpdated.getId() +" Actualizado: " + userUpdated);})
+                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+
+        System.out.println(".............................");
+        System.out.println("Eliminando Usuario 1 en la API-REST");
+        userService.deleteUserAsync(1)
+                .peek(userDeleted-> { System.out.println("Usuario 1 eliminado correctamente");})
+                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+
+        System.out.println(".............................");
+        System.out.println("Eliminando Usuario inexistente en la API-REST");
+        userService.deleteUserAsync(100)
+                .peek(userDeleted-> { System.out.println("Usuario 100 eliminado correctamente");})
+                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+
+    System.exit(0);
     }
 }

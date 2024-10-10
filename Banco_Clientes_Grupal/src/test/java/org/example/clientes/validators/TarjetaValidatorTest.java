@@ -4,10 +4,12 @@ import org.example.clientes.model.Tarjeta;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TarjetaValidatorTest {
+
     private final TarjetaValidator validator = new TarjetaValidator();
 
     @Test
@@ -42,8 +44,8 @@ class TarjetaValidatorTest {
                 .fechaCaducidad(LocalDate.parse("2025-12-31"))
                 .nombreTitular("Mario de Domingo")
                 .id(1L)
-                .createdAt(LocalDate.now().minusDays(1))
-                .updatedAt(LocalDate.now())
+                .createdAt(LocalDateTime.now().minusDays(1))
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         assertTrue(validator.validate(tarjeta));
@@ -55,8 +57,8 @@ class TarjetaValidatorTest {
                 .numeroTarjeta("4532 7233 6544 2231")
                 .fechaCaducidad(LocalDate.parse("2025-12-31"))
                 .nombreTitular("Juan Pérez")
-                .createdAt(LocalDate.now())
-                .updatedAt(LocalDate.now().minusDays(1))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now().minusDays(1))
                 .build();
 
         assertFalse(validator.validate(tarjeta));

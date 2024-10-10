@@ -27,7 +27,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         List<Cliente> clientes = new ArrayList<>();
         String query = "SELECT u.id AS usuarioId, u.nombre, u.userName, u.email, u.createdAt AS usuarioCreatedAt, u.updatedAt AS usuarioUpdatedAt," +
                         "t.id AS tarjetaId, t.numeroTarjeta, t.nombreTitular, t.fechaCaducidad, t.createdAt AS tarjetaCreatedAt, t.updatedAt AS tarjetaUpdatedAt " +
-                        "FROM Usuario u LEFT JOIN Tarjeta t ON u.id = t.clientID";
+                        "FROM Usuario u LEFT JOIN Tarjeta t ON u.nombre = t.nombreTitular";
 
         try (Connection connection = dataBaseManager.connect();
              PreparedStatement statement = connection.prepareStatement(query);
@@ -39,8 +39,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                         .nombre(resultSet.getString("nombre"))
                         .userName(resultSet.getString("userName"))
                         .email(resultSet.getString("email"))
-                        .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class).toLocalDate())
-                        .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class).toLocalDate())
+                        .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class))
+                        .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class))
                         .build();
 
                 Tarjeta tarjeta = null;
@@ -50,8 +50,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                             .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                             .nombreTitular(resultSet.getString("nombreTitular"))
                             .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
-                            .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class).toLocalDate())
-                            .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class).toLocalDate())
+                            .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class))
+                            .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class))
                             .build();
                 }
 
@@ -59,8 +59,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                         .id(resultSet.getLong("id"))
                         .usuario(resultSet.getObject("usuario", Usuario.class))
                         .tarjeta(resultSet.getObject("tarjeta", Tarjeta.class))
-                        .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
-                        .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
+                        .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+                        .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                         .build();
 
                 clientes.add(cliente);
@@ -89,8 +89,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                             .nombre(resultSet.getString("nombre"))
                             .userName(resultSet.getString("userName"))
                             .email(resultSet.getString("email"))
-                            .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class).toLocalDate())
-                            .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class).toLocalDate())
+                            .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class))
+                            .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class))
                             .build();
 
                     Tarjeta tarjeta = null;
@@ -100,8 +100,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                                 .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                                 .nombreTitular(resultSet.getString("nombreTitular"))
                                 .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
-                                .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class).toLocalDate())
-                                .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class).toLocalDate())
+                                .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class))
+                                .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class))
                                 .build();
                     }
 
@@ -109,8 +109,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                             .id(resultSet.getLong("id"))
                             .usuario(resultSet.getObject("usuario", Usuario.class))
                             .tarjeta(resultSet.getObject("tarjeta", Tarjeta.class))
-                            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
-                            .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
+                            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+                            .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                             .build());
                 }
             }
@@ -177,8 +177,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
             connection.prepareStatement("COMMIT").execute();
 
-            cliente.setCreatedAt(timeStamp.toLocalDate());
-            cliente.setUpdatedAt(timeStamp.toLocalDate());
+            cliente.setCreatedAt(timeStamp);
+            cliente.setUpdatedAt(timeStamp);
             return cliente;
 
         } catch (SQLException e) {
@@ -193,7 +193,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         logger.info("Actualizando cliente...");
 
         String userQuery = "UPDATE Usuario SET nombre = ?, userName = ?, email = ?, updatedAt = ? WHERE id = ?";
-        String tarjetaQuery = "UPDATE Tarjeta SET numeroTarjeta = ?, nombreTitular = ?, fechaCaducidad = ?, updatedAt = ? WHERE clientID = ?";
+        String tarjetaQuery = "UPDATE Tarjeta SET numeroTarjeta = ?, nombreTitular = ?, fechaCaducidad = ?, updatedAt = ? WHERE nombreTitular = ?";
 
         LocalDateTime timeStamp = LocalDateTime.now();
 
@@ -223,7 +223,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
             connection.prepareStatement("COMMIT").execute();
 
-            cliente.setUpdatedAt(timeStamp.toLocalDate());
+            cliente.setUpdatedAt(timeStamp);
             return cliente;
 
         } catch (SQLException e) {
@@ -238,7 +238,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         logger.info("Borrando cliente...");
 
         String deleteUsuarioQuery = "DELETE FROM Usuario WHERE id = ?";
-        String deleteTarjetaQuery = "DELETE FROM Tarjeta WHERE clientID = ?";
+        String deleteTarjetaQuery = "DELETE FROM Tarjeta WHERE nombreTitular = ?";
 
         try (Connection connection = dataBaseManager.connect()) {
             connection.prepareStatement("BEGIN TRANSACTION").execute();
@@ -267,4 +267,41 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
         return false;
     }
+
+    @Override
+    public boolean deleteAll() {
+        logger.info("Borrando todos los usuarios...");
+
+        String usuarioQuery = "DELETE FROM Usuario";
+        String tarjetaQuery = "DELETE FROM Tarjeta";
+
+        try (Connection connection = dataBaseManager.connect()) {
+
+            connection.prepareStatement("BEGIN TRANSACTION").execute();
+
+            try (PreparedStatement statementTarjeta = connection.prepareStatement(tarjetaQuery)) {
+                statementTarjeta.executeUpdate();
+            }
+
+            try (PreparedStatement statementUsuario = connection.prepareStatement(usuarioQuery)) {
+                int rows = statementUsuario.executeUpdate();
+
+                if (rows > 0) {
+                    connection.prepareStatement("COMMIT").execute();
+                    return true;
+                } else {
+                    logger.warn("No se ha borrado ningún usuario");
+                    connection.prepareStatement("COMMIT").execute();
+                    return false;
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error al borrar todos los usuarios", e);
+        }
+
+        return false;
+    }
+
+
 }

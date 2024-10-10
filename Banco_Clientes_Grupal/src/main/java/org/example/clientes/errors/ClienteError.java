@@ -1,3 +1,4 @@
+
 package org.example.clientes.errors;
 
 import org.example.rest.errors.UserApiError;

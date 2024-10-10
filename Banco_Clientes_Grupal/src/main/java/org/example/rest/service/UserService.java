@@ -49,7 +49,7 @@ public abstract class UserService {
     public Either<UserApiError, Usuario> createUserAsync (Usuario user){
         logger.debug("UserService: Guardando el usuario con id " + user.getId());
         CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(
-                ()-> userRepository.createUser(user));
+                ()-> userRepository.createUserSync(user));
         try{
             return Either.right(completableFuture.get(10000,MILLISECONDS));
         } catch (Exception e) {
@@ -57,4 +57,25 @@ public abstract class UserService {
         }
     }
 
+    public Either<UserApiError, Usuario> updateUserAsync (int id, Usuario user){
+        logger.debug("UserService: Actualizando el usuario con id " + id);
+        CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(() ->
+                userRepository.updateUserSync(id, user));
+        try{
+            return Either.right(completableFuture.get(10000, MILLISECONDS));
+        } catch (Exception e) {
+            return Either.left(new UserApiError.UserApiNotUpdatedError(id));
+        }
+    }
+
+    public Either<UserApiError, Usuario> deleteUserAsync(int id){
+        logger.debug("UserService: Eliminando el usuario con id " + id);
+        CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(
+                ()-> userRepository.deleteUserSync(id));
+        try{
+            return Either.right(completableFuture.get(10000, MILLISECONDS));
+        } catch (Exception e) {
+            return Either.left(new UserApiError.UserApiNotDeletedError(id));
+        }
+    }
 }
