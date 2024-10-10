@@ -15,4 +15,6 @@ public interface ClienteRepository {
     Cliente update(long id, Cliente cliente);
 
     boolean delete(long id);
+
+    boolean deleteAll();
 }

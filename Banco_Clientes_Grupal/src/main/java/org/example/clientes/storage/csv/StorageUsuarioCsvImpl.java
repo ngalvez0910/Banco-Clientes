@@ -5,18 +5,20 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.example.clientes.errors.UsuarioError;
 import org.example.clientes.model.Usuario;
 import org.example.clientes.validators.UsuarioValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
 
     private final UsuarioValidator usuarioValidator = new UsuarioValidator();
+    private final Logger logger = LoggerFactory.getLogger(StorageUsuarioCsvImpl.class);
 
     @Override
     public Observable<Usuario> importFile(File file) {
@@ -27,13 +29,14 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
                     String line = lines.get(i);
                     Usuario usuario = parseLine(line.split(","));
                     if (!usuarioValidator.validarUsuario(usuario)) {
-                        System.err.println("Usuario no válido: " + usuario);
+                        logger.error("Usuario no válido: {}", usuario);
                         continue;
                     }
                     emitter.onNext(usuario);
                 }
                 emitter.onComplete();
             } catch (IOException e) {
+                logger.error("Error al leer el archivo: {}", file.getName(), e);
                 emitter.onError(new UsuarioError.StorageError("leer", file.getName()));
             }
         }).subscribeOn(Schedulers.io());
@@ -56,9 +59,10 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
                                 usuario.getUpdatedAt());
                         writer.write(formattedUsuario);
                     } catch (IOException e) {
+                        logger.error("Error al escribir en el archivo: {}", file.getName(), e);
                         throw new UsuarioError.StorageError("escribir", file.getName());
                     }
-                }, Throwable::printStackTrace);
+                }, error -> logger.error("Error en exportFile: ", error));
     }
 
     private Usuario parseLine(String[] parts) {
