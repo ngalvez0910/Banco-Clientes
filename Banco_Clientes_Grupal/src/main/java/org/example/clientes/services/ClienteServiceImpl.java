@@ -12,6 +12,7 @@ import org.example.rest.repository.UserRemoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,8 @@ public class ClienteServiceImpl implements ClienteService {
                         tarjetasUser.add(tarjeta);
                     }
                 }
-                // Crear cliente y añadir a lista de clientes
+                Cliente cliente = new Cliente(1L, usuario, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
+                clientes.add(cliente);
             }
         }
         return null;

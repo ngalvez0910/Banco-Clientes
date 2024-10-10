@@ -14,4 +14,12 @@ public class Cliente {
     private Usuario usuario;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public Cliente(Long id, Usuario usuario, List<Tarjeta> tarjeta, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.usuario = usuario;
+        this.tarjeta = tarjeta;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 }
