@@ -38,13 +38,15 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
                 .blockingSubscribe(tarjeta -> {
                     try (FileWriter writer = new FileWriter(file, true)) {
                         if (file.length() == 0) {
-                            writer.write("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad\n");
+                            writer.write("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n");
                         }
-                        String formattedTarjeta = String.format("%d,%s,%s,%s%n",
+                        String formattedTarjeta = String.format("%d,%s,%s,%s,%s,%s%n",
                                 tarjeta.getId(),
                                 tarjeta.getNombreTitular(),
                                 tarjeta.getNumeroTarjeta(),
-                                tarjeta.getFechaCaducidad().toString());
+                                tarjeta.getFechaCaducidad().toString(),
+                                tarjeta.getCreatedAt() != null ? tarjeta.getCreatedAt().toString() : "",
+                                tarjeta.getUpdatedAt() != null ? tarjeta.getUpdatedAt().toString() : "");
 
                         writer.write(formattedTarjeta);
                     } catch (IOException e) {
@@ -59,6 +61,8 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
                 .nombreTitular(parts[1])
                 .numeroTarjeta(parts[2])
                 .fechaCaducidad(LocalDate.parse(parts[3]))
+                .createdAt(parts.length > 4 && !parts[4].isEmpty() ? LocalDate.parse(parts[4]) : null)
+                .updatedAt(parts.length > 5 && !parts[5].isEmpty() ? LocalDate.parse(parts[5]) : null)
                 .build();
     }
 }

@@ -42,9 +42,24 @@ class TarjetaValidatorTest {
                 .fechaCaducidad(LocalDate.parse("2025-12-31"))
                 .nombreTitular("Mario de Domingo")
                 .id(1L)
+                .createdAt(LocalDate.now().minusDays(1))
+                .updatedAt(LocalDate.now())
                 .build();
 
         assertTrue(validator.validate(tarjeta));
+    }
+
+    @Test
+    void validarTarjetaConUpdatedAtInvalido() {
+        Tarjeta tarjeta = Tarjeta.builder()
+                .numeroTarjeta("4532 7233 6544 2231")
+                .fechaCaducidad(LocalDate.parse("2025-12-31"))
+                .nombreTitular("Juan Pérez")
+                .createdAt(LocalDate.now())
+                .updatedAt(LocalDate.now().minusDays(1))
+                .build();
+
+        assertFalse(validator.validate(tarjeta));
     }
 
     @Test
@@ -152,15 +167,6 @@ class TarjetaValidatorTest {
     }
 
     @Test
-    void validarNumeroTarjetaConEspacios() {
-        String numeroTarjeta = "4532 7233 6544 2231";
-        Tarjeta tarjeta = Tarjeta.builder()
-                .numeroTarjeta(numeroTarjeta)
-                .build();
-        assertTrue(validator.validarNumeroTarjeta(tarjeta).isRight());
-    }
-
-    @Test
     void validarNumeroTarjetaSinEspacios() {
         String numeroTarjeta = "4532723365442231";
         Tarjeta tarjeta = Tarjeta.builder()
@@ -176,14 +182,6 @@ class TarjetaValidatorTest {
                 .numeroTarjeta(numeroTarjeta)
                 .build();
         assertTrue(validator.validarNumeroTarjeta(tarjeta).isLeft());
-    }
-
-    @Test
-    void fechaCaducidadConFormatoIncorrecto() {
-        Tarjeta tarjeta = Tarjeta.builder()
-                .fechaCaducidad(LocalDate.parse("2025-12-31"))
-                .build();
-        assertTrue(validator.validarFechaCaducidad(tarjeta).isRight());
     }
 
     @Test

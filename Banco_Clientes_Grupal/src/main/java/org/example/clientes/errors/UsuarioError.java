@@ -3,6 +3,12 @@ package org.example.clientes.errors;
 public abstract class UsuarioError extends Exception{
     public UsuarioError(String message) {super(message);}
 
+    public static class UsuarioInvaido extends UsuarioError {
+        public UsuarioInvaido(String mensaje) {
+            super(mensaje);
+        }
+    }
+
     public static class NombreInvalido extends UsuarioError {
         public NombreInvalido(String nombre) {
             super("El nombre '" + nombre + "' no es válido. Debe tener entre 4 y 80 caracteres y no debe contener números ni caracteres especiales.");

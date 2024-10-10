@@ -21,7 +21,8 @@ class StorageTarjetaCsvImplTest {
     public void setUp() throws IOException {
         storage = new StorageTarjetaCsvImpl();
         testFile = File.createTempFile("StorageTarjetaCsvImplTest", ".csv");
-        Files.write(testFile.toPath(),"ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad\n1,John Doe,1234567890123456,2025-12-31\n2,Jane Smith,6543210987654321,2024-11-30".getBytes());
+        Files.write(testFile.toPath(),
+                ("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n1,John Doe,1234567890123456,2025-12-31,2024-01-01,2024-01-02\n2,Jane Smith,6543210987654321,2024-11-30,2024-01-03,2024-01-04").getBytes());
     }
 
     @AfterEach
@@ -38,8 +39,12 @@ class StorageTarjetaCsvImplTest {
                 () -> assertEquals(2, tarjetaList.size()),
                 () -> assertEquals(1L, tarjetaList.getFirst().getId()),
                 () -> assertEquals("John Doe", tarjetaList.getFirst().getNombreTitular()),
+                () -> assertEquals(LocalDate.parse("2024-01-01"), tarjetaList.getFirst().getCreatedAt()),
+                () -> assertEquals(LocalDate.parse("2024-01-02"), tarjetaList.getFirst().getUpdatedAt()),
                 () -> assertEquals(2L, tarjetaList.get(1).getId()),
-                () -> assertEquals("Jane Smith", tarjetaList.get(1).getNombreTitular())
+                () -> assertEquals("Jane Smith", tarjetaList.get(1).getNombreTitular()),
+                () -> assertEquals(LocalDate.parse("2024-01-03"), tarjetaList.get(1).getCreatedAt()),
+                () -> assertEquals(LocalDate.parse("2024-01-04"), tarjetaList.get(1).getUpdatedAt())
         );
     }
 
@@ -51,12 +56,16 @@ class StorageTarjetaCsvImplTest {
                         .nombreTitular("John Shena")
                         .numeroTarjeta("1234567890123456")
                         .fechaCaducidad(LocalDate.parse("2025-12-31"))
+                        .createdAt(LocalDate.parse("2024-01-01"))
+                        .updatedAt(LocalDate.parse("2024-01-02"))
                         .build(),
                 Tarjeta.builder()
                         .id(2L)
                         .nombreTitular("Will Smith")
                         .numeroTarjeta("6543210987654321")
                         .fechaCaducidad(LocalDate.parse("2024-11-30"))
+                        .createdAt(LocalDate.parse("2024-01-03"))
+                        .updatedAt(LocalDate.parse("2024-01-04"))
                         .build()
         );
 
@@ -71,10 +80,9 @@ class StorageTarjetaCsvImplTest {
 
         assertAll("exportedTarjetas",
                 () -> assertEquals(3, lines.size()),
-                () -> assertEquals("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad", lines.getFirst()),
-                () -> assertEquals("1,John Shena,1234567890123456,2025-12-31", lines.get(1)),
-                () -> assertEquals("2,Will Smith,6543210987654321,2024-11-30", lines.get(2))
+                () -> assertEquals("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt", lines.getFirst()),
+                () -> assertEquals("1,John Shena,1234567890123456,2025-12-31,2024-01-01,2024-01-02", lines.get(1)),
+                () -> assertEquals("2,Will Smith,6543210987654321,2024-11-30,2024-01-03,2024-01-04", lines.get(2))
         );
     }
-
 }

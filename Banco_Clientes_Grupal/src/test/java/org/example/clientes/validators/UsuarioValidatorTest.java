@@ -3,6 +3,8 @@ package org.example.clientes.validators;
 import org.example.clientes.model.Usuario;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UsuarioValidatorTest {
@@ -42,6 +44,8 @@ class UsuarioValidatorTest {
                 .nombre("Mario")
                 .userName("wolverine307")
                 .email("mario@gmail.com")
+                .createdAt(LocalDate.now())
+                .updatedAt(LocalDate.now())
                 .build();
         assertTrue(validator.validarUsuario(usuario));
     }
@@ -161,6 +165,8 @@ class UsuarioValidatorTest {
                 .nombre("Ana")
                 .userName("wolverine307")
                 .email("mario@gmail.com")
+                .createdAt(LocalDate.now())
+                .updatedAt(LocalDate.now())
                 .build();
 
         assertFalse(validator.validarUsuario(usuario));
@@ -174,6 +180,8 @@ class UsuarioValidatorTest {
                 .nombre("Mario")
                 .userName("a")
                 .email("mario@gmail.com")
+                .createdAt(LocalDate.now())
+                .updatedAt(LocalDate.now())
                 .build();
 
         assertFalse(validator.validarUsuario(usuario));
@@ -187,6 +195,8 @@ class UsuarioValidatorTest {
                 .nombre("Mario")
                 .userName("wolverine307")
                 .email("mario_at_gmail.com")
+                .createdAt(LocalDate.now())
+                .updatedAt(LocalDate.now())
                 .build();
 
         assertFalse(validator.validarUsuario(usuario));
