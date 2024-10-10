@@ -27,7 +27,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         List<Cliente> clientes = new ArrayList<>();
         String query = "SELECT u.id AS usuarioId, u.nombre, u.userName, u.email, u.createdAt AS usuarioCreatedAt, u.updatedAt AS usuarioUpdatedAt," +
                         "t.id AS tarjetaId, t.numeroTarjeta, t.nombreTitular, t.fechaCaducidad, t.createdAt AS tarjetaCreatedAt, t.updatedAt AS tarjetaUpdatedAt " +
-                        "FROM Usuario u LEFT JOIN Tarjeta t ON u.id = t.clientID";
+                        "FROM Usuario u LEFT JOIN Tarjeta t ON u.nombre = t.nombreTitular";
 
         try (Connection connection = dataBaseManager.connect();
              PreparedStatement statement = connection.prepareStatement(query);
@@ -193,7 +193,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         logger.info("Actualizando cliente...");
 
         String userQuery = "UPDATE Usuario SET nombre = ?, userName = ?, email = ?, updatedAt = ? WHERE id = ?";
-        String tarjetaQuery = "UPDATE Tarjeta SET numeroTarjeta = ?, nombreTitular = ?, fechaCaducidad = ?, updatedAt = ? WHERE clientID = ?";
+        String tarjetaQuery = "UPDATE Tarjeta SET numeroTarjeta = ?, nombreTitular = ?, fechaCaducidad = ?, updatedAt = ? WHERE nombreTitular = ?";
 
         LocalDateTime timeStamp = LocalDateTime.now();
 
@@ -238,7 +238,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         logger.info("Borrando cliente...");
 
         String deleteUsuarioQuery = "DELETE FROM Usuario WHERE id = ?";
-        String deleteTarjetaQuery = "DELETE FROM Tarjeta WHERE clientID = ?";
+        String deleteTarjetaQuery = "DELETE FROM Tarjeta WHERE nombreTitular = ?";
 
         try (Connection connection = dataBaseManager.connect()) {
             connection.prepareStatement("BEGIN TRANSACTION").execute();
