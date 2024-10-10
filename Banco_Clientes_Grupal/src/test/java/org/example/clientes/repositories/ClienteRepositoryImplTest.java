@@ -5,6 +5,7 @@ import org.example.clientes.model.Tarjeta;
 import org.example.clientes.model.Usuario;
 import org.example.database.LocalDataBaseManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,14 +21,41 @@ class ClienteRepositoryImplTest {
 
     private ClienteRepositoryImpl clienteRepository;
 
-    @BeforeEach
-    void setUp()throws SQLException {
+    @BeforeAll
+    static void setUpAll() throws SQLException {
+        ConfigProperties properties = new ConfigProperties("application.properties");
+        dataBaseManager = LocalDataBaseManager.getInstance();
+        dataBaseManager.connect();
+        dataBaseManager.initializeDatabase();
         clienteRepository =  ClienteRepositoryImpl.getInstance(LocalDataBaseManager.getInstance());
-        clienteRepository.deleteAll
+
+    }
+    @BeforeEach
+    void setUp() {
+        usuarioRepository.saveUser(Usuario.builder()
+                .id(1l)
+                .name("Test")
+                .username("TestUsername")
+                .email("test@example.com")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build());
+        creditCardRepository.saveCreditCard(TarjetaCredito.builder()
+                .id(UUID.fromString("3a62d823-e068-4560-a464-9daa369e03d6"))
+                .numero("1234567890123456")
+                .nombreTitular("Test")
+                .clientID(1L)
+                .fechaCaducidad("12/24")
+                .isDeleted(false)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build());
+
     }
 
     @AfterEach
     void tearDown() {
+        clienteRepository.deleteAll();
     }
 
     @Test
