@@ -45,8 +45,13 @@ class UsuarioValidatorTest {
                 .nombre("Mario")
                 .userName("wolverine307")
                 .email("mario@gmail.com")
+<<<<<<< Updated upstream
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+=======
+                .createdAt(LocalDate.now().atStartOfDay())
+                .updatedAt(LocalDate.now().atStartOfDay())
+>>>>>>> Stashed changes
                 .build();
         assertTrue(validator.validarUsuario(usuario));
     }
@@ -166,8 +171,13 @@ class UsuarioValidatorTest {
                 .nombre("Ana")
                 .userName("wolverine307")
                 .email("mario@gmail.com")
+<<<<<<< Updated upstream
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+=======
+                .createdAt(LocalDate.now().atStartOfDay())
+                .updatedAt(LocalDate.now().atStartOfDay())
+>>>>>>> Stashed changes
                 .build();
 
         assertFalse(validator.validarUsuario(usuario));
@@ -181,8 +191,13 @@ class UsuarioValidatorTest {
                 .nombre("Mario")
                 .userName("a")
                 .email("mario@gmail.com")
+<<<<<<< Updated upstream
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+=======
+                .createdAt(LocalDate.now().atStartOfDay())
+                .updatedAt(LocalDate.now().atStartOfDay())
+>>>>>>> Stashed changes
                 .build();
 
         assertFalse(validator.validarUsuario(usuario));
@@ -196,8 +211,13 @@ class UsuarioValidatorTest {
                 .nombre("Mario")
                 .userName("wolverine307")
                 .email("mario_at_gmail.com")
+<<<<<<< Updated upstream
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+=======
+                .createdAt(LocalDate.now().atStartOfDay())
+                .updatedAt(LocalDate.now().atStartOfDay())
+>>>>>>> Stashed changes
                 .build();
 
         assertFalse(validator.validarUsuario(usuario));

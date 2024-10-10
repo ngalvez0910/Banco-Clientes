@@ -44,8 +44,13 @@ class TarjetaValidatorTest {
                 .fechaCaducidad(LocalDate.parse("2025-12-31"))
                 .nombreTitular("Mario de Domingo")
                 .id(1L)
+<<<<<<< Updated upstream
                 .createdAt(LocalDateTime.now().minusDays(1))
                 .updatedAt(LocalDateTime.now())
+=======
+                .createdAt(LocalDate.now().minusDays(1).atStartOfDay())
+                .updatedAt(LocalDate.now().atStartOfDay())
+>>>>>>> Stashed changes
                 .build();
 
         assertTrue(validator.validate(tarjeta));
@@ -57,8 +62,13 @@ class TarjetaValidatorTest {
                 .numeroTarjeta("4532 7233 6544 2231")
                 .fechaCaducidad(LocalDate.parse("2025-12-31"))
                 .nombreTitular("Juan Pérez")
+<<<<<<< Updated upstream
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now().minusDays(1))
+=======
+                .createdAt(LocalDate.now().atStartOfDay())
+                .updatedAt(LocalDate.now().minusDays(1).atStartOfDay())
+>>>>>>> Stashed changes
                 .build();
 
         assertFalse(validator.validate(tarjeta));
