@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
@@ -61,8 +62,8 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
                 .nombreTitular(parts[1])
                 .numeroTarjeta(parts[2])
                 .fechaCaducidad(LocalDate.parse(parts[3]))
-                .createdAt(parts.length > 4 && !parts[4].isEmpty() ? LocalDate.parse(parts[4]) : null)
-                .updatedAt(parts.length > 5 && !parts[5].isEmpty() ? LocalDate.parse(parts[5]) : null)
+                .createdAt(parts.length > 4 && !parts[4].isEmpty() ? LocalDateTime.parse(parts[4]) : null)
+                .updatedAt(parts.length > 5 && !parts[5].isEmpty() ? LocalDateTime.parse(parts[5]) : null)
                 .build();
     }
 }

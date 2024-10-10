@@ -34,8 +34,8 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                         .nombreTitular(resultSet.getString("nombreTitular"))
                         .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                         .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDateTime.class).toLocalDate())
-                        .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
-                        .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
+                        .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+                        .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                         .build();
                 tarjetas.add(tarjeta);
             }
@@ -60,8 +60,8 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                             .nombreTitular(resultSet.getString("nombreTitular"))
                             .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                             .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDateTime.class).toLocalDate())
-                            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
-                            .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
+                            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+                            .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                             .build());
                 }
         } catch (SQLException e) {
@@ -88,8 +88,8 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                 if (generatedKeys.next()) {
                     long id = generatedKeys.getLong(1);
                     tarjeta.setId(id);
-                    tarjeta.setCreatedAt(LocalDate.from(timeStamp));
-                    tarjeta.setUpdatedAt(LocalDate.from(timeStamp));
+                    tarjeta.setCreatedAt(timeStamp);
+                    tarjeta.setUpdatedAt(timeStamp);
                     return tarjeta;
                 } else {
                     throw new SQLException("No se pudo obtener la clave generada.");
@@ -116,7 +116,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
 
                 int rows = statement.executeUpdate();
                 if (rows > 0) {
-                    tarjeta.setUpdatedAt(LocalDate.from(timeStamp));
+                    tarjeta.setUpdatedAt(timeStamp);
                     return tarjeta;
                 }
 

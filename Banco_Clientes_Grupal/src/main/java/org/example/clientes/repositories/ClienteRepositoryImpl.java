@@ -39,8 +39,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                         .nombre(resultSet.getString("nombre"))
                         .userName(resultSet.getString("userName"))
                         .email(resultSet.getString("email"))
-                        .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class).toLocalDate())
-                        .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class).toLocalDate())
+                        .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class))
+                        .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class))
                         .build();
 
                 Tarjeta tarjeta = null;
@@ -50,8 +50,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                             .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                             .nombreTitular(resultSet.getString("nombreTitular"))
                             .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
-                            .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class).toLocalDate())
-                            .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class).toLocalDate())
+                            .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class))
+                            .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class))
                             .build();
                 }
 
@@ -59,8 +59,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                         .id(resultSet.getLong("id"))
                         .usuario(resultSet.getObject("usuario", Usuario.class))
                         .tarjeta(resultSet.getObject("tarjeta", Tarjeta.class))
-                        .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
-                        .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
+                        .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+                        .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                         .build();
 
                 clientes.add(cliente);
@@ -89,8 +89,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                             .nombre(resultSet.getString("nombre"))
                             .userName(resultSet.getString("userName"))
                             .email(resultSet.getString("email"))
-                            .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class).toLocalDate())
-                            .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class).toLocalDate())
+                            .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class))
+                            .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class))
                             .build();
 
                     Tarjeta tarjeta = null;
@@ -100,8 +100,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                                 .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                                 .nombreTitular(resultSet.getString("nombreTitular"))
                                 .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
-                                .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class).toLocalDate())
-                                .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class).toLocalDate())
+                                .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class))
+                                .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class))
                                 .build();
                     }
 
@@ -109,8 +109,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                             .id(resultSet.getLong("id"))
                             .usuario(resultSet.getObject("usuario", Usuario.class))
                             .tarjeta(resultSet.getObject("tarjeta", Tarjeta.class))
-                            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
-                            .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
+                            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+                            .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                             .build());
                 }
             }
@@ -177,8 +177,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
             connection.prepareStatement("COMMIT").execute();
 
-            cliente.setCreatedAt(timeStamp.toLocalDate());
-            cliente.setUpdatedAt(timeStamp.toLocalDate());
+            cliente.setCreatedAt(timeStamp);
+            cliente.setUpdatedAt(timeStamp);
             return cliente;
 
         } catch (SQLException e) {
@@ -223,7 +223,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
             connection.prepareStatement("COMMIT").execute();
 
-            cliente.setUpdatedAt(timeStamp.toLocalDate());
+            cliente.setUpdatedAt(timeStamp);
             return cliente;
 
         } catch (SQLException e) {

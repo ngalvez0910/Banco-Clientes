@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -14,8 +15,8 @@ public class Tarjeta {
     private String nombreTitular;
     private String numeroTarjeta;
     private LocalDate fechaCaducidad;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MM/yy");
 

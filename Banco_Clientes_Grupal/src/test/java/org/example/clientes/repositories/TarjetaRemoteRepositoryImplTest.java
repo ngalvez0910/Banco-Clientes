@@ -131,8 +131,8 @@ public class TarjetaRemoteRepositoryImplTest {
                 .nombreTitular("Ana Actualizada")
                 .numeroTarjeta("1234567890123456")
                 .fechaCaducidad(LocalDate.of(2022, 12, 31))
-                .createdAt(LocalDateTime.now().toLocalDate())
-                .updatedAt(LocalDateTime.now().toLocalDate())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         var tarjetaActualizada = tarjetaRemoteRepository.update(999L, tarjeta);
