@@ -1,4 +1,4 @@
-package org.example.clientes.errors;
+package org.example.rest.errors;
 
 public class UserApiError {
     private final String message;

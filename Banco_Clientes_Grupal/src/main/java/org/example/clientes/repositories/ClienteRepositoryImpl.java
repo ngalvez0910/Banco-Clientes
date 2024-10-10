@@ -11,6 +11,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +59,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                 Cliente cliente = Cliente.builder()
                         .id(resultSet.getLong("id"))
                         .usuario(resultSet.getObject("usuario", Usuario.class))
-                        .tarjeta(resultSet.getObject("tarjeta", Tarjeta.class))
+                        .tarjeta(Collections.singletonList(resultSet.getObject("tarjeta", Tarjeta.class)))
                         .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
                         .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                         .build();
@@ -108,7 +109,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                     return Optional.of(Cliente.builder()
                             .id(resultSet.getLong("id"))
                             .usuario(resultSet.getObject("usuario", Usuario.class))
-                            .tarjeta(resultSet.getObject("tarjeta", Tarjeta.class))
+                            .tarjeta(Collections.singletonList(resultSet.getObject("tarjeta", Tarjeta.class)))
                             .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
                             .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                             .build());
@@ -154,22 +155,23 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                 }
             }
 
-            if (cliente.getTarjeta() != null) {
-                try (PreparedStatement statementTarjeta = connection.prepareStatement(tarjetaQuery)) {
-                    statementTarjeta.setLong(1, cliente.getTarjeta().getId());
-                    statementTarjeta.setString(2, cliente.getTarjeta().getNumeroTarjeta());
-                    statementTarjeta.setString(3, cliente.getTarjeta().getNombreTitular());
-                    statementTarjeta.setObject(4, cliente.getTarjeta().getFechaCaducidad());
-                    statementTarjeta.setObject(5, timeStamp);
-                    statementTarjeta.setObject(6, timeStamp);
+            if (cliente.getTarjeta() != null && !cliente.getTarjeta().isEmpty()) {
+                for (Tarjeta tarjeta : cliente.getTarjeta()) {
+                    try (PreparedStatement statementTarjeta = connection.prepareStatement(tarjetaQuery, Statement.RETURN_GENERATED_KEYS)) {
+                        statementTarjeta.setString(1, tarjeta.getNumeroTarjeta());
+                        statementTarjeta.setString(2, tarjeta.getNombreTitular());
+                        statementTarjeta.setObject(3, tarjeta.getFechaCaducidad());
+                        statementTarjeta.setObject(4, timeStamp);
+                        statementTarjeta.setObject(5, timeStamp);
+                        statementTarjeta.setLong(6, cliente.getId());
+                        statementTarjeta.executeUpdate();
 
-                    statementTarjeta.executeUpdate();
-
-                    try (ResultSet generatedKeys = statementTarjeta.getGeneratedKeys()) {
-                        if (generatedKeys.next()) {
-                            cliente.getTarjeta().setId(generatedKeys.getLong(1));
-                        } else {
-                            throw new SQLException("No se pudo obtener la clave generada para Tarjeta.");
+                        try (ResultSet generatedKeys = statementTarjeta.getGeneratedKeys()) {
+                            if (generatedKeys.next()) {
+                                tarjeta.setId(generatedKeys.getLong(1));
+                            } else {
+                                throw new SQLException("No se pudo obtener la clave generada para Tarjeta.");
+                            }
                         }
                     }
                 }
@@ -210,14 +212,16 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                 statementUsuario.executeUpdate();
             }
 
-            if (cliente.getTarjeta() != null) {
-                try (PreparedStatement statementTarjeta = connection.prepareStatement(tarjetaQuery)) {
-                    statementTarjeta.setString(1, cliente.getTarjeta().getNumeroTarjeta());
-                    statementTarjeta.setString(2, cliente.getTarjeta().getNombreTitular());
-                    statementTarjeta.setObject(3, cliente.getTarjeta().getFechaCaducidad());
-                    statementTarjeta.setObject(4, timeStamp);
-                    statementTarjeta.setLong(5, id);
-                    statementTarjeta.executeUpdate();
+            if (cliente.getTarjeta() != null && !cliente.getTarjeta().isEmpty()) {
+                for (Tarjeta tarjeta : cliente.getTarjeta()){
+                    try (PreparedStatement statementTarjeta = connection.prepareStatement(tarjetaQuery)) {
+                        statementTarjeta.setString(1, tarjeta.getNumeroTarjeta());
+                        statementTarjeta.setString(2, tarjeta.getNombreTitular());
+                        statementTarjeta.setObject(3, tarjeta.getFechaCaducidad());
+                        statementTarjeta.setObject(4, timeStamp);
+                        statementTarjeta.setLong(5, id);
+                        statementTarjeta.executeUpdate();
+                    }
                 }
             }
 
