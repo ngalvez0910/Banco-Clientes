@@ -19,6 +19,7 @@ public class UserRemoteRepository {
     }
 
     public List<Usuario> getAllSync(){
+        logger.debug("UserRemoteRepository: Devolviendo todos los usuarios de la API");
         var call = userApiRest.getAllSync();
         try {
             var response = call.execute();
@@ -51,8 +52,8 @@ public class UserRemoteRepository {
             throw new UserNotFoundException("User not found with id: " + id);
         }
     }
-
     public Usuario createUserSync(Usuario user) {
+        logger.debug("UserRemoteRepository: Creando un nuevo usuario con username: " + user.getUserName());
         var call = userApiRest.createUserSync(UsuarioMapper.toRequest(user));
         try {
             var response = call.execute();
@@ -65,44 +66,42 @@ public class UserRemoteRepository {
             return null;
         }
     }
-    public Usuario createAsyncUser(Usuario user) {
-        var call = userApiRest.createUser(UsuarioMapper.toRequest(user));
+
+    public Usuario updateUserSync(int id, Usuario user) {
+        logger.debug("UserRemoteRepository: Actualizando al usuario con id " + id);
+        var call = userApiRest.updateUserSync(id, UsuarioMapper.toRequest(user));
         try {
-            var response = call.get();
-            return UsuarioMapper.toUserFromCreate(response);
+            var response = call.execute();
+            if (!response.isSuccessful()) {
+                if (response.code() == 404) {
+                    throw new UserNotFoundException("Usuario no encontrado al actualizar con id: " + id);
+                } else {
+                    throw new Exception("Error: " + response.code());
+                }
+            }
+            return UsuarioMapper.toUserFromCreate(response.body());
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new UserNotFoundException("Usuario no encontrado al actualizar con id: " + id);
         }
     }
-
-    public Usuario updateUser(int id, Usuario user) {
-        var call = userApiRest.updateUser(id, UsuarioMapper.toRequest(user));
+    public Usuario deleteUserSync(int id){
+        logger.debug("UserRemoteRepository: Eliminando al usuario con id " + id);
+        var call = userApiRest.deleteUserSync(id);
         try {
-            var response = call.get();
-            return UsuarioMapper.toUserFromUpdate(response, id);
-        } catch (Exception e) {
-            if (e.getCause().getMessage().contains("404")) {
-                throw new UserNotFoundException("Usuario no encontrado al actualizar, con id: " + id);
-            } else {
-                e.printStackTrace();
-                return null;
+            var response = call.execute();
+            if (!response.isSuccessful()) {
+                if (response.code() == 404) {
+                    throw new UserNotFoundException("Usuario no encontrado al eliminar con id: " + id);
+                } else {
+                    throw new Exception("Error: " + response.code());
+                }
             }
-        }
-    }
-
-    public void deleteUser(int id) {
-        var call = userApiRest.deleteUser(id);
-        try {
-            call.get();
+            return UsuarioMapper.toUserFromDelete(response.body());
         } catch (Exception e) {
-            if (e.getCause().getMessage().contains("404")) {
-                throw new UserNotFoundException("Usuario no encontrado al eliminar, con id: " + id);
-            } else {
-                e.printStackTrace();
-            }
-
+            throw new UserNotFoundException("Usuario no encontrado al eliminar con id: " + id);
         }
+
+
     }
 
 }

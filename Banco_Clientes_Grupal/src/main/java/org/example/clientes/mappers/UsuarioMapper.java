@@ -4,10 +4,10 @@ import org.example.clientes.dto.UsuarioDto;
 import org.example.clientes.model.Usuario;
 
 import org.example.rest.responses.createUpdateDelete.UserCreate;
+import org.example.rest.responses.createUpdateDelete.UserDelete;
 import org.example.rest.responses.getAll.UserGetAll;
 import org.example.rest.responses.getById.UserGetById;
 import org.example.rest.responses.createUpdateDelete.Request;
-import org.example.rest.responses.createUpdateDelete.Response;
 
 public class UsuarioMapper {
     public static Usuario toEntity(UsuarioDto usuarioDto) {
@@ -46,6 +46,7 @@ public class UsuarioMapper {
 
     public static Usuario toUserFromCreate(UserCreate userCreate) {
         return Usuario.builder()
+                .id((long) userCreate.getId())
                 .nombre (userCreate.getName())
                 .userName(userCreate.getUsername())
                 .email(userCreate.getEmail())
@@ -69,25 +70,8 @@ public class UsuarioMapper {
                 .build();
     }
 
-    public static Usuario toUserFromCreate(Response response) {
+    public static Usuario toUserFromDelete(UserDelete body) {
         return Usuario.builder()
-                .id(Long.parseLong(response.getId()))
-                .nombre(response.getName())
-                .userName(response.getUserName())
-                .email(response.getEmail())
-                //.createdAt(LocalDateTime.parse(response.getCreatedAt()))
-                //.updatedAt(LocalDateTime.parse(response.getUpdatedAt()))
-                .build();
-    }
-
-    public static Usuario toUserFromUpdate(Response response, int id) {
-        return Usuario.builder()
-                .id((long) id)
-                .nombre(response.getName())
-                .userName(response.getUserName())
-                .email(response.getEmail())
-                //.createdAt(LocalDateTime.parse(response.getCreatedAt()))
-                //.updatedAt(LocalDateTime.parse(response.getUpdatedAt()))
-                .build();
+               .build();
     }
 }

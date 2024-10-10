@@ -9,17 +9,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCreate {
+public class UserDelete {
 
+    @JsonIgnore
     @JsonProperty("id")
     private int id;
 
+    @JsonIgnore
     @JsonProperty("name")
     private String name;
 
+    @JsonIgnore
     @JsonProperty("username")
     private String username;
 
+    @JsonIgnore
     @JsonProperty("email")
     private String email;
 
@@ -39,12 +43,5 @@ public class UserCreate {
     @JsonProperty("company")
     private String company;
 
-    public int getId() { return id; }
-
-    public String getName() {  return name;  }
-
-    public String getUsername() {  return username;  }
-
-    public String getEmail() {  return email; }
 
 }
