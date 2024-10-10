@@ -1,9 +1,13 @@
 package org.example.clientes.errors;
 
-import org.example.clientes.model.Usuario;
-
 public abstract class UsuarioError extends Exception{
     public UsuarioError(String message) {super(message);}
+
+    public static class UsuarioInvaido extends UsuarioError {
+        public UsuarioInvaido(String mensaje) {
+            super(mensaje);
+        }
+    }
 
     public static class NombreInvalido extends UsuarioError {
         public NombreInvalido(String nombre) {
@@ -23,9 +27,9 @@ public abstract class UsuarioError extends Exception{
         }
     }
 
-    public static class UsuarioStorageError extends UsuarioError{
-        public UsuarioStorageError(String string){
-            super(string);
+    public static class StorageError extends UsuarioError {
+        public StorageError(String action, String nombreArchivo) {
+            super("Error al " + action + " el archivo : " + nombreArchivo);
         }
     }
 }

@@ -10,4 +10,6 @@ public class UsuarioDto {
     private String nombre;
     private String userName;
     private String email;
+    private String createdAt;
+    private String updatedAt;
 }

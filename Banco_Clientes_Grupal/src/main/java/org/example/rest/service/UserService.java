@@ -3,7 +3,8 @@ package org.example.rest.service;
 import io.vavr.control.Either;
 
 import org.example.clientes.model.Usuario;
-import org.example.errors.*;
+
+import org.example.clientes.errors.UserApiError;
 import org.example.exceptions.UserNoUsersFoundException;
 import org.example.rest.repository.UserRemoteRepository;
 import org.slf4j.Logger;
@@ -21,39 +22,39 @@ public class UserService {
 
     public UserService(UserRemoteRepository userRepository) { this.userRepository = userRepository; }
 
-    public Either<UserError, List<Usuario>> getAllAsync() {
+    public Either<UserApiError, List<Usuario>> getAllAsync() {
         logger.debug("UserService: Recuperando todos los usuarios");
         CompletableFuture<List<Usuario>> completableFuture = CompletableFuture.supplyAsync(()->
                 userRepository.getAllSync());
         try {
             return Either.right(completableFuture.get(10000,MILLISECONDS));
         } catch (UserNoUsersFoundException e) {
-            return Either.left(new UserNoUsersFound());
+            return Either.left(new UserApiError.UserApiNoUsersFound());
         } catch (Exception e) {
-            return Either.left(new UserError("Error obteniendo la lista de usuarios", 500));
+            return Either.left(new UserApiError("Error obteniendo la lista de usuarios", 500));
         }
     }
 
 
-    public Either<UserError, Usuario> getByIdAsync(int id) {
+    public Either<UserApiError, Usuario> getByIdAsync(int id) {
         logger.debug("UserService: Recuperando el usuario con id " + id);
         CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(() ->
                 userRepository.getByIdSync(id));
         try {
             return Either.right(completableFuture.get(10000, MILLISECONDS));
         } catch (Exception e) {
-            return Either.left(new UserNotFoundError(id));
+            return Either.left(new UserApiError.UserNotFoundApiError(id));
         }
     }
 
-    public Either<UserError, Usuario> createUserAsync (Usuario user){
+    public Either<UserApiError, Usuario> createUserAsync (Usuario user){
         logger.debug("UserService: Guardando el usuario con id " + user.getId());
         CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(
                 ()-> userRepository.createUserSync(user));
         try{
             return Either.right(completableFuture.get(10000,MILLISECONDS));
         } catch (Exception e) {
-            return Either.left(new UserNotCreated(user.getId()));
+            return Either.left(new UserApiError.UserApiNotCreated(user.getId()));
         }
     }
 

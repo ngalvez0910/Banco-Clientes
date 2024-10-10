@@ -4,6 +4,7 @@ import org.example.clientes.dto.TarjetaDto;
 import org.example.clientes.model.Tarjeta;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,12 @@ public class TarjetaMapper {
                 .fechaCaducidad(tarjetaDto.getFechaCaducidad() != null
                         ? LocalDate.parse(tarjetaDto.getFechaCaducidad(), formatter)
                         : null)
+                .createdAt(tarjetaDto.getCreatedAt() != null
+                        ? LocalDateTime.parse(tarjetaDto.getCreatedAt(), formatter)
+                        : null)
+                .updatedAt(tarjetaDto.getUpdatedAt() != null
+                        ? LocalDateTime.parse(tarjetaDto.getUpdatedAt(), formatter)
+                        : null)
                 .build();
     }
 
@@ -37,6 +44,12 @@ public class TarjetaMapper {
                 .numeroTarjeta(tarjeta.getNumeroTarjeta())
                 .fechaCaducidad(tarjeta.getFechaCaducidad() != null
                         ? tarjeta.getFechaCaducidad().format(formatter)
+                        : null)
+                .createdAt(tarjeta.getCreatedAt()!= null
+                        ? tarjeta.getCreatedAt().format(formatter)
+                        : null)
+                .updatedAt(tarjeta.getUpdatedAt()!= null
+                        ? tarjeta.getUpdatedAt().format(formatter)
                         : null)
                 .build();
     }
