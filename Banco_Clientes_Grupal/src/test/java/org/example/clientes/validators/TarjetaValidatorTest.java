@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TarjetaValidatorTest {
+
     private final TarjetaValidator validator = new TarjetaValidator();
 
     @Test
