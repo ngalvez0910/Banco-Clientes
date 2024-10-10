@@ -2,9 +2,7 @@ package org.example.clientes.storage.csv;
 
 import io.reactivex.rxjava3.core.Observable;
 import org.example.clientes.errors.TarjetaError;
-import org.example.clientes.errors.UsuarioError;
 import org.example.clientes.model.Tarjeta;
-import org.example.clientes.model.Usuario;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
