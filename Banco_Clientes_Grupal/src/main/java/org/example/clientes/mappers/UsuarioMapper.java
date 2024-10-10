@@ -22,8 +22,8 @@ public class UsuarioMapper {
                 .nombre(usuarioDto.getNombre())
                 .userName(usuarioDto.getUserName())
                 .email(usuarioDto.getEmail())
-                .createdAt(LocalDate.parse(usuarioDto.getCreatedAt()))
-                .updatedAt(LocalDate.parse(usuarioDto.getUpdatedAt()))
+                .createdAt(LocalDateTime.parse(usuarioDto.getCreatedAt()))
+                .updatedAt(LocalDateTime.parse(usuarioDto.getUpdatedAt()))
                 .build();
     }
 

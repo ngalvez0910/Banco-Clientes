@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
@@ -66,8 +67,8 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
                 .nombre(parts[1])
                 .userName(parts[2])
                 .email(parts[3])
-                .createdAt(LocalDate.parse(parts[4]))
-                .updatedAt(LocalDate.parse(parts[5]))
+                .createdAt(LocalDateTime.parse(parts[4]))
+                .updatedAt(LocalDateTime.parse(parts[5]))
                 .build();
     }
 }

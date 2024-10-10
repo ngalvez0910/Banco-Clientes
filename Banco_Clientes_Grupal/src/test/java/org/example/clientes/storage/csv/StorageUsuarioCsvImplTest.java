@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,16 +61,16 @@ class StorageUsuarioCsvImplTest {
                         .nombre("Pablo Motos")
                         .email("pablomotos@gmail.com")
                         .userName("pablomotos")
-                        .createdAt(LocalDate.of(2023, 1, 1))
-                        .updatedAt(LocalDate.of(2023, 10, 1))
+                        .createdAt(LocalDateTime.of(2023, 1, 1))
+                        .updatedAt(LocalDateTime.of(2023, 10, 1))
                         .build(),
                 Usuario.builder()
                         .id(2L)
                         .nombre("Juan Perez")
                         .email("juanperez@gmail.com")
                         .userName("juanperez")
-                        .createdAt(LocalDate.of(2023, 1, 2))
-                        .updatedAt(LocalDate.of(2023, 10, 2))
+                        .createdAt(LocalDateTime.of(2023, 1, 2))
+                        .updatedAt(LocalDateTime.of(2023, 10, 2))
                         .build()
         );
 
