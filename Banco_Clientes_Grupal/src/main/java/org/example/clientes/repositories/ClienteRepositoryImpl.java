@@ -25,13 +25,36 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     public List<Cliente> getAll() {
         logger.info("Obteniendo clientes...");
         List<Cliente> clientes = new ArrayList<>();
-        String query = "SELECT * FROM clientes";
+        String query = "SELECT u.id AS usuarioId, u.nombre, u.userName, u.email, u.createdAt AS usuarioCreatedAt, u.updatedAt AS usuarioUpdatedAt," +
+                        "t.id AS tarjetaId, t.numeroTarjeta, t.nombreTitular, t.fechaCaducidad, t.createdAt AS tarjetaCreatedAt, t.updatedAt AS tarjetaUpdatedAt " +
+                        "FROM Usuario u LEFT JOIN Tarjeta t ON u.id = t.clientID";
 
         try (Connection connection = dataBaseManager.connect();
              PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
+                Usuario usuario = Usuario.builder()
+                        .id(resultSet.getLong("usuarioId"))
+                        .nombre(resultSet.getString("nombre"))
+                        .userName(resultSet.getString("userName"))
+                        .email(resultSet.getString("email"))
+                        .createdAt(resultSet.getObject("usuarioCreatedAt", LocalDateTime.class).toLocalDate())
+                        .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class).toLocalDate())
+                        .build();
+
+                Tarjeta tarjeta = null;
+                if (resultSet.getString("tarjetaId") != null) {
+                    tarjeta = Tarjeta.builder()
+                            .id(resultSet.getLong("tarjetaId"))
+                            .numeroTarjeta(resultSet.getString("numeroTarjeta"))
+                            .nombreTitular(resultSet.getString("nombreTitular"))
+                            .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
+                            .createdAt(resultSet.getObject("tarjetaCreatedAt", LocalDateTime.class).toLocalDate())
+                            .updatedAt(resultSet.getObject("tarjetaUpdatedAt", LocalDateTime.class).toLocalDate())
+                            .build();
+                }
+
                 Cliente cliente = Cliente.builder()
                         .id(resultSet.getLong("id"))
                         .usuario(resultSet.getObject("usuario", Usuario.class))
@@ -39,6 +62,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                         .createdAt(resultSet.getObject("createdAt", LocalDateTime.class).toLocalDate())
                         .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class).toLocalDate())
                         .build();
+
                 clientes.add(cliente);
             }
         } catch (SQLException e) {
