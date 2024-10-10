@@ -34,4 +34,16 @@ public class UserApiError {
             super("No se encontró ningún usuario", 404);
         }
     }
+
+    public static class UserApiNotUpdatedError extends UserApiError {
+        public UserApiNotUpdatedError(long id) {
+            super("Usuario no actualizado con id: " + id, 404);
+        }
+    }
+
+    public static class UserApiNotDeletedError extends UserApiError {
+        public UserApiNotDeletedError(long id) {
+            super("Usuario no eliminado con id: " + id, 404);
+        }
+    }
 }
