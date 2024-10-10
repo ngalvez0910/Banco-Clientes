@@ -3,6 +3,7 @@ package org.example.rest.service;
 import io.vavr.control.Either;
 
 import org.example.clientes.model.Usuario;
+
 import org.example.clientes.errors.UserApiError;
 import org.example.exceptions.UserNoUsersFoundException;
 import org.example.rest.repository.UserRemoteRepository;
@@ -49,7 +50,7 @@ public class UserService {
     public Either<UserApiError, Usuario> createUserAsync (Usuario user){
         logger.debug("UserService: Guardando el usuario con id " + user.getId());
         CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(
-                ()-> userRepository.createUser(user));
+                ()-> userRepository.createUserSync(user));
         try{
             return Either.right(completableFuture.get(10000,MILLISECONDS));
         } catch (Exception e) {
@@ -57,4 +58,25 @@ public class UserService {
         }
     }
 
+    public Either<UserError, Usuario> updateUserAsync (int id, Usuario user){
+        logger.debug("UserService: Actualizando el usuario con id " + id);
+        CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(() ->
+                userRepository.updateUserSync(id, user));
+        try{
+            return Either.right(completableFuture.get(10000, MILLISECONDS));
+        } catch (Exception e) {
+            return Either.left(new UserNotUpdatedError(id));
+        }
+    }
+
+    public Either<UserError, Usuario> deleteUserAsync(int id){
+        logger.debug("UserService: Eliminando el usuario con id " + id);
+        CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(
+                ()-> userRepository.deleteUserSync(id));
+        try{
+            return Either.right(completableFuture.get(10000, MILLISECONDS));
+        } catch (Exception e) {
+            return Either.left(new UserNotDeletedError(id));
+        }
+    }
 }
