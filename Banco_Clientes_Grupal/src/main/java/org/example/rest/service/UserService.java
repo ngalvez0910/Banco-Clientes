@@ -3,8 +3,7 @@ package org.example.rest.service;
 import io.vavr.control.Either;
 
 import org.example.clientes.model.Usuario;
-
-import org.example.clientes.errors.UserApiError;
+import org.example.rest.errors.UserApiError;
 import org.example.exceptions.UserNoUsersFoundException;
 import org.example.rest.repository.UserRemoteRepository;
 import org.slf4j.Logger;
@@ -15,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class UserService {
+public abstract class UserService {
 
     private final UserRemoteRepository userRepository;
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
