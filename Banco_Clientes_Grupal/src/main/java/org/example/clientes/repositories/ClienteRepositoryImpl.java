@@ -267,4 +267,41 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
         return false;
     }
+
+    @Override
+    public boolean deleteAll() {
+        logger.info("Borrando todos los usuarios...");
+
+        String usuarioQuery = "DELETE FROM Usuario";
+        String tarjetaQuery = "DELETE FROM Tarjeta";
+
+        try (Connection connection = dataBaseManager.connect()) {
+
+            connection.prepareStatement("BEGIN TRANSACTION").execute();
+
+            try (PreparedStatement statementTarjeta = connection.prepareStatement(tarjetaQuery)) {
+                statementTarjeta.executeUpdate();
+            }
+
+            try (PreparedStatement statementUsuario = connection.prepareStatement(usuarioQuery)) {
+                int rows = statementUsuario.executeUpdate();
+
+                if (rows > 0) {
+                    connection.prepareStatement("COMMIT").execute();
+                    return true;
+                } else {
+                    logger.warn("No se ha borrado ningún usuario");
+                    connection.prepareStatement("COMMIT").execute();
+                    return false;
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.error("Error al borrar todos los usuarios", e);
+        }
+
+        return false;
+    }
+
+
 }
