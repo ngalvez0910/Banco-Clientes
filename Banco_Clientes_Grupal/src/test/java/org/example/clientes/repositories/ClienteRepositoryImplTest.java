@@ -3,15 +3,17 @@ package org.example.clientes.repositories;
 import org.example.clientes.model.Cliente;
 import org.example.clientes.model.Tarjeta;
 import org.example.clientes.model.Usuario;
+import org.example.config.ConfigProperties;
 import org.example.database.LocalDataBaseManager;
+import org.example.rest.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,33 +22,32 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClienteRepositoryImplTest {
 
     private ClienteRepositoryImpl clienteRepository;
+    private UserService usuarioRepository;
+    private TarjetaRemoteRepositoryImpl tarjetaRepository;
 
     @BeforeAll
     static void setUpAll() throws SQLException {
         ConfigProperties properties = new ConfigProperties("application.properties");
-        dataBaseManager = LocalDataBaseManager.getInstance();
+        LocalDataBaseManager dataBaseManager = LocalDataBaseManager.getInstance();
         dataBaseManager.connect();
-        dataBaseManager.initializeDatabase();
-        clienteRepository =  ClienteRepositoryImpl.getInstance(LocalDataBaseManager.getInstance());
-
+        dataBaseManager.getInstance();
     }
+
     @BeforeEach
     void setUp() {
-        usuarioRepository.saveUser(Usuario.builder()
-                .id(1l)
-                .name("Test")
-                .username("TestUsername")
+        usuarioRepository.createUserAsync(Usuario.builder()
+                .id(1L)
+                .nombre("Test")
+                .userName("TestUsername")
                 .email("test@example.com")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build());
-        creditCardRepository.saveCreditCard(TarjetaCredito.builder()
-                .id(UUID.fromString("3a62d823-e068-4560-a464-9daa369e03d6"))
-                .numero("1234567890123456")
+        tarjetaRepository.create(Tarjeta.builder()
+                .id(1L)
                 .nombreTitular("Test")
-                .clientID(1L)
-                .fechaCaducidad("12/24")
-                .isDeleted(false)
+                .numeroTarjeta("1234567890123456")
+                .fechaCaducidad(LocalDate.of(2025, 12, 31))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build());
@@ -64,9 +65,13 @@ class ClienteRepositoryImplTest {
         assertNotNull(clientes);
         assertEquals(1, clientes.size());
 
-        Cliente cliente = clientes.get(0);
+        Cliente cliente = clientes.getFirst();
         assertEquals("Pedro pedro", cliente.getUsuario().getNombre());
-        assertEquals("1234567890123456", cliente.getTarjeta().getNumeroTarjeta());
+        assertNotNull(cliente.getTarjeta());
+        assertEquals(1, cliente.getTarjeta().size());
+
+        Tarjeta tarjeta = cliente.getTarjeta().getFirst();
+        assertEquals("1234567890123456", tarjeta.getNumeroTarjeta());
     }
 
     @Test
@@ -77,7 +82,11 @@ class ClienteRepositoryImplTest {
         Cliente cliente = clienteOpt.get();
         assertEquals(1L, cliente.getUsuario().getId());
         assertEquals("Pedro", cliente.getUsuario().getNombre());
-        assertEquals("1234567890123456", cliente.getTarjeta().getNumeroTarjeta());
+        assertNotNull(cliente.getTarjeta());
+        assertFalse(cliente.getTarjeta().isEmpty());
+
+        Tarjeta tarjeta = cliente.getTarjeta().getFirst();
+        assertEquals("1234567890123456", tarjeta.getNumeroTarjeta());
     }
 
     @Test
@@ -91,7 +100,7 @@ class ClienteRepositoryImplTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        Tarjeta tarjeta = Tarjeta.builder()
+        Tarjeta tarjeta1 = Tarjeta.builder()
                 .id(1L)
                 .numeroTarjeta("9876543210987654")
                 .nombreTitular("Pedro")
@@ -100,9 +109,20 @@ class ClienteRepositoryImplTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
+        Tarjeta tarjeta2 = Tarjeta.builder()
+                .id(2L)
+                .numeroTarjeta("1234567890123456")
+                .nombreTitular("Pedro")
+                .fechaCaducidad(LocalDate.of(2026, 12, 31))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        List<Tarjeta> tarjetas = Arrays.asList(tarjeta1, tarjeta2);
+
         Cliente cliente = Cliente.builder()
                 .usuario(usuario)
-                .tarjeta(tarjeta)
+                .tarjeta(tarjetas)
                 .build();
 
         Cliente createdCliente = clienteRepository.create(cliente);
@@ -110,12 +130,21 @@ class ClienteRepositoryImplTest {
         assertNotNull(createdCliente);
         assertNotNull(createdCliente.getUsuario().getId());
         assertEquals("Pedro", createdCliente.getUsuario().getNombre());
-        assertEquals("9876543210987654", createdCliente.getTarjeta().getNumeroTarjeta());
-
+        assertNotNull(createdCliente.getTarjeta());
+        assertEquals(2, createdCliente.getTarjeta().size());
 
         Optional<Cliente> retrievedCliente = clienteRepository.getById(createdCliente.getId());
         assertTrue(retrievedCliente.isPresent());
         assertEquals(createdCliente.getId(), retrievedCliente.get().getId());
+        assertEquals("Pedro", retrievedCliente.get().getUsuario().getNombre());
+        assertNotNull(retrievedCliente.get().getTarjeta());
+        assertEquals(2, retrievedCliente.get().getTarjeta().size());
+
+        Tarjeta retrievedTarjeta1 = retrievedCliente.get().getTarjeta().get(0);
+        Tarjeta retrievedTarjeta2 = retrievedCliente.get().getTarjeta().get(1);
+
+        assertEquals("9876543210987654", retrievedTarjeta1.getNumeroTarjeta());
+        assertEquals("1234567890123456", retrievedTarjeta2.getNumeroTarjeta());
     }
 
 
@@ -135,30 +164,47 @@ class ClienteRepositoryImplTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        Tarjeta updatedTarjeta = Tarjeta.builder()
+        Tarjeta updatedTarjeta1 = Tarjeta.builder()
                 .id(1234L)
                 .numeroTarjeta("6543210987654321")
                 .nombreTitular("Pedro")
                 .fechaCaducidad(LocalDate.of(2026, 12, 31))
-                .createdAt(clienteOriginal.get().getTarjeta().getCreatedAt())
+                .createdAt(clienteOriginal.get().getTarjeta().getFirst().getCreatedAt())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        Cliente updatedCliente = Cliente.builder()
-                .usuario(updatedUsuario)
-                .tarjeta(updatedTarjeta)
+        Tarjeta updatedTarjeta2 = Tarjeta.builder()
+                .id(5678L)
+                .numeroTarjeta("1234567890123456")
+                .nombreTitular("Pedro")
+                .fechaCaducidad(LocalDate.of(2027, 12, 31))
+                .createdAt(clienteOriginal.get().getTarjeta().getFirst().getCreatedAt())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
-        Cliente clienteResult = clienteRepository.update(1234L, updatedCliente);
+        List<Tarjeta> updatedTarjetas = Arrays.asList(updatedTarjeta1, updatedTarjeta2);
+
+        Cliente updatedCliente = Cliente.builder()
+                .usuario(updatedUsuario)
+                .tarjeta(updatedTarjetas)
+                .build();
+
+        Cliente clienteResult = clienteRepository.update(13145346L, updatedCliente);
         assertNotNull(clienteResult);
         assertEquals("Pedro", clienteResult.getUsuario().getNombre());
-        assertEquals("6543210987654321", clienteResult.getTarjeta().getNumeroTarjeta());
 
-
-        Optional<Cliente> retrievedCliente = clienteRepository.getById(1234L);
+        Optional<Cliente> retrievedCliente = clienteRepository.getById(13145346L);
         assertTrue(retrievedCliente.isPresent());
         assertEquals("Pedro", retrievedCliente.get().getUsuario().getNombre());
-        assertEquals("6543210987654321", retrievedCliente.get().getTarjeta().getNumeroTarjeta());
+
+        assertNotNull(retrievedCliente.get().getTarjeta());
+        assertEquals(2, retrievedCliente.get().getTarjeta().size());
+
+        Tarjeta retrievedTarjeta1 = retrievedCliente.get().getTarjeta().get(0);
+        Tarjeta retrievedTarjeta2 = retrievedCliente.get().getTarjeta().get(1);
+
+        assertEquals("6543210987654321", retrievedTarjeta1.getNumeroTarjeta());
+        assertEquals("1234567890123456", retrievedTarjeta2.getNumeroTarjeta());
     }
 
     @Test
