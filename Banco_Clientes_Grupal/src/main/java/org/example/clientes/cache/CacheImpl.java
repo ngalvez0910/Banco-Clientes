@@ -10,7 +10,7 @@ import java.util.Map;
 public class CacheImpl implements Cache<Long, Cliente> {
     private static final Logger logger = LoggerFactory.getLogger(CacheImpl.class);
     private final int cacheSize;
-    private final LinkedHashMap<Long, Cliente> cache;
+    private final Map<Long, Cliente> cache;
 
     public CacheImpl(int cacheSize) {
         this.cacheSize = cacheSize;
@@ -51,5 +51,10 @@ public class CacheImpl implements Cache<Long, Cliente> {
     @Override
     public int size() {
         return cache.size();
+    }
+
+    @Override
+    public boolean containsKey(Long key) {
+        return cache.containsKey(key);
     }
 }
