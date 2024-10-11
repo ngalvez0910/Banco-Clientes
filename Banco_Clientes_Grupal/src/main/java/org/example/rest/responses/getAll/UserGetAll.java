@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class UserGetAll {
 
     @JsonProperty("id")
-    private int id;
+    private long id;
 
     @JsonProperty("name")
     private String name;
@@ -39,7 +39,7 @@ public class UserGetAll {
     @JsonProperty("company")
     private String company;
 
-    public int getId() {  return id;  }
+    public long getId() {  return id;  }
 
     public String getName() {  return name;  }
 

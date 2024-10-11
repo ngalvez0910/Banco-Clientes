@@ -35,7 +35,7 @@ public class UserRemoteRepository {
         }
     }
 
-    public Usuario getByIdSync(int id) {
+    public Usuario getByIdSync(long id) {
         logger.debug("UserRemoteRepository: Recuperando el usuario con id " + id);
         var call = userApiRest.getByIdSync(id);
         try {
@@ -67,7 +67,7 @@ public class UserRemoteRepository {
         }
     }
 
-    public Usuario updateUserSync(int id, Usuario user) {
+    public Usuario updateUserSync(long id, Usuario user) {
         logger.debug("UserRemoteRepository: Actualizando al usuario con id " + id);
         var call = userApiRest.updateUserSync(id, UsuarioMapper.toRequest(user));
         try {
@@ -84,7 +84,7 @@ public class UserRemoteRepository {
             throw new UserNotFoundException("Usuario no encontrado al actualizar con id: " + id);
         }
     }
-    public Usuario deleteUserSync(int id){
+    public Usuario deleteUserSync(long id){
         logger.debug("UserRemoteRepository: Eliminando al usuario con id " + id);
         var call = userApiRest.deleteUserSync(id);
         try {
