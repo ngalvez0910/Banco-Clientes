@@ -1,7 +1,6 @@
 package org.example.clientes.services;
 
 import io.vavr.control.Either;
-import org.example.clientes.cache.CacheClienteImpl;
 import org.example.clientes.errors.ClienteError;
 import org.example.clientes.model.Cliente;
 import org.example.clientes.model.Tarjeta;

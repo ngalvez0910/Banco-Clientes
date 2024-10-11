@@ -1,42 +1,43 @@
 package org.example.clientes.cache;
 
+import org.example.clientes.model.Cliente;
 import org.example.common.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CacheImpl<K, V> implements Cache<K, V> {
+public class CacheImpl implements Cache<Long, Cliente> {
     private static final Logger logger = LoggerFactory.getLogger(CacheImpl.class);
     private final int cacheSize;
-    private final LinkedHashMap<K, V> cache;
+    private final LinkedHashMap<Long, Cliente> cache;
 
     public CacheImpl(int cacheSize) {
         this.cacheSize = cacheSize;
         this.cache = new LinkedHashMap<>(cacheSize, 0.75f, true) {
             @Override
-            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+            protected boolean removeEldestEntry(Map.Entry<Long, Cliente> eldest) {
                 return size() > CacheImpl.this.cacheSize;
             }
         };
     }
 
     @Override
-    public V get(K key) {
-        logger.error("Obteniendo el valor de la clave: {}", key);
-        return cache.get(key);
+    public Cliente get(Long key) {
+        if (cache.containsKey(key)) {
+            return cache.get(key);
+        }
+        return null;
     }
 
     @Override
-    public void put(K key, V value) {
+    public void put(Long key, Cliente value) {
         logger.debug("Añadiendo a cache el valor de la clave: {}", key);
         cache.put(key, value);
     }
 
     @Override
-    public void remove(K key) {
+    public void remove(Long key) {
         logger.debug("Eliminando de cache el valor de la clave: {}", key);
         cache.remove(key);
     }
@@ -49,31 +50,6 @@ public class CacheImpl<K, V> implements Cache<K, V> {
 
     @Override
     public int size() {
-        logger.debug("Obteniendo el tamaño de la cache");
         return cache.size();
-    }
-
-    @Override
-    public Collection<V> values() {
-        logger.debug("Obteniendo los valores de la cache");
-        return cache.values();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        logger.debug("Comprobando si la cache está vacía");
-        return cache.isEmpty();
-    }
-
-    @Override
-    public boolean isNotEmpty() {
-        logger.debug("Comprobando si la cache no está vacía");
-        return !isEmpty();
-    }
-
-    @Override
-    public boolean containsKey(K key) {
-        logger.debug("Comprobando si existe la clave en la cache: {}", key);
-        return cache.containsKey(key);
     }
 }
