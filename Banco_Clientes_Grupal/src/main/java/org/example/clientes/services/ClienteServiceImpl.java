@@ -11,6 +11,8 @@ import org.example.clientes.repositories.TarjetaRemoteRepositoryImpl;
 import org.example.rest.repository.UserRemoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,5 +174,13 @@ public class ClienteServiceImpl implements ClienteService {
         } catch (Exception e) {
             return Either.left(new ClienteError.ClienteNotDeleted());
         }
+    }
+
+    public Flux<List<Cliente>> getAllAsFlux() {
+        return clienteRepository.getAllAsFlux();
+    }
+
+    public Flux<String> getNotificationAsFlux() {
+        return clienteRepository.getNotificationAsFlux();
     }
 }
