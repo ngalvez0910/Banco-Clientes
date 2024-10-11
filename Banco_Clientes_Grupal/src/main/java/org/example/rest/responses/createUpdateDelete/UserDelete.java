@@ -13,7 +13,7 @@ public class UserDelete {
 
     @JsonIgnore
     @JsonProperty("id")
-    private int id;
+    private long id;
 
     @JsonIgnore
     @JsonProperty("name")

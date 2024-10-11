@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public abstract class UserService {
+public class UserService {
 
     private final UserRemoteRepository userRepository;
     private final Logger logger = LoggerFactory.getLogger(UserService.class);

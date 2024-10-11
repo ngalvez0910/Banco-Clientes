@@ -9,7 +9,7 @@ import java.util.List;
 public interface ClienteService {
     Either<ClienteError, List<Cliente>> getAll();
 
-    Either<ClienteError, Cliente> getById(int id);
+    Either<ClienteError, Cliente> getById(long id);
 
     Either<ClienteError, Cliente> create(Cliente cliente);
 

@@ -19,14 +19,14 @@ public interface UserApiRest {
     Call<List<UserGetAll>> getAllSync();
 
     @GET("users/{id}")
-    Call<UserGetById> getByIdSync(@Path("id") int id);
+    Call<UserGetById> getByIdSync(@Path("id") long id);
 
     @POST("users")
     Call<UserCreate> createUserSync(@Body Request user);
 
     @PUT("users/{id}")
-    Call<UserCreate> updateUserSync(@Path("id") int id, @Body Request user);
+    Call<UserCreate> updateUserSync(@Path("id") long id, @Body Request user);
 
     @DELETE ("users/{id}")
-    Call<UserDelete> deleteUserSync(@Path("id") int id);
+    Call<UserDelete> deleteUserSync(@Path("id") long id);
 }
