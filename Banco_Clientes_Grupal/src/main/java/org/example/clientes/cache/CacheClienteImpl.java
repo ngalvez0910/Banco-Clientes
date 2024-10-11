@@ -7,17 +7,17 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CacheImpl implements Cache<Long, Cliente> {
-    private static final Logger logger = LoggerFactory.getLogger(CacheImpl.class);
+public class CacheClienteImpl implements Cache<Long, Cliente> {
+    private static final Logger logger = LoggerFactory.getLogger(CacheClienteImpl.class);
     private final int cacheSize;
     private final Map<Long, Cliente> cache;
 
-    public CacheImpl(int cacheSize) {
-        this.cacheSize = cacheSize;
+    public CacheClienteImpl() {
+        this.cacheSize = 5;
         this.cache = new LinkedHashMap<>(cacheSize, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<Long, Cliente> eldest) {
-                return size() > CacheImpl.this.cacheSize;
+                return size() > CacheClienteImpl.this.cacheSize;
             }
         };
     }

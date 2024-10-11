@@ -35,7 +35,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Usuario usuario = Usuario.builder()
+                Usuario.builder()
                         .id(resultSet.getLong("usuarioId"))
                         .nombre(resultSet.getString("nombre"))
                         .userName(resultSet.getString("userName"))
@@ -44,9 +44,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                         .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class))
                         .build();
 
-                Tarjeta tarjeta = null;
                 if (resultSet.getString("tarjetaId") != null) {
-                    tarjeta = Tarjeta.builder()
+                    Tarjeta.builder()
                             .id(resultSet.getLong("tarjetaId"))
                             .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                             .nombreTitular(resultSet.getString("nombreTitular"))
@@ -85,7 +84,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    Usuario usuario = Usuario.builder()
+                    Usuario.builder()
                             .id(resultSet.getLong("usuarioId"))
                             .nombre(resultSet.getString("nombre"))
                             .userName(resultSet.getString("userName"))
@@ -94,9 +93,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                             .updatedAt(resultSet.getObject("usuarioUpdatedAt", LocalDateTime.class))
                             .build();
 
-                    Tarjeta tarjeta = null;
                     if (resultSet.getString("tarjetaId") != null) {
-                        tarjeta = Tarjeta.builder()
+                        Tarjeta.builder()
                                 .id(Long.valueOf(resultSet.getString("tarjetaId")))
                                 .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                                 .nombreTitular(resultSet.getString("nombreTitular"))
@@ -306,6 +304,4 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
         return false;
     }
-
-
 }
