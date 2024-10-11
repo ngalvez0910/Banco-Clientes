@@ -10,8 +10,8 @@ import java.util.List;
 @Builder
 public class Cliente {
     private Long id;
-    private List<Tarjeta> tarjeta;
     private Usuario usuario;
+    private List<Tarjeta> tarjeta;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
