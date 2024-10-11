@@ -9,7 +9,7 @@ import java.nio.file.Files;
 
 class StorageJsonClienteImplTest {
 
-    private StorageJsonClienteImpl storageJsonCliente;
+   /* private StorageJsonClienteImpl storageJsonCliente;
     private File testFile;
     @BeforeEach
     public void setUp() throws IOException {
@@ -19,5 +19,5 @@ class StorageJsonClienteImplTest {
     @Test
     void importFileSuccessfully() throws IOException {
 
-    }
+    }*/
 }

@@ -1,6 +1,7 @@
 package org.example.clientes.services;
 
 import io.vavr.control.Either;
+import org.example.clientes.cache.CacheClienteImpl;
 import org.example.clientes.errors.ClienteError;
 import org.example.clientes.model.Cliente;
 import org.example.clientes.model.Tarjeta;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ClienteServiceImpl implements ClienteService {
     private final UserRemoteRepository userRepository;
@@ -34,10 +37,10 @@ public class ClienteServiceImpl implements ClienteService {
     public Either<ClienteError, List<Cliente>> getAll() {
         logger.info("Obteniendo clientes...");
         try {
-            List<Cliente> clientes = CompletableFuture.supplyAsync(clienteRepository::getAll).get();
+            List<Cliente> clientes = CompletableFuture.supplyAsync(clienteRepository::getAll).get(10000, MILLISECONDS);
             if (clientes.isEmpty()) {
-                List<Usuario> usuarios = CompletableFuture.supplyAsync(userRepository::getAllSync).get();
-                List<Tarjeta> tarjetas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get();
+                List<Usuario> usuarios = CompletableFuture.supplyAsync(userRepository::getAllSync).get(10000, MILLISECONDS);
+                List<Tarjeta> tarjetas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get(10000, MILLISECONDS);
 
                 for (Usuario usuario : usuarios) {
                     List<Tarjeta> tarjetasUser = new ArrayList<>();
@@ -46,7 +49,7 @@ public class ClienteServiceImpl implements ClienteService {
                             tarjetasUser.add(tarjeta);
                         }
                     }
-                    Cliente cliente = new Cliente(1L, usuario, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
+                    Cliente cliente = new Cliente(usuario.getId(), usuario, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
                     clientes.add(cliente);
 
                     CompletableFuture.runAsync(() -> clienteRepository.create(cliente));
@@ -66,33 +69,33 @@ public class ClienteServiceImpl implements ClienteService {
     public Either<ClienteError, Cliente> getById(long id) {
         logger.info("Obteniendo cliente por id: {}", id);
         try {
-            Cliente cliente = CompletableFuture.supplyAsync(() -> cacheCliente.get(id)).get();
+            Cliente cliente = CompletableFuture.supplyAsync(() -> cacheCliente.get(id)).get(10000, MILLISECONDS);
             if (cliente == null) {
-                Optional<Cliente> clienteRepo = CompletableFuture.supplyAsync(() -> clienteRepository.getById(id)).get();
+                Optional<Cliente> clienteRepo = CompletableFuture.supplyAsync(() -> clienteRepository.getById(id)).get(10000, MILLISECONDS);
 
                 if (clienteRepo.isEmpty()) {
-                    Usuario usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.getByIdSync(id)).get();
+                    Usuario usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.getByIdSync(id)).get(10000, MILLISECONDS);
 
                     if (usuarioRemoto == null) {
                         return Either.left(new ClienteError.ClienteNotFound());
                     } else {
-                        List<Tarjeta> tarjetasRemotas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get();
+                        List<Tarjeta> tarjetasRemotas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get(10000, MILLISECONDS);
                         List<Tarjeta> tarjetasUser = new ArrayList<>();
                         for (Tarjeta tarjeta : tarjetasRemotas) {
                             if (tarjeta.getNombreTitular().equals(usuarioRemoto.getNombre())) {
                                 tarjetasUser.add(tarjeta);
                             }
                         }
-                        cliente = new Cliente(id, usuarioRemoto, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
+                        cliente = new Cliente(usuarioRemoto.getId(), usuarioRemoto, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
                         Cliente finalCliente = cliente;
-                        CompletableFuture.runAsync(() -> cacheCliente.put(id, finalCliente));
+                        CompletableFuture.runAsync(() -> cacheCliente.put(finalCliente.getId(), finalCliente));
                         CompletableFuture.runAsync(() -> clienteRepository.create(finalCliente));
                         return Either.right(cliente);
                     }
                 } else {
                     cliente = clienteRepo.get();
                     Cliente finalClient = cliente;
-                    CompletableFuture.runAsync(() -> cacheCliente.put(id, finalClient));
+                    CompletableFuture.runAsync(() -> cacheCliente.put(finalClient.getId(), finalClient));
                     return Either.right(cliente);
                 }
             }
@@ -108,7 +111,7 @@ public class ClienteServiceImpl implements ClienteService {
         Usuario usuario = cliente.getUsuario();
         List<Tarjeta> tarjetas = cliente.getTarjeta();
         try {
-            Usuario usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.createUserSync(usuario)).get();
+            Usuario usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.createUserSync(usuario)).get(10000, MILLISECONDS);
             for (Tarjeta tarjeta : tarjetas) {
                 CompletableFuture.runAsync(() -> tarjetaRepository.create(tarjeta));
             }
@@ -123,15 +126,15 @@ public class ClienteServiceImpl implements ClienteService {
     public Either<ClienteError, Cliente> update(long id, Cliente cliente) {
         logger.info("Actualizando cliente con id: {}", id);
         try {
-            CompletableFuture.runAsync(() -> userRepository.getByIdSync(cliente.getUsuario().getId()));
+            CompletableFuture.runAsync(() -> userRepository.getByIdSync(id)); //si no existe salta una excepción
             CompletableFuture.runAsync(() -> userRepository.updateUserSync(id, cliente.getUsuario()));
             List<Tarjeta> tarjetas = new ArrayList<>();
             for (Tarjeta tarjeta : cliente.getTarjeta()) {
                 CompletableFuture<Tarjeta> tarjetaFuture = CompletableFuture.supplyAsync(() -> tarjetaRepository.update(tarjeta.getId(), tarjeta));
-                tarjetas.add(tarjetaFuture.get());
+                tarjetas.add(tarjetaFuture.get(10000, MILLISECONDS));
             }
 
-            Cliente clienteUpdated = CompletableFuture.supplyAsync(() -> clienteRepository.update(id, cliente)).get();
+            Cliente clienteUpdated = CompletableFuture.supplyAsync(() -> clienteRepository.update(id, cliente)).get(10000, MILLISECONDS);
             if (clienteUpdated == null) {
                 return Either.left(new ClienteError.ClienteNotUpdated());
             } else {
@@ -152,24 +155,20 @@ public class ClienteServiceImpl implements ClienteService {
     public Either<ClienteError, Cliente> delete(long id) {
         logger.info("Borrando cliente con id: {}", id);
         try {
-            Optional<Cliente> clienteLocal = CompletableFuture.supplyAsync(() -> clienteRepository.getById(id)).get();
+            CompletableFuture.runAsync(() -> userRepository.deleteUserSync(id)); //si falla salta excepción
+            Optional<Cliente> clienteLocal = CompletableFuture.supplyAsync(() -> clienteRepository.getById(id)).get(10000, MILLISECONDS);
             if (clienteLocal.isPresent()) {
-                CompletableFuture.runAsync(() -> userRepository.deleteUserSync(clienteLocal.get().getUsuario().getId()));
+                CompletableFuture.runAsync(() -> clienteRepository.delete(id));
                 for (Tarjeta tarjeta : clienteLocal.get().getTarjeta()) {
                     CompletableFuture.runAsync(() -> tarjetaRepository.delete(tarjeta.getId()));
                 }
-                CompletableFuture.runAsync(() -> clienteRepository.delete(id));
-
                 CompletableFuture.runAsync(() -> {
                     if (cacheCliente.get(id) != null) {
                         cacheCliente.remove(id);
                     }
                 });
-
-                return Either.right(clienteLocal.get());
-            } else {
-                return Either.left(new ClienteError.ClienteNotDeleted());
             }
+            return Either.right(clienteLocal.get());
         } catch (Exception e) {
             return Either.left(new ClienteError.ClienteNotDeleted());
         }

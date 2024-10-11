@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CacheImplTest {
+class CacheClienteImplTest {
 
     private Cliente Cliente1() {
         return Cliente.builder()
@@ -57,7 +57,7 @@ class CacheImplTest {
 
     @Test
     void get() {
-        CacheImpl cache = new CacheImpl(2);
+        CacheClienteImpl cache = new CacheClienteImpl();
         Cliente cliente1 = Cliente1();
 
         cache.put(cliente1.getId(), cliente1);
@@ -70,7 +70,7 @@ class CacheImplTest {
 
     @Test
     void getNotFound() {
-        CacheImpl cache = new CacheImpl(2);
+        CacheClienteImpl cache = new CacheClienteImpl();
         Long idNoExistente = 3L;
 
         assertAll( () -> {
@@ -80,7 +80,7 @@ class CacheImplTest {
 
     @Test
     void put() {
-        CacheImpl cache = new CacheImpl(2);
+        CacheClienteImpl cache = new CacheClienteImpl();
         Cliente cliente1 = Cliente1();
         Cliente cliente2 = Cliente2();
 
@@ -96,26 +96,35 @@ class CacheImplTest {
 
     @Test
     void putOverrider() {
-        CacheImpl cache = new CacheImpl(2);
+        CacheClienteImpl cache = new CacheClienteImpl();
         Cliente cliente1 = Cliente1();
         Cliente cliente2 = Cliente2();
         Cliente cliente3 = Cliente.builder().id(3L).build();
+        Cliente cliente4 = Cliente.builder().id(4L).build();
+        Cliente cliente5 = Cliente.builder().id(5L).build();
+        Cliente cliente6 = Cliente.builder().id(6L).build();
 
         cache.put(cliente1.getId(), cliente1);
         cache.put(cliente2.getId(), cliente2);
         cache.put(cliente3.getId(), cliente3);
+        cache.put(cliente4.getId(), cliente4);
+        cache.put(cliente5.getId(), cliente5);
+        cache.put(cliente6.getId(), cliente6);
 
         assertAll( () -> {
-            assertEquals(2, cache.size(), "La caché debería contener dos clientes");
+            assertEquals(5, cache.size(), "La caché debería contener cinco clientes");
             assertFalse(cache.containsKey(cliente1.getId()), "La caché no debería contener cliente1");
-            assertTrue(cache.containsKey(cliente3.getId()), "La caché debería contener cliente3");
             assertTrue(cache.containsKey(cliente2.getId()), "La caché debería contener cliente2");
+            assertTrue(cache.containsKey(cliente3.getId()), "La caché debería contener cliente3");
+            assertTrue(cache.containsKey(cliente4.getId()), "La caché debería contener cliente4");
+            assertTrue(cache.containsKey(cliente5.getId()), "La caché debería contener cliente5");
+            assertTrue(cache.containsKey(cliente6.getId()), "La caché debería contener cliente6");
         });
     }
 
     @Test
     void remove() {
-        CacheImpl cache = new CacheImpl(3);
+        CacheClienteImpl cache = new CacheClienteImpl();
         Cliente cliente1 = Cliente1();
         Cliente cliente2 = Cliente2();
 
@@ -132,7 +141,7 @@ class CacheImplTest {
 
     @Test
     void clear() {
-        CacheImpl cache = new CacheImpl(2);
+        CacheClienteImpl cache = new CacheClienteImpl();
         Cliente cliente1 = Cliente1();
         Cliente cliente2 = Cliente2();
 
@@ -156,7 +165,7 @@ class CacheImplTest {
 
     @Test
     void size() {
-        CacheImpl cache = new CacheImpl(3);
+        CacheClienteImpl cache = new CacheClienteImpl();
         Cliente cliente1 = Cliente1();
         Cliente cliente2 = Cliente2();
         Cliente cliente3 = Cliente.builder().id(3L).build();
