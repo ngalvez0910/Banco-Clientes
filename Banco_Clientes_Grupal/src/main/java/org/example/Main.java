@@ -14,6 +14,26 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
+
+        /* TODO ESTO SE DEBERÁ USAR EN EL MAIN PERO AL LLAMAR AL REPOSITORIO EN REALIDAD DEBE LLAMAR AL SERVICIO, MODIFICAR CUANDO HAGAMOS EL MAIN
+
+        System.out.println("Systema de obtención de la lista en Tiempo Real");
+        repository.getAllAsFlux().subscribe(
+                lista -> {
+                    System.out.println("👉 Lista de Funkos actulizada: " + lista);
+                },
+                error -> System.err.println("Se ha producido un error: " + error),
+                () -> System.out.println("Completado")
+        );
+
+        System.out.println("Sistema de obtención de notificaciones en Tiempo Real");
+        repository.getNotificationAsFlux().subscribe(
+                notificacion -> System.out.println("🟢 Notificación: " + notificacion),
+                error -> System.err.println("Se ha producido un error: " + error),
+                () -> System.out.println("Completado")
+        );
+        */
+
         System.out.println("Hello world!");
         logger.debug("userApiRest: " + UserApiRest.API_USERS_URL);
 
