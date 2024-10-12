@@ -41,10 +41,16 @@ public class ClienteServiceImpl implements ClienteService {
         try {
             List<Cliente> clientes = CompletableFuture.supplyAsync(clienteRepository::getAll).get(10000, MILLISECONDS);
             if (clientes.isEmpty()) {
-                List<Usuario> usuarios = CompletableFuture.supplyAsync(userRepository::getAllSync).get(10000, MILLISECONDS);
+                //List<Usuario> usuarios = CompletableFuture.supplyAsync(userRepository::getAllSync).get(10000, MILLISECONDS);
+                // esta sería la nueva definición para optional
+                Optional<List<Usuario>> usuarios = CompletableFuture.supplyAsync(userRepository::getAllSync).get(10000, MILLISECONDS);
                 List<Tarjeta> tarjetas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get(10000, MILLISECONDS);
 
-                for (Usuario usuario : usuarios) {
+                //aquí comprobar si en el optional viene la lista con isPresent
+                // else return Either.right(clientes); como abajo
+
+//                for (Usuario usuario : usuarios) { // cambiar esta por la de abajo para recuperar la lista del Optional
+                for (Usuario usuario : usuarios.get()) {
                     List<Tarjeta> tarjetasUser = new ArrayList<>();
                     for (Tarjeta tarjeta : tarjetas) {
                         if (tarjeta.getNombreTitular().equals(usuario.getNombre())) {
