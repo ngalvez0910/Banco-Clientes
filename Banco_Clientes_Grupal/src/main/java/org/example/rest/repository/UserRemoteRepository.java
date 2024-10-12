@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserRemoteRepository {
 
@@ -18,7 +19,7 @@ public class UserRemoteRepository {
         this.userApiRest = userApiRest;
     }
 
-    public List<Usuario> getAllSync(){
+    public List<Usuario> getAllSyncSinOptional(){
         logger.debug("UserRemoteRepository: Devolviendo todos los usuarios de la API");
         var call = userApiRest.getAllSync();
         try {
@@ -32,6 +33,24 @@ public class UserRemoteRepository {
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
+        }
+    }
+
+    public Optional<List<Usuario>> getAllSync(){
+        logger.debug("UserRemoteRepository: Devolviendo todos los usuarios de la API");
+        var call = userApiRest.getAllSync();
+        try {
+            var response = call.execute();
+            if (!response.isSuccessful()) {
+                logger.error("Error: " + response.code());
+                return Optional.empty();
+            }
+            return Optional.of(response.body().stream()
+                    .map(UsuarioMapper::toUserFromCreate)
+                    .toList());
+        } catch (Exception e) {
+            logger.error("Error fetching users", e);
+            return Optional.empty();
         }
     }
 
