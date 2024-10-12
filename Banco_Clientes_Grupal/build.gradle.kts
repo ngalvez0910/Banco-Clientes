@@ -49,6 +49,9 @@ dependencies {
     // RXJava
     implementation("io.reactivex.rxjava3:rxjava:3.1.9")
 
+    // Reactor Core
+    implementation("io.projectreactor:reactor-core:3.5.7")
+
     // Testcontainers
     testImplementation("org.testcontainers:testcontainers:1.20.2")
     testImplementation("org.testcontainers:junit-jupiter:1.20.2")

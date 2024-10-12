@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -21,7 +22,7 @@ public class UserService {
 
     public UserService(UserRemoteRepository userRepository) { this.userRepository = userRepository; }
 
-    public Either<UserApiError, List<Usuario>> getAllAsync() {
+/*    public Either<UserApiError, List<Usuario>> getAllAsync() {
         logger.debug("UserService: Recuperando todos los usuarios");
         CompletableFuture<List<Usuario>> completableFuture = CompletableFuture.supplyAsync(()->
                 userRepository.getAllSync());
@@ -32,8 +33,22 @@ public class UserService {
         } catch (Exception e) {
             return Either.left(new UserApiError("Error obteniendo la lista de usuarios", 500));
         }
-    }
+    }*/
 
+    public Either<UserApiError, List<Usuario>> getAllAsync() {
+        logger.debug("UserService: Recuperando todos los usuarios");
+        CompletableFuture<Optional<List<Usuario>>> completableFuture = CompletableFuture.supplyAsync(userRepository::getAllSync);
+        try {
+            Optional<List<Usuario>> usuariosOptional = completableFuture.get(10000, MILLISECONDS);
+            if (usuariosOptional.isPresent()) {
+                return Either.right(usuariosOptional.get());
+            } else {
+                return Either.left(new UserApiError.UserApiNoUsersFound());
+            }
+        } catch (Exception e) {
+            return Either.left(new UserApiError("Error obteniendo la lista de usuarios", 500));
+        }
+    }
 
     public Either<UserApiError, Usuario> getByIdAsync(int id) {
         logger.debug("UserService: Recuperando el usuario con id " + id);
