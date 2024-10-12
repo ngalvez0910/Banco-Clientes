@@ -45,16 +45,41 @@ public class UserRemoteRepository {
                 logger.error("Error: " + response.code());
                 return Optional.empty();
             }
-            return Optional.of(response.body().stream()
-                    .map(UsuarioMapper::toUserFromCreate)
-                    .toList());
+            var body = response.body();
+            if (body != null) {
+                return Optional.of(body.stream()
+                        .map(UsuarioMapper::toUserFromCreate)
+                        .toList());
+            } else {
+                logger.error("Response body es null");
+                return Optional.empty();
+            }
         } catch (Exception e) {
-            logger.error("Error fetching users", e);
+            logger.error("Error recuperando todos los usuarios de la API", e);
             return Optional.empty();
         }
     }
 
-    public Usuario getByIdSync(long id) {
+    public Optional<Usuario> getByIdSync(long id) {
+        logger.debug("UserRemoteRepository: Recuperando el usuario con id " + id);
+        var call = userApiRest.getByIdSync(id);
+        try {
+            var response = call.execute();
+            if (!response.isSuccessful()) {
+                if (response.code() == 404) {
+                    return Optional.empty();
+                } else {
+                    throw new Exception("Error: " + response.code());
+                }
+            }
+            return Optional.of(UsuarioMapper.toUserFromCreate(response.body()));
+        } catch (Exception e) {
+            logger.error("Error fetching user with id: " + id, e);
+            return Optional.empty();
+        }
+    }
+
+    public Usuario getByIdSyncSinOptional(long id) {
         logger.debug("UserRemoteRepository: Recuperando el usuario con id " + id);
         var call = userApiRest.getByIdSync(id);
         try {

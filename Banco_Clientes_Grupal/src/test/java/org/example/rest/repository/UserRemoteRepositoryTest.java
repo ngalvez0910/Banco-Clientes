@@ -1,8 +1,11 @@
 package org.example.rest.repository;
 
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import org.example.clientes.model.Usuario;
 import org.example.rest.UserApiRest;
 import org.example.rest.responses.getAll.UserGetAll;
+import org.example.rest.responses.getById.UserGetById;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,6 +42,7 @@ class UserRemoteRepositoryTest {
         var response = Response.success(list);
         var call = mock(Call.class);
         when(call.execute()).thenReturn(response);
+
         when(userApiRest.getAllSync()).thenReturn(call);
 
         Optional<List<Usuario>> result = userRemoteRepository.getAllSync();
@@ -65,6 +69,97 @@ class UserRemoteRepositoryTest {
         );
 
         verify(userApiRest, times(1)).getAllSync();
+        verify(call, times(1)).execute();
+    }
+
+    @Test
+    void getAllEmptyList() throws IOException {
+        var response = Response.success(List.of());
+        var call = mock(Call.class);
+        when(call.execute()).thenReturn(response);
+        when(userApiRest.getAllSync()).thenReturn(call);
+
+        Optional<List<Usuario>> result = userRemoteRepository.getAllSync();
+
+        assertTrue(result.isPresent());
+        assertTrue(result.get().isEmpty());
+
+        verify(userApiRest, times(1)).getAllSync();
+        verify(call, times(1)).execute();
+
+    }
+
+    @Test
+    void getAllSyncServerInternalError() throws IOException {
+        var call = mock(Call.class);
+        when(call.execute()).thenThrow(new IOException("Server internal error"));
+        when(userApiRest.getAllSync()).thenReturn(call);
+
+        Optional<List<Usuario>> result = userRemoteRepository.getAllSync();
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).getAllSync();
+        verify(call, times(1)).execute();
+
+    }
+
+    @Test
+    void getByIdSync() throws IOException {
+        // Arrange
+        var id = 1;
+        var user = UserGetById.builder().id(id).name("Test 01").username("test01user").email("test01user@mail.com").build();
+        var response = Response.success(user);
+        var call = mock(Call.class);
+        when(call.execute()).thenReturn(response);
+        when(userApiRest.getByIdSync(id)).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.getByIdSync(id);
+
+        assertTrue(result.isPresent());
+        Usuario expectedResult = Usuario.builder()
+               .id((long) user.getId())
+               .nombre(user.getName())
+               .userName(user.getUsername())
+               .email(user.getEmail())
+               .build();
+
+        assertEquals(expectedResult, result.get());
+
+        verify(userApiRest, times(1)).getByIdSync(1L);
+        verify(call, times(1)).execute();
+    }
+
+    @Test
+    void getByIdNotFound() throws IOException {
+        // Arrange
+        var id = 1;
+        var response = Response.error(404, ResponseBody.create(null, String.valueOf(MediaType.get("application/json"))));
+        var call = mock(Call.class);
+        when(call.execute()).thenReturn(response);
+        when(userApiRest.getByIdSync(id)).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.getByIdSync(id);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).getByIdSync(1L);
+        verify(call, times(1)).execute();
+    }
+
+    @Test
+    void getByIdSyncServerInternalError() throws IOException {
+        // Arrange
+        var id = 1;
+        var call = mock(Call.class);
+        when(call.execute()).thenThrow(new IOException("Server internal error"));
+        when(userApiRest.getByIdSync(id)).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.getByIdSync(id);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).getByIdSync(1L);
         verify(call, times(1)).execute();
     }
 }

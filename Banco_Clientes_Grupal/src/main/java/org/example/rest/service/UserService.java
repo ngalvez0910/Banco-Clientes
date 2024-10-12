@@ -52,10 +52,15 @@ public class UserService {
 
     public Either<UserApiError, Usuario> getByIdAsync(int id) {
         logger.debug("UserService: Recuperando el usuario con id " + id);
-        CompletableFuture<Usuario> completableFuture = CompletableFuture.supplyAsync(() ->
+        CompletableFuture<Optional<Usuario>> completableFuture = CompletableFuture.supplyAsync(() ->
                 userRepository.getByIdSync(id));
         try {
-            return Either.right(completableFuture.get(10000, MILLISECONDS));
+            Optional<Usuario> usuarioOptional = completableFuture.get(10000, MILLISECONDS);
+            if (usuarioOptional.isPresent()) {
+                return Either.right(usuarioOptional.get());
+            } else {
+                return Either.left(new UserApiError.UserNotFoundApiError(id));
+            }
         } catch (Exception e) {
             return Either.left(new UserApiError.UserNotFoundApiError(id));
         }
