@@ -84,7 +84,7 @@ class StorageJsonImplTest {
 
         List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
 
-        when(objectMapper.readValue(file, new TypeReference<List<Cliente>>() {})).thenReturn(clientes);
+        when(objectMapper.readValue(eq(file), any(TypeReference.class))).thenReturn(clientes);
 
         Observable<Cliente> result = storageJson.importFile(file);
 
@@ -92,7 +92,6 @@ class StorageJsonImplTest {
         assertEquals(2, result.toList().blockingGet().size());
         verify(logger).info("Iniciando la importación de clientes desde el archivo: {}", file.getName());
     }
-
     @Test
     void testImportFile_Error() throws IOException {
         File file = new File("clientes.json");
@@ -101,7 +100,7 @@ class StorageJsonImplTest {
         Observable<Cliente> result = storageJson.importFile(file);
 
         result.test().assertError(IOException.class);
-        verify(logger).error("Error al importar clientes desde el archivo: {}", file.getName(), any(IOException.class));
+        verify(logger).error(eq("Error al importar clientes desde el archivo: {}"), eq(file.getName()), any(IOException.class));
     }
 
     @Test
@@ -178,6 +177,6 @@ class StorageJsonImplTest {
 
         storageJson.exportFile(file, Observable.fromIterable(clientes));
 
-        verify(logger).error("Error al exportar clientes al archivo: {}", file.getName(), any(IOException.class));
+        verify(logger).error(eq("Error al exportar clientes al archivo: {}"), eq(file.getName()), any(IOException.class));
     }
 }
