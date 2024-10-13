@@ -20,23 +20,6 @@ public class UserRemoteRepository {
         this.userApiRest = userApiRest;
     }
 
-    public List<Usuario> getAllSyncSinOptional(){
-        logger.debug("UserRemoteRepository: Devolviendo todos los usuarios de la API");
-        var call = userApiRest.getAllSync();
-        try {
-            var response = call.execute();
-            if (!response.isSuccessful()) {
-                throw new Exception("Error: " + response.code());
-            }
-            return response.body().stream()
-                    .map(UsuarioMapper::toUserFromCreate)
-                    .toList();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
-        }
-    }
-
     public Optional<List<Usuario>> getAllSync(){
         logger.debug("UserRemoteRepository: Devolviendo todos los usuarios de la API");
         var call = userApiRest.getAllSync();
@@ -81,23 +64,6 @@ public class UserRemoteRepository {
         }
     }
 
-    public Usuario getByIdSyncSinOptional(long id) {
-        logger.debug("UserRemoteRepository: Recuperando el usuario con id " + id);
-        var call = userApiRest.getByIdSync(id);
-        try {
-            var response = call.execute();
-            if (!response.isSuccessful()) {
-                if (response.code() == 404) {
-                    throw new UserNotFoundException("User not found with id: " + id);
-                } else {
-                    throw new Exception("Error: " + response.code());
-                }
-            }
-            return UsuarioMapper.toUserFromCreate(response.body());
-        } catch (Exception e) {
-            throw new UserNotFoundException("User not found with id: " + id);
-        }
-    }
     public Optional<Usuario> createUserSync(Usuario user) {
         logger.debug("UserRemoteRepository: Creando un nuevo usuario con username: " + user.getUserName());
         var call = userApiRest.createUserSync(UsuarioMapper.toRequest(user));
@@ -117,40 +83,6 @@ public class UserRemoteRepository {
         } catch (Exception e) {
             logger.debug("UserRemoteRepository: Error creando usuario" + user + e.getMessage());
             return Optional.empty();
-        }
-
-    }
-    public Usuario createUserSyncSinOptional(Usuario user) {
-        logger.debug("UserRemoteRepository: Creando un nuevo usuario con username: " + user.getUserName());
-        var call = userApiRest.createUserSync(UsuarioMapper.toRequest(user));
-        try {
-            var response = call.execute();
-            if (!response.isSuccessful()) {
-                throw new Exception("Error: " + response.code());
-            }
-            var timeStamp = LocalDateTime.now();
-            return UsuarioMapper.toUserFromCreate(response.body(),timeStamp,timeStamp);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Usuario updateUserSyncSinOptional(long id, Usuario user) {
-        logger.debug("UserRemoteRepository: Actualizando al usuario con id " + id);
-        var call = userApiRest.updateUserSync(id, UsuarioMapper.toRequest(user));
-        try {
-            var response = call.execute();
-            if (!response.isSuccessful()) {
-                if (response.code() == 404) {
-                    throw new UserNotFoundException("Usuario no encontrado al actualizar con id: " + id);
-                } else {
-                    throw new Exception("Error: " + response.code());
-                }
-            }
-            return UsuarioMapper.toUserFromCreate(response.body());
-        } catch (Exception e) {
-            throw new UserNotFoundException("Usuario no encontrado al actualizar con id: " + id);
         }
     }
 
@@ -196,25 +128,4 @@ public class UserRemoteRepository {
             return Optional.empty();
         }
     }
-
-    public Usuario deleteUserSyncSinOptional(long id){
-        logger.debug("UserRemoteRepository: Eliminando al usuario con id " + id);
-        var call = userApiRest.deleteUserSync(id);
-        try {
-            var response = call.execute();
-            if (!response.isSuccessful()) {
-                if (response.code() == 404) {
-                    throw new UserNotFoundException("Usuario no encontrado al eliminar con id: " + id);
-                } else {
-                    throw new Exception("Error: " + response.code());
-                }
-            }
-            return UsuarioMapper.toUserFromDelete(response.body());
-        } catch (Exception e) {
-            throw new UserNotFoundException("Usuario no encontrado al eliminar con id: " + id);
-        }
-
-
-    }
-
 }
