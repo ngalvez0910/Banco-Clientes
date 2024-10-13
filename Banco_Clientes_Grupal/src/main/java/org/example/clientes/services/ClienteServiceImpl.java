@@ -123,11 +123,15 @@ public class ClienteServiceImpl implements ClienteService {
         Usuario usuario = cliente.getUsuario();
         List<Tarjeta> tarjetas = cliente.getTarjeta();
         try {
-            Usuario usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.createUserSync(usuario)).get(10000, MILLISECONDS);
+            //Usuario usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.createUserSync(usuario)).get(10000, MILLISECONDS);
+            // esta sería la nueva definición para optional
+            Optional<Usuario> usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.createUserSync(usuario)).get(10000, MILLISECONDS);
+
             for (Tarjeta tarjeta : tarjetas) {
                 CompletableFuture.runAsync(() -> tarjetaRepository.create(tarjeta));
             }
-            Cliente clienteRemoto = new Cliente(usuarioRemoto.getId(), usuarioRemoto, tarjetas, usuarioRemoto.getCreatedAt(), usuarioRemoto.getUpdatedAt());
+            //Cliente clienteRemoto = new Cliente(usuarioRemoto.getId(), usuarioRemoto, tarjetas, usuarioRemoto.getCreatedAt(), usuarioRemoto.getUpdatedAt());
+            Cliente clienteRemoto = new Cliente(usuarioRemoto.get().getId(), usuarioRemoto.get(), tarjetas, usuarioRemoto.get().getCreatedAt(), usuarioRemoto.get().getUpdatedAt());
             return Either.right(clienteRemoto);
         } catch (Exception e) {
             return Either.left(new ClienteError.ClienteNotCreated());

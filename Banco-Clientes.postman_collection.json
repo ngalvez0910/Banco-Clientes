@@ -1,0 +1,263 @@
+{
+	"info": {
+		"_postman_id": "9d8411e0-9cfe-4978-8cb6-d0db23d76ec1",
+		"name": ">Banco-Clientes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38663368",
+		"_collection_link": "https://www.postman.com/aerospace-physicist-85610387/workspace/my-workspace/collection/38663368-9d8411e0-9cfe-4978-8cb6-d0db23d76ec1?action=share&source=collection_link&creator=38663368"
+	},
+	"item": [
+		{
+			"name": "https://jsonplaceholder.typicode.com/users/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Prueba\",\r\n    \"username\": \"userPrueba\",\r\n    \"email\": \"userPrueba@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create normal, devuelve 201 Created ",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Prueba\",\r\n    \"username\": \"userPrueba\",\r\n    \"email\": \"userPrueba@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				},
+				"description": "Create normal, devuelve 201 Created "
+			},
+			"response": []
+		},
+		{
+			"name": "Create con body vacío, devuelve 201 Created",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				},
+				"description": "Create con body vacío, lo acepta y devuelve un usuario nuevo pero vacío"
+			},
+			"response": []
+		},
+		{
+			"name": "Create con body erróneo, devuelve 500 Int.Server Error",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "jefwkfjwljfklew",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				},
+				"description": "Create con body erróneo, devuelve 500 Internal Server Error"
+			},
+			"response": []
+		},
+		{
+			"name": "getAll Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				},
+				"description": "A tener en cuenta: los usuarios de la API no tienen createdAt ni updatedAt  \ncon lo cuál, no lo devuelven ni al buscarlos ni al crearlos ni actualizarlos"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ok, devuelve 200",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/1",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						"1"
+					]
+				},
+				"description": "Delete ok, devuelve 200"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete id no existente, ¡devuelve 200 OK!",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/1323232",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						"1323232"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete id formato erróneo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/1323232",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						"1323232"
+					]
+				},
+				"description": "Delete id formato erróneo"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete id formato erróneo ¡devuelve 200 OK!",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/\"wwewq\"",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						"\"wwewq\""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete sin id, devuelve 404 not found",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

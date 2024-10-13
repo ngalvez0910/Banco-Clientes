@@ -4,6 +4,7 @@ import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import org.example.clientes.model.Usuario;
 import org.example.rest.UserApiRest;
+import org.example.rest.responses.createUpdateDelete.UserCreate;
 import org.example.rest.responses.getAll.UserGetAll;
 import org.example.rest.responses.getById.UserGetById;
 import org.junit.jupiter.api.Test;
@@ -161,5 +162,37 @@ class UserRemoteRepositoryTest {
 
         verify(userApiRest, times(1)).getByIdSync(1L);
         verify(call, times(1)).execute();
+    }
+
+    @Test
+    void createUserSync() throws IOException {
+        // Arrange
+        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
+        var response = Response.success(UserCreate.builder().id(1).name("Test 01").username("test01user").email("test01user@mail.com").build());
+        var call = mock(Call.class);
+        when(call.execute()).thenReturn(response);
+        when(userApiRest.createUserSync(any(org.example.rest.responses.createUpdateDelete.Request.class))).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.createUserSync(user);
+
+        assertTrue(result.isPresent());
+        Usuario expectedResult = Usuario.builder()
+               .id((long) response.body().getId())
+               .nombre(response.body().getName())
+               .userName(response.body().getUsername())
+               .email(response.body().getEmail())
+               .build();
+        assertEquals(expectedResult, result.get());
+        verify(userApiRest, times(1)).createUserSync(any(org.example.rest.responses.createUpdateDelete.Request.class));
+        verify(call, times(1)).execute();
+
+    }
+
+    @Test
+    void updateUserSync() {
+    }
+
+    @Test
+    void deleteUserSync() {
     }
 }
