@@ -63,6 +63,26 @@ public class UsuarioMapper {
                 .build();
     }
 
+    public static Usuario toUserFromCreate(UserCreate userCreate, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        return Usuario.builder()
+                .id((long) userCreate.getId())
+                .nombre (userCreate.getName())
+                .userName(userCreate.getUsername())
+                .email(userCreate.getEmail())
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .build();
+    }
+    public static Usuario toUserFromCreate(UserCreate userCreate, LocalDateTime updatedAt) {
+        return Usuario.builder()
+                .id((long) userCreate.getId())
+                .nombre (userCreate.getName())
+                .userName(userCreate.getUsername())
+                .email(userCreate.getEmail())
+                .updatedAt(updatedAt)
+                .build();
+    }
+
     public static Usuario toUserFromCreate(UserGetById userGetById) {
         return Usuario.builder()
                 .id((long) userGetById.getId())
