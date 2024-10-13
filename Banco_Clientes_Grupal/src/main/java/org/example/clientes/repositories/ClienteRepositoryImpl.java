@@ -21,25 +21,9 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     private final Logger logger = LoggerFactory.getLogger(ClienteRepositoryImpl.class);
     private final LocalDataBaseManager dataBaseManager;
 
-    private final List<Cliente> clientesNotifications = new ArrayList<>();
-    private final Flux<List<Cliente>> clienteFlux;
-    private final Flux<String> clienteNotificationsFlux;
-    private FluxSink<List<Cliente>> clienteFluxSync;
-    private FluxSink<String> clienteNotification;
-
 
     public ClienteRepositoryImpl(LocalDataBaseManager dataBaseManager) {
         this.dataBaseManager = dataBaseManager;
-        clienteFlux = Flux.<List<Cliente>>create(emitter -> this.clienteFluxSync = emitter).share();
-        clienteNotificationsFlux = Flux.<String>create(emitter -> this.clienteNotification = emitter).share();
-    }
-
-    public Flux<List<Cliente>> getAllAsFlux() {
-        return clienteFlux;
-    }
-
-    public Flux<String> getNotificationAsFlux() {
-        return clienteNotificationsFlux;
     }
 
     public List<Cliente> getAll() {
@@ -199,10 +183,6 @@ public class ClienteRepositoryImpl implements ClienteRepository {
             cliente.setCreatedAt(timeStamp);
             cliente.setUpdatedAt(timeStamp);
 
-            clientesNotifications.add(cliente);
-            clienteFluxSync.next(clientesNotifications);
-            clienteNotification.next("Se ha añadido un nuevo Cliente: " + cliente);
-
             return cliente;
 
         } catch (SQLException e) {
@@ -280,14 +260,6 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 
                 if (rows > 0) {
                     connection.prepareStatement("COMMIT").execute();
-
-                    Optional<Cliente> clienteToRemove = clientesNotifications.stream().filter(client -> client.getId().equals(id)).findFirst();
-                    clienteToRemove.ifPresent(client -> {
-                        clientesNotifications.remove(client);
-                        clienteFluxSync.next(clientesNotifications);
-                        clienteNotification.next("Se ha eliminado un Cliente: " + client);
-                    });
-
                     return true;
                 } else {
                     logger.warn("No se ha borrado ningún cliente");

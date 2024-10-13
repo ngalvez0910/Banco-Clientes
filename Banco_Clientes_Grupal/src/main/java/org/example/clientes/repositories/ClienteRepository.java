@@ -15,10 +15,6 @@ public interface ClienteRepository {
 
     Cliente update(long id, Cliente cliente);
 
-    Flux<List<Cliente>> getAllAsFlux();
-
-    Flux<String> getNotificationAsFlux();
-
     boolean delete(long id);
 
     boolean deleteAll();
