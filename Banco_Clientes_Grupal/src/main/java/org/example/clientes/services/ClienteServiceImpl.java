@@ -4,6 +4,7 @@ import io.vavr.control.Either;
 import org.example.clientes.cache.CacheClienteImpl;
 import org.example.clientes.errors.ClienteError;
 import org.example.clientes.model.Cliente;
+import org.example.clientes.model.Notificacion;
 import org.example.clientes.model.Tarjeta;
 import org.example.clientes.model.Usuario;
 import org.example.clientes.repositories.ClienteRepository;
@@ -12,7 +13,6 @@ import org.example.rest.repository.UserRemoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +22,19 @@ import java.util.concurrent.CompletableFuture;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ClienteServiceImpl implements ClienteService {
+    private final ClienteNotificacion notification;
     private final UserRemoteRepository userRepository;
     private final TarjetaRemoteRepositoryImpl tarjetaRepository;
     private final ClienteRepository clienteRepository;
     private final CacheClienteImpl cacheCliente;
     private final Logger logger = LoggerFactory.getLogger(ClienteServiceImpl.class);
 
-    public ClienteServiceImpl(UserRemoteRepository userRepository, TarjetaRemoteRepositoryImpl tarjetaRemoteRepository, ClienteRepository clienteRepository, CacheClienteImpl cacheCliente) {
+    public ClienteServiceImpl(UserRemoteRepository userRepository, TarjetaRemoteRepositoryImpl tarjetaRemoteRepository, ClienteRepository clienteRepository, CacheClienteImpl cacheCliente, ClienteNotificacion notification) {
         this.userRepository = userRepository;
         this.tarjetaRepository = tarjetaRemoteRepository;
         this.clienteRepository = clienteRepository;
         this.cacheCliente = cacheCliente;
+        this.notification = notification;
     }
 
     @Override
@@ -41,33 +43,27 @@ public class ClienteServiceImpl implements ClienteService {
         try {
             List<Cliente> clientes = CompletableFuture.supplyAsync(clienteRepository::getAll).get(10000, MILLISECONDS);
             if (clientes.isEmpty()) {
-                //List<Usuario> usuarios = CompletableFuture.supplyAsync(userRepository::getAllSync).get(10000, MILLISECONDS);
-                // esta sería la nueva definición para optional
                 Optional<List<Usuario>> usuarios = CompletableFuture.supplyAsync(userRepository::getAllSync).get(10000, MILLISECONDS);
-                List<Tarjeta> tarjetas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get(10000, MILLISECONDS);
-
-                //aquí comprobar si en el optional viene la lista con isPresent
-                // else return Either.right(clientes); como abajo
-
-//                for (Usuario usuario : usuarios) { // cambiar esta por la de abajo para recuperar la lista del Optional
-                for (Usuario usuario : usuarios.get()) {
-                    List<Tarjeta> tarjetasUser = new ArrayList<>();
-                    for (Tarjeta tarjeta : tarjetas) {
-                        if (tarjeta.getNombreTitular().equals(usuario.getNombre())) {
-                            tarjetasUser.add(tarjeta);
+                if (usuarios.isPresent()) {
+                    List<Tarjeta> tarjetas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get(10000, MILLISECONDS);
+                    for (Usuario usuario : usuarios.get()) {
+                        List<Tarjeta> tarjetasUser = new ArrayList<>();
+                        for (Tarjeta tarjeta : tarjetas) {
+                            if (tarjeta.getNombreTitular().equals(usuario.getNombre())) {
+                                tarjetasUser.add(tarjeta);
+                            }
                         }
-                    }
-                    Cliente cliente = new Cliente(usuario.getId(), usuario, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
-                    clientes.add(cliente);
+                        Cliente cliente = new Cliente(usuario.getId(), usuario, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
+                        clientes.add(cliente);
 
-                    CompletableFuture.runAsync(() -> clienteRepository.create(cliente));
+                        CompletableFuture.runAsync(() -> clienteRepository.create(cliente));
+                        return Either.right(clientes);
+                    }
+                } else {
+                    return Either.left(new ClienteError.ClienteNotFound());
                 }
             }
-            if (clientes.isEmpty()) {
-                return Either.left(new ClienteError.ClienteNotFound());
-            } else {
-                return Either.right(clientes);
-            }
+            return Either.right(clientes);
         } catch (Exception e) {
             return Either.left(new ClienteError.ClienteNotFound());
         }
@@ -82,22 +78,18 @@ public class ClienteServiceImpl implements ClienteService {
                 Optional<Cliente> clienteRepo = CompletableFuture.supplyAsync(() -> clienteRepository.getById(id)).get(10000, MILLISECONDS);
 
                 if (clienteRepo.isEmpty()) {
-                    //Usuario usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.getByIdSync(id)).get(10000, MILLISECONDS);
-                    // esta sería la nueva definición para optional
                     Optional<Usuario> usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.getByIdSync(id)).get(10000, MILLISECONDS);
 
-                    if (usuarioRemoto == null) {
+                    if (usuarioRemoto.isEmpty()) {
                         return Either.left(new ClienteError.ClienteNotFound());
                     } else {
                         List<Tarjeta> tarjetasRemotas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get(10000, MILLISECONDS);
                         List<Tarjeta> tarjetasUser = new ArrayList<>();
                         for (Tarjeta tarjeta : tarjetasRemotas) {
-                            //if (tarjeta.getNombreTitular().equals(usuarioRemoto.getNombre())) {
                             if (tarjeta.getNombreTitular().equals(usuarioRemoto.get().getNombre())) {
                                 tarjetasUser.add(tarjeta);
                             }
                         }
-                        //cliente = new Cliente(usuarioRemoto.getId(), usuarioRemoto, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
                         cliente = new Cliente(usuarioRemoto.get().getId(), usuarioRemoto.get(), tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
                         Cliente finalCliente = cliente;
                         CompletableFuture.runAsync(() -> cacheCliente.put(finalCliente.getId(), finalCliente));
@@ -123,16 +115,18 @@ public class ClienteServiceImpl implements ClienteService {
         Usuario usuario = cliente.getUsuario();
         List<Tarjeta> tarjetas = cliente.getTarjeta();
         try {
-            //Usuario usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.createUserSync(usuario)).get(10000, MILLISECONDS);
-            // esta sería la nueva definición para optional
             Optional<Usuario> usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.createUserSync(usuario)).get(10000, MILLISECONDS);
-
-            for (Tarjeta tarjeta : tarjetas) {
-                CompletableFuture.runAsync(() -> tarjetaRepository.create(tarjeta));
+            if (usuarioRemoto.isPresent()) {
+                for (Tarjeta tarjeta : tarjetas) {
+                    CompletableFuture.runAsync(() -> tarjetaRepository.create(tarjeta));
+                }
+                Cliente client = new Cliente(usuarioRemoto.get().getId(), usuarioRemoto.get(), tarjetas, usuarioRemoto.get().getCreatedAt(), usuarioRemoto.get().getUpdatedAt());
+                clienteRepository.create(client);
+                notification.notify(new Notificacion<>(Notificacion.Tipo.NEW, client));
+                return Either.right(client);
+            } else {
+                return Either.left(new ClienteError.ClienteNotCreated());
             }
-            //Cliente clienteRemoto = new Cliente(usuarioRemoto.getId(), usuarioRemoto, tarjetas, usuarioRemoto.getCreatedAt(), usuarioRemoto.getUpdatedAt());
-            Cliente clienteRemoto = new Cliente(usuarioRemoto.get().getId(), usuarioRemoto.get(), tarjetas, usuarioRemoto.get().getCreatedAt(), usuarioRemoto.get().getUpdatedAt());
-            return Either.right(clienteRemoto);
         } catch (Exception e) {
             return Either.left(new ClienteError.ClienteNotCreated());
         }
@@ -142,25 +136,31 @@ public class ClienteServiceImpl implements ClienteService {
     public Either<ClienteError, Cliente> update(long id, Cliente cliente) {
         logger.info("Actualizando cliente con id: {}", id);
         try {
-            CompletableFuture.runAsync(() -> userRepository.getByIdSync(id)); //si no existe salta una excepción
-            CompletableFuture.runAsync(() -> userRepository.updateUserSync(id, cliente.getUsuario()));
-            List<Tarjeta> tarjetas = new ArrayList<>();
-            for (Tarjeta tarjeta : cliente.getTarjeta()) {
-                CompletableFuture<Tarjeta> tarjetaFuture = CompletableFuture.supplyAsync(() -> tarjetaRepository.update(tarjeta.getId(), tarjeta));
-                tarjetas.add(tarjetaFuture.get(10000, MILLISECONDS));
-            }
+            Optional<Usuario> usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.getByIdSync(id)).get(10000, MILLISECONDS); //si no existe salta una excepción
+            if (usuarioRemoto.isPresent()) {
+                CompletableFuture.runAsync(() -> userRepository.updateUserSync(id, cliente.getUsuario()));
 
-            Cliente clienteUpdated = CompletableFuture.supplyAsync(() -> clienteRepository.update(id, cliente)).get(10000, MILLISECONDS);
-            if (clienteUpdated == null) {
-                return Either.left(new ClienteError.ClienteNotUpdated());
+                List<Tarjeta> tarjetas = new ArrayList<>();
+                for (Tarjeta tarjeta : cliente.getTarjeta()) {
+                    CompletableFuture<Tarjeta> tarjetaFuture = CompletableFuture.supplyAsync(() -> tarjetaRepository.update(tarjeta.getId(), tarjeta));
+                    tarjetas.add(tarjetaFuture.get(10000, MILLISECONDS));
+                }
+
+                Cliente clienteUpdated = CompletableFuture.supplyAsync(() -> clienteRepository.update(id, cliente)).get(10000, MILLISECONDS);
+                if (clienteUpdated == null) {
+                    return Either.left(new ClienteError.ClienteNotUpdated());
+                } else {
+                    notification.notify(new Notificacion<>(Notificacion.Tipo.NEW, clienteUpdated));
+                    CompletableFuture.runAsync(() -> {
+                        if (cacheCliente.get(id) != null) {
+                            cacheCliente.remove(id);
+                        }
+                        cacheCliente.put(id, clienteUpdated);
+                    });
+                    return Either.right(clienteUpdated);
+                }
             } else {
-                CompletableFuture.runAsync(() -> {
-                    if (cacheCliente.get(id) != null) {
-                        cacheCliente.remove(id);
-                    }
-                    cacheCliente.put(id, cliente);
-                });
-                return Either.right(clienteUpdated);
+                return Either.left(new ClienteError.ClienteNotUpdated());
             }
         } catch (Exception e) {
             return Either.left(new ClienteError.ClienteNotUpdated());
@@ -171,30 +171,32 @@ public class ClienteServiceImpl implements ClienteService {
     public Either<ClienteError, Cliente> delete(long id) {
         logger.info("Borrando cliente con id: {}", id);
         try {
-            CompletableFuture.runAsync(() -> userRepository.deleteUserSync(id)); //si falla salta excepción
-            Optional<Cliente> clienteLocal = CompletableFuture.supplyAsync(() -> clienteRepository.getById(id)).get(10000, MILLISECONDS);
-            if (clienteLocal.isPresent()) {
-                CompletableFuture.runAsync(() -> clienteRepository.delete(id));
-                for (Tarjeta tarjeta : clienteLocal.get().getTarjeta()) {
-                    CompletableFuture.runAsync(() -> tarjetaRepository.delete(tarjeta.getId()));
-                }
-                CompletableFuture.runAsync(() -> {
-                    if (cacheCliente.get(id) != null) {
-                        cacheCliente.remove(id);
+            Optional<Usuario> usuarioRemoto = CompletableFuture.supplyAsync(() -> userRepository.getByIdSync(id)).get(10000, MILLISECONDS);
+            if (usuarioRemoto.isPresent()) {
+                CompletableFuture.runAsync(() -> userRepository.deleteUserSync(id));
+                Optional<Cliente> clienteLocal = CompletableFuture.supplyAsync(() -> clienteRepository.getById(id)).get(10000, MILLISECONDS);
+                if (clienteLocal.isPresent()) {
+                    for (Tarjeta tarjeta : clienteLocal.get().getTarjeta()) {
+                        CompletableFuture.runAsync(() -> tarjetaRepository.delete(tarjeta.getId()));
                     }
-                });
+                    CompletableFuture.runAsync(() -> clienteRepository.delete(id));
+                    notification.notify(new Notificacion<>(Notificacion.Tipo.DELETED, clienteLocal.get()));
+                    CompletableFuture.runAsync(() -> {
+                        if (cacheCliente.get(id) != null) {
+                            cacheCliente.remove(id);
+                        }
+                    });
+                }
+                return Either.right(clienteLocal.get());
+            } else {
+                return Either.left(new ClienteError.ClienteNotDeleted());
             }
-            return Either.right(clienteLocal.get());
         } catch (Exception e) {
             return Either.left(new ClienteError.ClienteNotDeleted());
         }
     }
 
-    public Flux<List<Cliente>> getAllAsFlux() {
-        return clienteRepository.getAllAsFlux();
-    }
-
-    public Flux<String> getNotificationAsFlux() {
-        return clienteRepository.getNotificationAsFlux();
+    public Flux<Notificacion<Cliente>> getNotifications() {
+        return notification.getNotificationAsFlux();
     }
 }
