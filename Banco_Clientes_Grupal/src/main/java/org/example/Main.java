@@ -100,6 +100,6 @@ public class Main {
                 .peek(client -> System.out.println("Cliente eliminado: " + client))
                 .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
 
-    System.exit(0);
+        System.exit(0);
     }
 }

@@ -36,6 +36,7 @@ dependencies {
 
     // Jackson
     implementation("com.fasterxml.jackson.core:jackson-core:2.18.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.0")
 
     // PostgresSQL
     implementation("org.postgresql:postgresql:42.7.4")
