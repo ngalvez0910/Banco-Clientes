@@ -19,7 +19,7 @@ public class LocalDataBaseManager implements AutoCloseable {
     private String DB_Timeout = "10000";
     private Connection connection = null;
 
-    protected LocalDataBaseManager() {
+    public LocalDataBaseManager() {
     }
 
     private LocalDataBaseManager(ConfigProperties config) {
@@ -34,12 +34,12 @@ public class LocalDataBaseManager implements AutoCloseable {
         logger.info("Hikari configurado correctamente");
     }
 
-    public static LocalDataBaseManager getInstance() {
+    /*public static LocalDataBaseManager getInstance() {
         if (instance == null) {
             instance = new LocalDataBaseManager();
         }
         return instance;
-    }
+    }*/
 
     public static LocalDataBaseManager getInstance(ConfigProperties config) {
         if (instance == null) {

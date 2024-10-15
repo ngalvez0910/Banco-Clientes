@@ -11,7 +11,7 @@ public class ClienteNotificacionImpl implements ClienteNotificacion {
     private final Flux<Notificacion<Cliente>> clientesNotificationFlux;
     private FluxSink<Notificacion<Cliente>> clientesNotification;
 
-    private ClienteNotificacionImpl() {
+    public ClienteNotificacionImpl() {
         this.clientesNotificationFlux = Flux.<Notificacion<Cliente>>create(emitter -> this.clientesNotification = emitter).share();
     }
 

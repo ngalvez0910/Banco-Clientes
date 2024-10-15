@@ -1,13 +1,25 @@
 package org.example;
 
-import org.example.clientes.mappers.UsuarioMapper;
+import org.example.clientes.cache.CacheClienteImpl;
+import org.example.clientes.model.Cliente;
+import org.example.clientes.model.Tarjeta;
 import org.example.clientes.model.Usuario;
+import org.example.clientes.repositories.ClienteRepositoryImpl;
+import org.example.clientes.repositories.TarjetaRemoteRepositoryImpl;
+import org.example.clientes.services.ClienteNotificacionImpl;
+import org.example.clientes.services.ClienteServiceImpl;
+import org.example.database.LocalDataBaseManager;
+import org.example.database.RemoteDataBaseManager;
 import org.example.rest.RetrofitClient;
 import org.example.rest.UserApiRest;
 import org.example.rest.repository.UserRemoteRepository;
-import org.example.rest.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
@@ -15,110 +27,78 @@ public class Main {
 
     public static void main(String[] args) {
 
-        /* TODO ESTO SE DEBERÁ USAR EN EL MAIN PERO AL LLAMAR AL REPOSITORIO EN REALIDAD DEBE LLAMAR AL SERVICIO, MODIFICAR CUANDO HAGAMOS EL MAIN
-
-        System.out.println("Systema de obtención de la lista en Tiempo Real");
-        repository.getAllAsFlux().subscribe(
-                lista -> {
-                    System.out.println("👉 Lista de Funkos actulizada: " + lista);
-                },
-                error -> System.err.println("Se ha producido un error: " + error),
-                () -> System.out.println("Completado")
-        );
-
-        System.out.println("Sistema de obtención de notificaciones en Tiempo Real");
-        repository.getNotificationAsFlux().subscribe(
-                notificacion -> System.out.println("🟢 Notificación: " + notificacion),
-                error -> System.err.println("Se ha producido un error: " + error),
-                () -> System.out.println("Completado")
-        );
-        */
-
         System.out.println("Hello world!");
         logger.debug("userApiRest: " + UserApiRest.API_USERS_URL);
 
         var retrofit = RetrofitClient.getClient(UserApiRest.API_USERS_URL);
         var userApiRest = retrofit.create(UserApiRest.class);
-        UserRemoteRepository userRemoteRepository = new UserRemoteRepository(userApiRest);
-        UserService userService = new UserService(userRemoteRepository);
+        UserRemoteRepository userRepository = new UserRemoteRepository(userApiRest);
+        var remoteDataBaseManager = new RemoteDataBaseManager();
+        TarjetaRemoteRepositoryImpl tarjetaRepository = new TarjetaRemoteRepositoryImpl(remoteDataBaseManager);
+        var localDataBaseManager = new LocalDataBaseManager();
+        ClienteRepositoryImpl clienteRepository = new ClienteRepositoryImpl(localDataBaseManager);
+        CacheClienteImpl cacheCliente = new CacheClienteImpl();
+        ClienteNotificacionImpl notification = new ClienteNotificacionImpl();
 
+        var service = new ClienteServiceImpl(userRepository, tarjetaRepository, clienteRepository, cacheCliente, notification);
 
-        System.out.println(".............................");
-        System.out.println("Recuperando todos los usuarios de la API-REST");
-        var usuarios = userService.getAllAsync();
-        usuarios
-                .peek(lista->lista.forEach(System.out::println))
-                .peekLeft(error-> System.out.println("Error recuperando todos los usuarios"+ error.getMessage()));
+        System.out.println("Sistema de obtención de notificaciones en Tiempo Real");
+        service.getNotifications().subscribe(
+                notificacion -> System.out.println("🟢 Notificación: " + notificacion),
+                error -> System.err.println("Se ha producido un error: " + error),
+                () -> System.out.println("Completado")
+        );
 
-        System.out.println(".............................");
-        System.out.println("Recuperando Usuario existente de la API-REST");
-        int id = 1;
-        var usuario = userService.getByIdAsync(id);
-        usuario
-                .peek(user-> {System.out.println("Usuario " + id +" Encontrado " + user);})
-                .peekLeft(error-> {System.out.println("Error: " + error.getCode() + " - " + error.getMessage());});
+        //TODO PRUEBAS:
 
-        /*System.out.println(".............................");
-        System.out.println("Recuperando Usuario NO existente de la API-REST");
-        int id2 = 100;
-        userService.getByIdAsync(id2)
-                .peek(user-> {System.out.println("Usuario " + id2 +" No Encontrado " + user);})
-                .peekLeft(error -> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
-*/
-        System.out.println(".............................");
-        System.out.println("Creando Usuario en la API-REST");
-        Usuario user =  Usuario.builder()
-                .id(2312312312312132123L)
-                .nombre("Prueba")
-                .userName("UsuarioPrueba")
-                .email("usuarioprueba@mail.com")
-                .build();
-        userService.createUserAsync(user)
-                .peek(userCreated-> { System.out.println("Usuario creado correctamente: " + userCreated);})
-                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+        var usuario = new Usuario(1L, "name1", "username1", "email1@email.com", LocalDateTime.now(), LocalDateTime.now());
+        var usuario2 = new Usuario(2L, "name2", "username2", "email2@email.com", LocalDateTime.now(), LocalDateTime.now());
 
-        System.out.println(".............................");
-        System.out.println("Eliminando Usuario 1 en la API-REST");
-        userService.deleteUserAsync(1)
-                .peek(userDeleted-> { System.out.println("Usuario " + id + " eliminado correctamente");})
-                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+        List<Tarjeta> tarjetas1 = new ArrayList<>();
+        List<Tarjeta> tarjetas2 = new ArrayList<>();
+        var tarjeta1 = new Tarjeta(1L, "name1", "1111222233334444", LocalDate.now(), LocalDateTime.now(), LocalDateTime.now());
+        var tarjeta2 = new Tarjeta(2L, "name1", "2222333344445555", LocalDate.now(), LocalDateTime.now(), LocalDateTime.now());
+        var tarjeta3 = new Tarjeta(3L, "name2", "3333444455556666", LocalDate.now(), LocalDateTime.now(), LocalDateTime.now());
+        tarjetas1.add(tarjeta1);
+        tarjetas1.add(tarjeta2);
+        tarjetas2.add(tarjeta3);
 
-        System.out.println(".............................");
-        System.out.println("Actualizando Usuario 4 en la API-REST");
-        Usuario updateUser = Usuario.builder()
-                .id(4L)
-                .nombre("Nombre actualizado")
-                .userName("Username actualizado")
-                .email("emailActualizado@mail.com")
-                .build();
-        userService.updateUserAsync( (Integer.parseInt(updateUser.getId().toString())), updateUser)
-                .peek(userUpdated-> { System.out.println("Usuario "+ userUpdated.getId() +" Actualizado: " + userUpdated);})
-                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+        var cliente = new Cliente(usuario.getId(), usuario, tarjetas1, LocalDateTime.now(), LocalDateTime.now());
+        var cliente2 = new Cliente(usuario2.getId(), usuario2, tarjetas2, LocalDateTime.now(), LocalDateTime.now());
 
-        System.out.println(".............................");
-        System.out.println("Actualizando Usuario NO existente 2124 en la API-REST");
-        Usuario updateUser2 = Usuario.builder()
-                .id(2124L)
-                .nombre("Nombre actualizado")
-                .userName("Username actualizado")
-                .email("emailActualizado@mail.com")
-                .build();
+        //probando create
+        service.create(cliente)
+                .peek(client -> System.out.println("Cliente creado: " + client))
+                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
 
-        userService.updateUserAsync( (Integer.parseInt(updateUser2.getId().toString())), updateUser)
-                .peek(userUpdated-> { System.out.println("Usuario "+ userUpdated.getId() +" Actualizado: " + userUpdated);})
-                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+        service.create(cliente2)
+                .peek(client -> System.out.println("Cliente creado: " + client))
+                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
 
-        System.out.println(".............................");
-        System.out.println("Eliminando Usuario 1 en la API-REST");
-        userService.deleteUserAsync(1)
-                .peek(userDeleted-> { System.out.println("Usuario 1 eliminado correctamente");})
-                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+        //probando getAll
+        service.getAll()
+                .peek(list -> System.out.println("Listado de clientes: " + list))
+                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
 
-        System.out.println(".............................");
-        System.out.println("Eliminando Usuario inexistente en la API-REST");
-        userService.deleteUserAsync(100)
-                .peek(userDeleted-> { System.out.println("Usuario 100 eliminado correctamente");})
-                .peekLeft(error-> {System.out.println("Error: "+ error.getCode() +": " + error.getMessage());});
+        //probando getById
+        service.getById(1L)
+                .peek(client -> System.out.println("Cliente con id 1: " + client))
+                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
+
+        //probando update
+        var usuarioUpdate = new Usuario(3L, "update", "updateUsername", "emailUpdate@email.com", LocalDateTime.now(), LocalDateTime.now());
+        List<Tarjeta> tarjetas3 = new ArrayList<>();
+        var tarjeta4 = new Tarjeta(4L, "update", "4444555566667777", LocalDate.now(), LocalDateTime.now(), LocalDateTime.now());
+        tarjetas3.add(tarjeta4);
+        var clienteUpdate = new Cliente(usuarioUpdate.getId(), usuarioUpdate, tarjetas3, LocalDateTime.now(), LocalDateTime.now());
+        service.update(1L, clienteUpdate)
+                .peek(client -> System.out.println("Cliente actualizado: " + client))
+                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
+
+        //probando delete
+        service.delete(2L)
+                .peek(client -> System.out.println("Cliente eliminado: " + client))
+                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
 
     System.exit(0);
     }
