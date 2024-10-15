@@ -176,13 +176,10 @@ class UserRemoteRepositoryTest {
         Optional<Usuario> result = userRemoteRepository.createUserSync(user);
 
         assertTrue(result.isPresent());
-        Usuario expectedResult = Usuario.builder()
-               .id((long) response.body().getId())
-               .nombre(response.body().getName())
-               .userName(response.body().getUsername())
-               .email(response.body().getEmail())
-               .build();
-        assertEquals(expectedResult, result.get());
+        assertEquals(response.body().getId(), result.get().getId());
+        assertEquals(response.body().getName(), result.get().getNombre());
+        assertEquals(response.body().getUsername(), result.get().getUserName());
+        assertEquals(response.body().getEmail(), result.get().getEmail());
         verify(userApiRest, times(1)).createUserSync(any(org.example.rest.responses.createUpdateDelete.Request.class));
         verify(call, times(1)).execute();
 

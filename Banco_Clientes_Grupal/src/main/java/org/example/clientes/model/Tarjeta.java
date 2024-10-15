@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,6 +18,15 @@ public class Tarjeta {
     private LocalDate fechaCaducidad;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public Tarjeta(Long id, String nombreTitular, String numeroTarjeta, LocalDate fechaCaducidad, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.nombreTitular = nombreTitular;
+        this.numeroTarjeta = numeroTarjeta;
+        this.fechaCaducidad = fechaCaducidad;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MM/yy");
 
