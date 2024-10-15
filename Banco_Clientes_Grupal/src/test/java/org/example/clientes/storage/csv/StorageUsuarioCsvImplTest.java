@@ -114,7 +114,7 @@ class StorageUsuarioCsvImplTest {
 
         assertAll("Verificar error de almacenamiento en importFile",
                 () -> assertInstanceOf(UsuarioError.StorageError.class, exception.getCause()),
-                () -> assertEquals("Error al leer el archivo : non-existent-file.csv", exception.getCause().getMessage())
+                () -> assertEquals("Error al leer el archivo: non-existent-file.csv", exception.getCause().getMessage())
         );
     }
 }
