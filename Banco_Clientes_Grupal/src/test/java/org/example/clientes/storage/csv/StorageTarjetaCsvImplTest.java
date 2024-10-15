@@ -24,7 +24,7 @@ class StorageTarjetaCsvImplTest {
         storage = new StorageTarjetaCsvImpl();
         testFile = File.createTempFile("StorageTarjetaCsvImplTest", ".csv");
         Files.write(testFile.toPath(),
-                ("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n1,John Doe,1234567890123456,2025-12-31,2024-01-01T00:00,2024-01-02T00:00\n2,Jane Smith,6543210987654321,2024-11-30,2024-01-03T00:00,2024-01-04T00:00").getBytes());
+                ("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n1,Juan Pérez,4532 4800 1234 5678,2025-12-31,2024-10-01T12:00:00,2024-10-01T12:00:00\n2,Will Smith,5532 4900 1234 5670,2026-11-30,2024-10-01T12:00:00,2024-10-01T12:00:00").getBytes());
     }
 
     @AfterEach
@@ -40,15 +40,16 @@ class StorageTarjetaCsvImplTest {
         assertAll("tarjetas",
                 () -> assertEquals(2, tarjetaList.size()),
                 () -> assertEquals(1L, tarjetaList.getFirst().getId()),
-                () -> assertEquals("John Doe", tarjetaList.getFirst().getNombreTitular()),
-                () -> assertEquals(LocalDateTime.parse("2024-01-01T00:00"), tarjetaList.getFirst().getCreatedAt()),
-                () -> assertEquals(LocalDateTime.parse("2024-01-02T00:00"), tarjetaList.getFirst().getUpdatedAt()),
+                () -> assertEquals("Juan Pérez", tarjetaList.get(0).getNombreTitular()),
+                () -> assertEquals(LocalDateTime.parse("2024-10-01T12:00"), tarjetaList.get(0).getCreatedAt()),
+                () -> assertEquals(LocalDateTime.parse("2024-10-01T12:00"), tarjetaList.get(0).getUpdatedAt()),
                 () -> assertEquals(2L, tarjetaList.get(1).getId()),
-                () -> assertEquals("Jane Smith", tarjetaList.get(1).getNombreTitular()),
-                () -> assertEquals(LocalDateTime.parse("2024-01-03T00:00"), tarjetaList.get(1).getCreatedAt()),
-                () -> assertEquals(LocalDateTime.parse("2024-01-04T00:00"), tarjetaList.get(1).getUpdatedAt())
+                () -> assertEquals("Will Smith", tarjetaList.get(1).getNombreTitular()),
+                () -> assertEquals(LocalDateTime.parse("2024-10-01T12:00"), tarjetaList.get(1).getCreatedAt()),
+                () -> assertEquals(LocalDateTime.parse("2024-10-01T12:00"), tarjetaList.get(1).getUpdatedAt())
         );
     }
+
 
 
     @Test
@@ -97,7 +98,7 @@ class StorageTarjetaCsvImplTest {
         Observable<Tarjeta> tarjetas = storage.importFile(invalidTestFile);
         List<Tarjeta> tarjetaList = tarjetas.toList().blockingGet();
 
-        assertEquals(1, tarjetaList.size());
+        assertEquals(0, tarjetaList.size());
 
         invalidTestFile.deleteOnExit();
     }
