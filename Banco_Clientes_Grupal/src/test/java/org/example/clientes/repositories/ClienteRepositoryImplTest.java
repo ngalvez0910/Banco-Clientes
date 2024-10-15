@@ -5,7 +5,7 @@ import org.example.clientes.model.Tarjeta;
 import org.example.clientes.model.Usuario;
 import org.example.config.ConfigProperties;
 import org.example.database.LocalDataBaseManager;
-import org.example.rest.service.UserService;
+import org.example.rest.repository.UserRemoteRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -21,37 +22,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ClienteRepositoryImplTest {
 
-    private ClienteRepositoryImpl clienteRepository;
-    private UserService usuarioRepository;
+    private static ClienteRepositoryImpl clienteRepository;
+    private UserRemoteRepository usuarioRepository;
     private TarjetaRemoteRepositoryImpl tarjetaRepository;
 
     @BeforeAll
     static void setUpAll() throws SQLException {
         ConfigProperties properties = new ConfigProperties("application.properties");
-        LocalDataBaseManager dataBaseManager = LocalDataBaseManager.getInstance();
+        LocalDataBaseManager dataBaseManager = LocalDataBaseManager.getInstance(properties);
         dataBaseManager.connect();
-        dataBaseManager.getInstance();
+        clienteRepository = new ClienteRepositoryImpl(dataBaseManager);
     }
 
     @BeforeEach
     void setUp() {
-        usuarioRepository.createUserAsync(Usuario.builder()
-                .id(1L)
-                .nombre("Test")
-                .userName("TestUsername")
-                .email("test@example.com")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build());
-        tarjetaRepository.create(Tarjeta.builder()
-                .id(1L)
-                .nombreTitular("Test")
-                .numeroTarjeta("1234567890123456")
-                .fechaCaducidad(LocalDate.of(2025, 12, 31))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build());
-
+        var usuario = new Usuario(1L, "Test", "TestUsername", "test@example.com", LocalDateTime.now(), LocalDateTime.now());
+        List<Tarjeta> tarjetas = new ArrayList<Tarjeta>();
+        var tarjeta = new Tarjeta(1L, "Test", "1234567890123456", LocalDate.of(2025, 12, 31), LocalDateTime.now(), LocalDateTime.now());
+        tarjetas.add(tarjeta);
+        var cliente = new Cliente(1L, usuario, tarjetas, LocalDateTime.now(), LocalDateTime.now());
+        clienteRepository.create(cliente);
     }
 
     @AfterEach
