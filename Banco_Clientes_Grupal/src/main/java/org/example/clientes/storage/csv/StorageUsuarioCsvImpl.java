@@ -18,6 +18,8 @@ import java.util.List;
 /**
  * Implementación de la interfaz StorageCsv para manejar operaciones de almacenamiento
  * de usuarios en archivos CSV.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
 
@@ -35,11 +37,9 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
         return Observable.<Usuario>create(emitter -> {
             try {
                 List<String> lines = Files.readAllLines(file.toPath());
-                // Procesa cada línea del archivo, omitiendo el encabezado
                 for (int i = 1; i < lines.size(); i++) {
                     String line = lines.get(i);
                     Usuario usuario = parseLine(line.split(","));
-                    // Valida el usuario antes de emitirlo
                     if (!usuarioValidator.validarUsuario(usuario)) {
                         logger.error("Usuario no válido: {}", usuario);
                         continue;
@@ -65,11 +65,9 @@ public class StorageUsuarioCsvImpl implements StorageCsv<Usuario> {
         items.subscribeOn(Schedulers.io())
                 .blockingSubscribe(usuario -> {
                     try (FileWriter writer = new FileWriter(file, true)) {
-                        // Escribe el encabezado si el archivo está vacío
                         if (file.length() == 0) {
                             writer.write("ID,Nombre,UserName,Email,createdAt,updatedAt\n");
                         }
-                        // Formatea el usuario como una línea CSV
                         String formattedUsuario = String.format("%d,%s,%s,%s,%s,%s%n",
                                 usuario.getId(),
                                 usuario.getNombre(),
