@@ -5,6 +5,7 @@ import okhttp3.ResponseBody;
 import org.example.clientes.model.Usuario;
 import org.example.rest.UserApiRest;
 import org.example.rest.responses.createUpdateDelete.UserCreate;
+import org.example.rest.responses.createUpdateDelete.UserDelete;
 import org.example.rest.responses.getAll.UserGetAll;
 import org.example.rest.responses.getById.UserGetById;
 import org.junit.jupiter.api.Test;
@@ -241,8 +242,96 @@ class UserRemoteRepositoryTest {
         verify(call, times(1)).execute();
 
     }
+    @Test
+    void updateUserSyncInternalServerError() throws IOException {
+        var id = 1L;
+        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
+        var call = mock(Call.class);
+        when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
+        when(userApiRest.updateUserSync(eq(id), any(org.example.rest.responses.createUpdateDelete.Request.class))).thenReturn(call);
+        Optional<Usuario> result = userRemoteRepository.updateUserSync(id, user);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).updateUserSync(eq(id), any(org.example.rest.responses.createUpdateDelete.Request.class));
+        verify(call, times(1)).execute();
+    }
+    @Test
+    void updateUserSyncNotFound() throws IOException {
+        var id = 12L;
+        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
+        var call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.error(404, ResponseBody.create(null, String.valueOf(MediaType.get("application/json")))));
+        when(userApiRest.updateUserSync(eq(id), any(org.example.rest.responses.createUpdateDelete.Request.class))).thenReturn(call);
+        Optional<Usuario> result = userRemoteRepository.updateUserSync(id, user);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).updateUserSync(eq(id), any(org.example.rest.responses.createUpdateDelete.Request.class));
+        verify(call, times(1)).execute();
+    }
 
     @Test
-    void deleteUserSync() {
+    void deleteUserSync() throws IOException {
+        var id = 1L;
+
+        var response = Response.success(UserDelete.builder().id(id).build());
+        var call = mock(Call.class);
+        when(call.execute()).thenReturn(response);
+        when(userApiRest.deleteUserSync(id)).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.deleteUserSync(id);
+
+        assertTrue(result.isPresent());
+        // delete no devuelve user cuando es correcto
+
+        verify(userApiRest, times(1)).deleteUserSync(id);
+        verify(call, times(1)).execute();
     }
+
+    @Test
+    void deleteUserSyncNotFound() throws IOException {
+        var id = 12L;
+        var call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.error(404, ResponseBody.create(null, String.valueOf(MediaType.get("application/json")))));
+        when(userApiRest.deleteUserSync(id)).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.deleteUserSync(id);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).deleteUserSync(id);
+        verify(call, times(1)).execute();
+    }
+
+    @Test
+    void deleteUserSyncOtherError() throws IOException {
+        var id = 1L;
+        var call = mock(Call.class);
+        //when(call.execute()).thenThrow(new RuntimeException("Error desconocido"));
+        when(call.execute()).thenReturn(Response.error(400, ResponseBody.create(null, String.valueOf(MediaType.get("application/json")))));
+        when(userApiRest.deleteUserSync(id)).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.deleteUserSync(id);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).deleteUserSync(id);
+        verify(call, times(1)).execute();
+    }
+    @Test
+    void deleteUserSyncInternalServerError() throws IOException {
+        var id = 1L;
+        var call = mock(Call.class);
+        when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
+        when(userApiRest.deleteUserSync(id)).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.deleteUserSync(id);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).deleteUserSync(id);
+        verify(call, times(1)).execute();
+    }
+
 }
