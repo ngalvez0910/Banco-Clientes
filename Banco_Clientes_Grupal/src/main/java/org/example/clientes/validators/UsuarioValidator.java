@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 /**
  * Clase encargada de validar los atributos de un objeto Usuario.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public class UsuarioValidator {
 
@@ -19,7 +21,6 @@ public class UsuarioValidator {
      */
     public Either<UsuarioError.NombreInvalido, String> validarNombre(Usuario usuario) {
         String nombre = usuario.getNombre();
-        // Regex que permite letras acentuadas, la ñ y espacios
         if (nombre == null || nombre.length() < 4 || nombre.length() > 80 || !nombre.matches("^[\\p{L}\\s]+$")) {
             return Either.left(new UsuarioError.NombreInvalido(nombre));
         }
