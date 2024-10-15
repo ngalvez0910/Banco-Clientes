@@ -93,7 +93,7 @@ class UserRemoteRepositoryTest {
     @Test
     void getAllSyncServerInternalError() throws IOException {
         var call = mock(Call.class);
-        when(call.execute()).thenThrow(new IOException("Server internal error"));
+        when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
         when(userApiRest.getAllSync()).thenReturn(call);
 
         Optional<List<Usuario>> result = userRemoteRepository.getAllSync();
@@ -107,7 +107,6 @@ class UserRemoteRepositoryTest {
 
     @Test
     void getByIdSync() throws IOException {
-        // Arrange
         var id = 1;
         var user = UserGetById.builder().id(id).name("Test 01").username("test01user").email("test01user@mail.com").build();
         var response = Response.success(user);
@@ -153,7 +152,7 @@ class UserRemoteRepositoryTest {
         // Arrange
         var id = 1;
         var call = mock(Call.class);
-        when(call.execute()).thenThrow(new IOException("Server internal error"));
+        when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
         when(userApiRest.getByIdSync(id)).thenReturn(call);
 
         Optional<Usuario> result = userRemoteRepository.getByIdSync(id);
@@ -168,7 +167,8 @@ class UserRemoteRepositoryTest {
     void createUserSync() throws IOException {
         // Arrange
         var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
-        var response = Response.success(UserCreate.builder().id(1).name("Test 01").username("test01user").email("test01user@mail.com").build());
+
+        var response = Response.success(UserCreate.builder().id(1L).name("Test 01").username("test01user").email("test01user@mail.com").build());
         var call = mock(Call.class);
         when(call.execute()).thenReturn(response);
         when(userApiRest.createUserSync(any(org.example.rest.responses.createUpdateDelete.Request.class))).thenReturn(call);
@@ -177,19 +177,69 @@ class UserRemoteRepositoryTest {
 
         assertTrue(result.isPresent());
         Usuario expectedResult = Usuario.builder()
-               .id((long) response.body().getId())
+               .id(response.body().getId())
                .nombre(response.body().getName())
                .userName(response.body().getUsername())
                .email(response.body().getEmail())
                .build();
-        assertEquals(expectedResult, result.get());
+
+        assertAll(
+                () -> assertEquals(expectedResult.getId(), result.get().getId()),
+                () -> assertEquals(expectedResult.getNombre(), result.get().getNombre()),
+                () -> assertEquals(expectedResult.getUserName(), result.get().getUserName()),
+                () -> assertEquals(expectedResult.getEmail(), result.get().getEmail())
+        );
+
         verify(userApiRest, times(1)).createUserSync(any(org.example.rest.responses.createUpdateDelete.Request.class));
         verify(call, times(1)).execute();
 
     }
 
+    @Test 
+    void createUserSyncInternalServerError() throws IOException{
+        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
+        var call = mock(Call.class);
+        when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
+        when(userApiRest.createUserSync(any(org.example.rest.responses.createUpdateDelete.Request.class))).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.createUserSync(user);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).createUserSync(any(org.example.rest.responses.createUpdateDelete.Request.class));
+        verify(call, times(1)).execute();
+    } 
+    
     @Test
-    void updateUserSync() {
+    void updateUserSync() throws IOException {
+        // Arrange
+        var id = 1L;
+        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
+
+        var response = Response.success(UserCreate.builder().id(id).name("Test 01").username("test01user").email("test01user@mail.com").build());
+        var call = mock(Call.class);
+        when(call.execute()).thenReturn(response);
+        when(userApiRest.updateUserSync(eq(id), any(org.example.rest.responses.createUpdateDelete.Request.class))).thenReturn(call);
+        Optional<Usuario> result = userRemoteRepository.updateUserSync(id, user);
+
+        assertTrue(result.isPresent());
+        Usuario expectedResult = Usuario.builder()
+               .id(response.body() != null ? response.body().getId() : null)
+               .nombre(response.body().getName())
+               .userName(response.body().getUsername())
+               .email(response.body().getEmail())
+               .build();
+
+        assertAll(
+                () -> assertEquals(expectedResult.getId(), result.get().getId()),
+                () -> assertEquals(expectedResult.getNombre(), result.get().getNombre()),
+                () -> assertEquals(expectedResult.getUserName(), result.get().getUserName()),
+                () -> assertEquals(expectedResult.getEmail(), result.get().getEmail())
+        );
+
+        verify(userApiRest, times(1)).updateUserSync(eq(id), any(org.example.rest.responses.createUpdateDelete.Request.class));
+        verify(call, times(1)).execute();
+
     }
 
     @Test
