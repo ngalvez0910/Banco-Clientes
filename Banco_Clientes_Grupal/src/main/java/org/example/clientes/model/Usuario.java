@@ -8,17 +8,19 @@ import java.util.List;
 
 /**
  * La clase Usuario representa los detalles de un usuario
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 @Data
 @Builder
 public class Usuario {
 
-    private Long id;                     // Identificador único del usuario
-    private String nombre;               // Nombre completo del usuario
-    private String userName;             // Nombre de usuario (username) único
-    private String email;                // Dirección de correo electrónico del usuario
-    private LocalDateTime createdAt;     // Fecha y hora de creación del usuario
-    private LocalDateTime updatedAt;     // Fecha y hora de la última actualización del usuario
+    private Long id;
+    private String nombre;
+    private String userName;
+    private String email;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     /**
      * Constructor completo para crear una instancia de la clase Usuario.

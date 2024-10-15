@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 /**
  * Clase encargada de mapear entre las entidades Usuario y UsuarioDto,
  * así como entre diferentes objetos de respuesta relacionados con el usuario.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public class UsuarioMapper {
     /**

@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Clase encargada de mapear entre las entidades Cliente y ClienteDto.
  * Proporciona métodos para convertir objetos de tipo Cliente a ClienteDto y viceversa.
+ *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public class ClienteMapper {

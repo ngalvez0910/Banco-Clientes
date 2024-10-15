@@ -10,15 +10,17 @@ import java.util.List;
  * Clase modelo que representa a un cliente en el sistema.
  * Utiliza las anotaciones de Lombok para generar automáticamente los métodos
  * getter, setter, equals, hashCode, toString, y un patrón de construcción (builder).
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 @Data
 @Builder
 public class Cliente {
-    private Long id;                     // Identificador único del cliente
-    private Usuario usuario;             // Usuario asociado al cliente
-    private List<Tarjeta> tarjeta;       // Lista de tarjetas asociadas al cliente
-    private LocalDateTime createdAt;     // Fecha y hora de creación del cliente
-    private LocalDateTime updatedAt;     // Fecha y hora de la última actualización del cliente
+    private Long id;
+    private Usuario usuario;
+    private List<Tarjeta> tarjeta;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     /**
      * Constructor completo para la clase Cliente.

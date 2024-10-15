@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
  * Clase encargada de mapear entre las entidades Tarjeta y TarjetaDto.
  * Proporciona métodos para convertir objetos de tipo Tarjeta a TarjetaDto y viceversa,
  * así como listas de ambos tipos.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public class TarjetaMapper {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
