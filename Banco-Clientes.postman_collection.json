@@ -320,6 +320,68 @@
 				"description": "Update incorrecto (id no existente), devuelve 500 Int.Server Error"
 			},
 			"response": []
+		},
+		{
+			"name": "Update incorrecto (id no indicado), devuelve 404 Not Found",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Prueba\",\r\n    \"username\": \"userPrueba\",\r\n    \"email\": \"userPrueba@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				},
+				"description": "Update incorrecto (id no indicado), devuelve 404 Not Found"
+			},
+			"response": []
+		},
+		{
+			"name": "Update incorrecto (id formato incorrecto), devuelve 500 Int.Server Error",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Prueba\",\r\n    \"username\": \"userPrueba\",\r\n    \"email\": \"userPrueba@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/cadena",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						"cadena"
+					]
+				},
+				"description": "Update incorrecto (id formato incorrecto), devuelve 500 Int.Server Error"
+			},
+			"response": []
 		}
 	]
 }
