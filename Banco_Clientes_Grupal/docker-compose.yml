@@ -11,7 +11,7 @@ services:
     ports:
       - ${POSTGRES_PORT}:5432
     volumes:
-      - ./database/init.sql:docker-entrypoint-initdb.d/init.sql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres-db-data:/var/lib/postgresql/data
     networks:
       - tarjetas-network
@@ -30,6 +30,7 @@ services:
 
 networks:
   tarjetas-network:
+    external: true
     driver: bridge
 
 volumes:
