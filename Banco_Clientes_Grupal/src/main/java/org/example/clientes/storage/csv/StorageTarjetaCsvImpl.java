@@ -17,16 +17,27 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/**
+ * Implementación de la interfaz StorageCsv para manejar operaciones de almacenamiento
+ * de tarjetas en archivos CSV.
+ */
 public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
 
     private final Logger logger = LoggerFactory.getLogger(StorageTarjetaCsvImpl.class);
 
+    /**
+     * Importa datos de un archivo CSV y emite objetos Tarjeta.
+     *
+     * @param file Archivo CSV desde el que se importan las tarjetas.
+     * @return Observable de Tarjeta, emitiendo cada tarjeta encontrada en el archivo.
+     */
     @Override
     public Observable<Tarjeta> importFile(File file) {
         return Observable.<Tarjeta>create(emitter -> {
             try {
                 List<String> lines = Files.readAllLines(file.toPath());
 
+                // Procesa cada línea del archivo, omitiendo el encabezado
                 for (int i = 1; i < lines.size(); i++) {
                     String line = lines.get(i);
                     Tarjeta tarjeta = parseLine(line.split(","));
@@ -42,14 +53,22 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
         }).subscribeOn(Schedulers.io());
     }
 
+    /**
+     * Exporta una lista de tarjetas a un archivo CSV.
+     *
+     * @param file Archivo CSV donde se exportarán las tarjetas.
+     * @param items Observable de Tarjeta que se exportará al archivo.
+     */
     @Override
     public void exportFile(File file, Observable<Tarjeta> items) {
         items.subscribeOn(Schedulers.io())
                 .blockingSubscribe(tarjeta -> {
                     try (FileWriter writer = new FileWriter(file, true)) {
+                        // Escribe el encabezado si el archivo está vacío
                         if (file.length() == 0) {
                             writer.write("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n");
                         }
+                        // Formatea la tarjeta como una línea CSV
                         String formattedTarjeta = String.format("%d,%s,%s,%s,%s,%s%n",
                                 tarjeta.getId(),
                                 tarjeta.getNombreTitular(),
@@ -66,8 +85,16 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
                 }, error -> logger.error("Error en exportFile: ", error));
     }
 
+    /**
+     * Parsea una línea del archivo CSV y crea un objeto Tarjeta.
+     *
+     * @param parts Array de cadenas que representan los campos de la tarjeta.
+     * @return Objeto Tarjeta o null si ocurre un error durante el parseo.
+     */
     private Tarjeta parseLine(String[] parts) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        // Formato de fecha y hora
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"); // Cambiado a este formato
+
         try {
             return Tarjeta.builder()
                     .id(Long.parseLong(parts[0]))
@@ -82,4 +109,5 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
             return null;
         }
     }
+
 }

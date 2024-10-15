@@ -6,16 +6,33 @@ import org.example.clientes.model.Usuario;
 
 import java.util.regex.Pattern;
 
+/**
+ * Clase encargada de validar los atributos de un objeto Usuario.
+ */
 public class UsuarioValidator {
 
+    /**
+     * Valida el nombre del usuario.
+     *
+     * @param usuario El usuario que se va a validar.
+     * @return Un Either que contiene un error si el nombre es inválido, o un mensaje de éxito si es válido.
+     */
     public Either<UsuarioError.NombreInvalido, String> validarNombre(Usuario usuario) {
         String nombre = usuario.getNombre();
-        if (nombre == null || nombre.length() < 4 || nombre.length() > 80 || !nombre.matches("^[a-zA-Z\\s]+$")) {
+        // Regex que permite letras acentuadas, la ñ y espacios
+        if (nombre == null || nombre.length() < 4 || nombre.length() > 80 || !nombre.matches("^[\\p{L}\\s]+$")) {
             return Either.left(new UsuarioError.NombreInvalido(nombre));
         }
         return Either.right("El nombre es válido.");
     }
 
+
+    /**
+     * Valida el nombre de usuario.
+     *
+     * @param usuario El usuario que se va a validar.
+     * @return Un Either que contiene un error si el nombre de usuario es inválido, o un mensaje de éxito si es válido.
+     */
     public Either<UsuarioError.UserNameInvalido, String> validarUserName(Usuario usuario) {
         String userName = usuario.getUserName();
         if (userName == null || userName.length() < 4 || userName.length() > 30) {
@@ -24,6 +41,12 @@ public class UsuarioValidator {
         return Either.right("El nombre de usuario es válido.");
     }
 
+    /**
+     * Valida el correo electrónico del usuario.
+     *
+     * @param usuario El usuario que se va a validar.
+     * @return Un Either que contiene un error si el correo electrónico es inválido, o un mensaje de éxito si es válido.
+     */
     public Either<UsuarioError.EmailInvalido, String> validarEmail(Usuario usuario) {
         Pattern emailRegex =
                 Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
@@ -34,6 +57,12 @@ public class UsuarioValidator {
         return Either.right("El correo electrónico es válido.");
     }
 
+    /**
+     * Valida todos los atributos del usuario.
+     *
+     * @param usuario El usuario que se va a validar.
+     * @return true si todos los atributos son válidos, false en caso contrario.
+     */
     public boolean validarUsuario(Usuario usuario) {
         Either<UsuarioError.NombreInvalido, String> nombre = validarNombre(usuario);
         if (nombre.isLeft()) {
@@ -50,4 +79,3 @@ public class UsuarioValidator {
         return true;
     }
 }
-
