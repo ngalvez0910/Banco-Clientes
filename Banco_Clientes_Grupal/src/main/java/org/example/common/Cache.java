@@ -6,6 +6,8 @@ package org.example.common;
  *
  * @param <K> El tipo de las claves utilizadas en la caché
  * @param <V> El tipo de los valores almacenados en la caché
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public interface Cache<K, V> {
 

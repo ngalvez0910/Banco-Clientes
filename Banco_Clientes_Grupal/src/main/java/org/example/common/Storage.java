@@ -7,6 +7,8 @@ import java.io.File;
  * Interfaz que define los métodos para gestionar la importación y exportación de archivos.
  *
  * @param <T> El tipo de los elementos que se importan o exportan.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public interface Storage<T> {
 

@@ -12,6 +12,8 @@ import java.util.Optional;
  *
  * @param <T>  El tipo de la entidad gestionada por el repositorio
  * @param <ID> El tipo de identificador utilizado para las entidades
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public interface Repository<T, ID> {
 
