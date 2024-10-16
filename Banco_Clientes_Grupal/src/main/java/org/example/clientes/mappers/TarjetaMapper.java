@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  */
 public class TarjetaMapper {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     /**
      * Convierte un objeto TarjetaDto en un objeto Tarjeta.
@@ -39,13 +40,14 @@ public class TarjetaMapper {
                         ? LocalDate.parse(tarjetaDto.getFechaCaducidad(), formatter)
                         : null)
                 .createdAt(tarjetaDto.getCreatedAt() != null
-                        ? LocalDateTime.parse(tarjetaDto.getCreatedAt(), formatter)
+                        ? LocalDateTime.parse(tarjetaDto.getCreatedAt(), dateTimeFormatter)
                         : null)
                 .updatedAt(tarjetaDto.getUpdatedAt() != null
-                        ? LocalDateTime.parse(tarjetaDto.getUpdatedAt(), formatter)
+                        ? LocalDateTime.parse(tarjetaDto.getUpdatedAt(), dateTimeFormatter)
                         : null)
                 .build();
     }
+
 
     /**
      * Convierte un objeto Tarjeta en un objeto TarjetaDto.
@@ -66,14 +68,13 @@ public class TarjetaMapper {
                         ? tarjeta.getFechaCaducidad().format(formatter)
                         : null)
                 .createdAt(tarjeta.getCreatedAt() != null
-                        ? tarjeta.getCreatedAt().format(formatter)
+                        ? tarjeta.getCreatedAt().format(dateTimeFormatter)
                         : null)
                 .updatedAt(tarjeta.getUpdatedAt() != null
-                        ? tarjeta.getUpdatedAt().format(formatter)
+                        ? tarjeta.getUpdatedAt().format(dateTimeFormatter)
                         : null)
                 .build();
     }
-
     /**
      * Convierte una lista de objetos TarjetaDto en una lista de objetos Tarjeta.
      *
