@@ -4,6 +4,7 @@ package org.example.clientes.errors;
  * Clase para representar errores relacionados con la gestión de clientes.
  * Proporciona mensajes de error y códigos de estado HTTP para diferentes situaciones.
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class ClienteError {
     private final String message;
