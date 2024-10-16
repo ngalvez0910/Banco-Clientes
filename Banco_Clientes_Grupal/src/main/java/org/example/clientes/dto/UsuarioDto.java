@@ -3,6 +3,11 @@ package org.example.clientes.dto;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * DTO para representar un usuario.
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
+ */
 @Data
 @Builder
 public class UsuarioDto {

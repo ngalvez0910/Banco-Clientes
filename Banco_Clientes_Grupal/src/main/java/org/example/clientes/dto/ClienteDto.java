@@ -3,19 +3,20 @@ package org.example.clientes.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 /**
- * DTO para representar a una tarjeta de crédito.
+ * DTO para representar a un cliente.
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  * @version 1.0-SNAPSHOT
  */
 @Data
 @Builder
-public class TarjetaDto {
+public class ClienteDto {
 
     private Long id;
-    private String nombreTitular;
-    private String numeroTarjeta;
-    private String fechaCaducidad;
+    private UsuarioDto usuario;
+    private List<TarjetaDto> tarjeta;
     private String createdAt;
     private String updatedAt;
 }
