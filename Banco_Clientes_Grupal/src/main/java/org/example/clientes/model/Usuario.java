@@ -10,6 +10,7 @@ import java.util.List;
  * La clase Usuario representa los detalles de un usuario
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 @Data
 @Builder

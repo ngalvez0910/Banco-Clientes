@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
  * así como listas de ambos tipos.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class TarjetaMapper {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

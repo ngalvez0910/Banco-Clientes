@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
  * así como entre diferentes objetos de respuesta relacionados con el usuario.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class UsuarioMapper {
     /**

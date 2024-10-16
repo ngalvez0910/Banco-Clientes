@@ -11,6 +11,7 @@ import java.util.List;
  * La clase Tarjeta representa los detalles de una tarjeta de crédito
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 @Data
 @Builder

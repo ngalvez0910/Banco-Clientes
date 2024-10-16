@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
  * Proporciona métodos para convertir objetos de tipo Cliente a ClienteDto y viceversa.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class ClienteMapper {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
