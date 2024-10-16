@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
  * Clase encargada de validar los atributos de un objeto Usuario.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class UsuarioValidator {
 

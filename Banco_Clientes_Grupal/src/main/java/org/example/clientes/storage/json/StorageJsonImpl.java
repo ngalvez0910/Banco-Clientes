@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  * importación y exportación de objetos Cliente en formato JSON.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class StorageJsonImpl implements StorageJson<Cliente> {
 
