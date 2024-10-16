@@ -18,20 +18,6 @@ public abstract class UsuarioError extends Exception {
     }
 
     /**
-     * Clase interna para representar un error cuando el usuario es inválido.
-     */
-    public static class UsuarioInvaido extends UsuarioError {
-        /**
-         * Constructor para crear una instancia de UsuarioInvaido.
-         *
-         * @param mensaje Mensaje descriptivo del error
-         */
-        public UsuarioInvaido(String mensaje) {
-            super(mensaje);
-        }
-    }
-
-    /**
      * Clase interna para representar un error cuando el nombre es inválido.
      */
     public static class NombreInvalido extends UsuarioError {
