@@ -93,7 +93,7 @@ class UserRemoteRepositoryTest {
     }
 
     @Test
-    void getAllSyncServerInternalError() throws IOException {
+    void getAllSyncOtherError() throws IOException {
         var call = mock(Call.class);
         when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
         when(userApiRest.getAllSync()).thenReturn(call);
@@ -107,7 +107,7 @@ class UserRemoteRepositoryTest {
 
     }
     @Test
-    public void testGetAllSync_Error() throws IOException {
+    public void testGetAllSyncServerInternalError() throws IOException {
         // Given
         var mockCall = mock(Call.class);
         var mockResponse = mock(Response.class);
@@ -126,8 +126,7 @@ class UserRemoteRepositoryTest {
     }
 
     @Test
-    public void testGetAllSync_Success_NullBody() throws IOException {
-        // Given
+    public void testGetAllSyncSuccessNullBody() throws IOException {
         var mockCall = mock(Call.class);
         var mockResponse = mock(Response.class);
         when(mockCall.execute()).thenReturn(mockResponse);
@@ -135,10 +134,8 @@ class UserRemoteRepositoryTest {
         when(mockResponse.body()).thenReturn(null);
         when(userApiRest.getAllSync()).thenReturn(mockCall);
 
-        // When
         Optional<List<Usuario>> result = userRemoteRepository.getAllSync();
 
-        // Then
         assertFalse(result.isPresent());
         verify(userApiRest, times(1)).getAllSync();
         verify(mockCall, times(1)).execute();
@@ -171,7 +168,7 @@ class UserRemoteRepositoryTest {
 
     @Test
     void getByIdNotFound() throws IOException {
-        // Arrange
+
         var id = 1;
         var response = Response.error(404, ResponseBody.create(null, String.valueOf(MediaType.get("application/json"))));
         var call = mock(Call.class);
@@ -188,7 +185,6 @@ class UserRemoteRepositoryTest {
 
     @Test
     void getByIdSyncServerInternalError() throws IOException {
-        // Arrange
         var id = 1;
         var call = mock(Call.class);
         when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
@@ -203,7 +199,7 @@ class UserRemoteRepositoryTest {
     }
 
     @Test
-    public void testGetByIdSync_OtherError() throws IOException {
+    public void getByIdSyncOtherError() throws IOException {
         // Given
         long userId = 123;
         var mockCall = mock(Call.class);
@@ -223,27 +219,11 @@ class UserRemoteRepositoryTest {
 
     }
 
-    @Test
-    public void testGetByIdSync_error() throws IOException {
-        // Given
-        long userId = 1L;
-        var mockCall= mock(Call.class);
-        when(mockCall.execute()).thenThrow(new IOException("Test exception"));
-        when(userApiRest.getByIdSync(anyLong())).thenReturn(mockCall);
 
-        // When
-        Optional<Usuario> result = userRemoteRepository.getByIdSync(userId);
-
-        // Then
-        assertTrue(result.isEmpty());
-        verify(userApiRest).getByIdSync(eq(userId));
-        verify(mockCall).execute();
-    }
     @Test
     void createUserSync() throws IOException {
-        // Arrange
-        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
 
+        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
         var response = Response.success(UserCreate.builder().id(1L).name("Test 01").username("test01user").email("test01user@mail.com").build());
         var call = mock(Call.class);
         when(call.execute()).thenReturn(response);
@@ -271,8 +251,42 @@ class UserRemoteRepositoryTest {
 
     }
 
+    @Test
+    public void createUserSyncNotSuccessfulInternalServerError() throws IOException {
+
+        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
+        var call = mock(Call.class);
+        var response = Response.error(500, mock(ResponseBody.class));
+        when(call.execute()).thenReturn(response);
+        when(userApiRest.createUserSync(any(Request.class))).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.createUserSync(user);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).createUserSync(any(Request.class));
+        verify(call, times(1)).execute();
+    }
+    @Test
+    public void createUserSyncNotSuccessfulOtherError() throws IOException {
+
+        var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
+        var call = mock(Call.class);
+        var response = Response.error(5000, mock(ResponseBody.class));
+        when(call.execute()).thenReturn(response);
+        when(userApiRest.createUserSync(any(Request.class))).thenReturn(call);
+
+        Optional<Usuario> result = userRemoteRepository.createUserSync(user);
+
+        assertFalse(result.isPresent());
+
+        verify(userApiRest, times(1)).createUserSync(any(Request.class));
+        verify(call, times(1)).execute();
+    }
+
     @Test 
-    void createUserSyncInternalServerError() throws IOException{
+    void createUserSyncOtherError() throws IOException{
+
         var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
         var call = mock(Call.class);
         when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
@@ -288,14 +302,14 @@ class UserRemoteRepositoryTest {
     
     @Test
     void updateUserSync() throws IOException {
-        // Arrange
+
         var id = 1L;
         var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
-
         var response = Response.success(UserCreate.builder().id(id).name("Test 01").username("test01user").email("test01user@mail.com").build());
         var call = mock(Call.class);
         when(call.execute()).thenReturn(response);
         when(userApiRest.updateUserSync(eq(id), any(Request.class))).thenReturn(call);
+
         Optional<Usuario> result = userRemoteRepository.updateUserSync(id, user);
 
         assertTrue(result.isPresent());
@@ -319,6 +333,7 @@ class UserRemoteRepositoryTest {
     }
     @Test
     void updateUserSyncInternalServerError() throws IOException {
+
         var id = 1L;
         var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
         var call = mock(Call.class);
@@ -348,7 +363,8 @@ class UserRemoteRepositoryTest {
     }
 
     @Test
-    public void testUpdateUserSync_OtherError() throws IOException {
+    public void updateUserSyncOtherError() throws IOException {
+
         long userId = 123L;
         var user = Usuario.builder().nombre("Test 01").userName("test01user").email("test01user@mail.com").build();
         var mockCall = mock(Call.class);
@@ -363,11 +379,12 @@ class UserRemoteRepositoryTest {
         assertFalse(result.isPresent());
         verify(userApiRest, times(1)).updateUserSync(eq(userId), any(Request.class));
         verify(mockCall, times(1)).execute();
+
     }
     @Test
     void deleteUserSync() throws IOException {
-        var id = 1L;
 
+        var id = 1L;
         var response = Response.success(UserDelete.builder().id(id).build());
         var call = mock(Call.class);
         when(call.execute()).thenReturn(response);
@@ -380,10 +397,12 @@ class UserRemoteRepositoryTest {
 
         verify(userApiRest, times(1)).deleteUserSync(id);
         verify(call, times(1)).execute();
+
     }
 
     @Test
     void deleteUserSyncNotFound() throws IOException {
+
         var id = 12L;
         var call = mock(Call.class);
         when(call.execute()).thenReturn(Response.error(404, ResponseBody.create(null, String.valueOf(MediaType.get("application/json")))));
@@ -395,13 +414,14 @@ class UserRemoteRepositoryTest {
 
         verify(userApiRest, times(1)).deleteUserSync(id);
         verify(call, times(1)).execute();
+
     }
 
     @Test
     void deleteUserSyncOtherError() throws IOException {
+
         var id = 1L;
         var call = mock(Call.class);
-        //when(call.execute()).thenThrow(new RuntimeException("Error desconocido"));
         when(call.execute()).thenReturn(Response.error(400, ResponseBody.create(null, String.valueOf(MediaType.get("application/json")))));
         when(userApiRest.deleteUserSync(id)).thenReturn(call);
 
@@ -411,9 +431,11 @@ class UserRemoteRepositoryTest {
 
         verify(userApiRest, times(1)).deleteUserSync(id);
         verify(call, times(1)).execute();
+
     }
     @Test
     void deleteUserSyncInternalServerError() throws IOException {
+
         var id = 1L;
         var call = mock(Call.class);
         when(call.execute()).thenThrow(new IOException("Error interno del servidor"));
@@ -425,6 +447,7 @@ class UserRemoteRepositoryTest {
 
         verify(userApiRest, times(1)).deleteUserSync(id);
         verify(call, times(1)).execute();
+        
     }
 
 }
