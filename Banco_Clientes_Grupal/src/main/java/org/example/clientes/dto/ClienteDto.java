@@ -7,10 +7,12 @@ import java.util.List;
 
 /**
  * DTO para representar a un cliente.
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 @Data
 @Builder
 public class ClienteDto {
+
     private Long id;
     private UsuarioDto usuario;
     private List<TarjetaDto> tarjeta;

@@ -20,6 +20,8 @@ import java.util.List;
 /**
  * Implementación de la interfaz StorageCsv para manejar operaciones de almacenamiento
  * de tarjetas en archivos CSV.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
 
@@ -37,7 +39,6 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
             try {
                 List<String> lines = Files.readAllLines(file.toPath());
 
-                // Procesa cada línea del archivo, omitiendo el encabezado
                 for (int i = 1; i < lines.size(); i++) {
                     String line = lines.get(i);
                     Tarjeta tarjeta = parseLine(line.split(","));
@@ -64,11 +65,9 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
         items.subscribeOn(Schedulers.io())
                 .blockingSubscribe(tarjeta -> {
                     try (FileWriter writer = new FileWriter(file, true)) {
-                        // Escribe el encabezado si el archivo está vacío
                         if (file.length() == 0) {
                             writer.write("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n");
                         }
-                        // Formatea la tarjeta como una línea CSV
                         String formattedTarjeta = String.format("%d,%s,%s,%s,%s,%s%n",
                                 tarjeta.getId(),
                                 tarjeta.getNombreTitular(),
@@ -92,8 +91,7 @@ public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
      * @return Objeto Tarjeta o null si ocurre un error durante el parseo.
      */
     private Tarjeta parseLine(String[] parts) {
-        // Formato de fecha y hora
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"); // Cambiado a este formato
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
         try {
             return Tarjeta.builder()

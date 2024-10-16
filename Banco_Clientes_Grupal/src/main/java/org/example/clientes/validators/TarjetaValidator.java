@@ -7,6 +7,8 @@ import java.time.LocalDate;
 
 /**
  * Clase encargada de validar los atributos de un objeto Tarjeta.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public class TarjetaValidator {
 

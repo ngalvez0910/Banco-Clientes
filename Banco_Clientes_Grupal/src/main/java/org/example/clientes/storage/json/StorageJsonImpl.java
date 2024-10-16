@@ -17,11 +17,13 @@ import java.util.stream.Collectors;
 /**
  * Implementación de la interfaz StorageJson para manejar operaciones de
  * importación y exportación de objetos Cliente en formato JSON.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  */
 public class StorageJsonImpl implements StorageJson<Cliente> {
 
-    private final Logger logger; // Logger para registrar eventos
-    private final ObjectMapper objectMapper; // Mapeador de objetos JSON
+    private final Logger logger;
+    private final ObjectMapper objectMapper;
 
     /**
      * Constructor que inicializa el objeto ObjectMapper y el Logger.
@@ -81,8 +83,7 @@ public class StorageJsonImpl implements StorageJson<Cliente> {
                                 .map(ClienteMapper::toDto)
                                 .collect(Collectors.toList());
 
-                        // Asegúrate de que el ObjectMapper está configurado para pretty print
-                        objectMapper.writeValue(file, clienteDtos); // Aquí se debe ver la salida formateada
+                        objectMapper.writeValue(file, clienteDtos);
 
                         logger.info("Clientes exportados correctamente al archivo: {}", file.getName());
                     } catch (IOException e) {
