@@ -5,6 +5,9 @@ import java.time.LocalDate;
 /**
  * Clase abstracta para representar errores relacionados con la gestión de tarjetas.
  * Extiende la clase Exception para proporcionar un manejo de errores más específico.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public abstract class TarjetaError extends Exception {
 

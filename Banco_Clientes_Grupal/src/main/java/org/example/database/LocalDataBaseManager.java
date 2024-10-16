@@ -14,6 +14,7 @@ import java.sql.SQLException;
  * Implementa la interfaz AutoCloseable para asegurar el cierre de recursos.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class LocalDataBaseManager implements AutoCloseable {
     private static LocalDataBaseManager instance = null;

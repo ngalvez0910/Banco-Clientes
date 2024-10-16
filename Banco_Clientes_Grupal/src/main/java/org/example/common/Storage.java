@@ -9,6 +9,7 @@ import java.io.File;
  * @param <T> El tipo de los elementos que se importan o exportan.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public interface Storage<T> {
 

@@ -4,6 +4,7 @@ package org.example.clientes.errors;
  * Clase abstracta para representar errores relacionados con la gestión de usuarios.
  * Extiende la clase Exception para proporcionar un manejo de errores específico.
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public abstract class UsuarioError extends Exception {
 

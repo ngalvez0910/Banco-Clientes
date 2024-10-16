@@ -14,6 +14,7 @@ import java.util.Optional;
  * @param <ID> El tipo de identificador utilizado para las entidades
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public interface Repository<T, ID> {
 

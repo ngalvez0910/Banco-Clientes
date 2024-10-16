@@ -22,6 +22,7 @@ import java.util.List;
  * de tarjetas en archivos CSV.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class StorageTarjetaCsvImpl implements StorageCsv<Tarjeta> {
 

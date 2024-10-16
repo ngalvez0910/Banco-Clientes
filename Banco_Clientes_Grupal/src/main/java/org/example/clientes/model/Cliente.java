@@ -12,6 +12,7 @@ import java.util.List;
  * getter, setter, equals, hashCode, toString, y un patrón de construcción (builder).
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 @Data
 @Builder

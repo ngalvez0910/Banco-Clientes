@@ -16,6 +16,7 @@ import java.util.Properties;
  * También implementa AutoCloseable para facilitar el cierre de la conexión.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class RemoteDataBaseManager implements AutoCloseable {
     private static RemoteDataBaseManager instance = null;

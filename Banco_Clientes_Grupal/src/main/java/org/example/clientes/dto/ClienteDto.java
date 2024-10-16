@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * DTO para representar a un cliente.
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 @Data
 @Builder
