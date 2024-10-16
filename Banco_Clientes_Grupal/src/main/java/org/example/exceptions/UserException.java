@@ -5,6 +5,7 @@ package org.example.exceptions;
  * Extiende de RuntimeException, lo que permite que estas excepciones no sean comprobadas (unchecked exceptions).
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 abstract class UserException extends RuntimeException {
 

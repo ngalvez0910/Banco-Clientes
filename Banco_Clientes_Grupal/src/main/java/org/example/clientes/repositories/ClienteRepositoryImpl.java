@@ -17,15 +17,41 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+    /**
+     * Implementación del repositorio de clientes.
+     * Esta clase gestiona las operaciones CRUD para los objetos {@link Cliente}
+     * en la base de datos. Utiliza {@link LocalDataBaseManager} para manejar
+     * la conexión y las operaciones de la base de datos.
+     *
+     * <p>Esta implementación permite obtener todos los clientes, buscar un cliente
+     * por ID, crear, actualizar y eliminar clientes, así como eliminar todos los clientes.</p>
+     *
+     * @see Cliente
+     * @see Usuario
+     * @see Tarjeta
+     *
+     * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+     * @version 1.0-SNAPSHOT
+     */
 public class ClienteRepositoryImpl implements ClienteRepository {
     private final Logger logger = LoggerFactory.getLogger(ClienteRepositoryImpl.class);
     private final LocalDataBaseManager dataBaseManager;
 
-
+    /**
+     * Constructor de la clase.
+     *
+     * @param dataBaseManager el gestor de la base de datos utilizado para las operaciones de conexión y consultas.
+     */
     public ClienteRepositoryImpl(LocalDataBaseManager dataBaseManager) {
         this.dataBaseManager = dataBaseManager;
     }
 
+    /**
+     * Obtiene todos los clientes de la base de datos.
+     *
+     * @return una lista de {@link Cliente} que contiene todos los clientes.
+     * Si no hay clientes, se devuelve una lista vacía.
+     */
     public List<Cliente> getAll() {
         logger.info("Obteniendo clientes...");
         List<Cliente> clientes = new ArrayList<>();
@@ -75,6 +101,12 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         return clientes;
     }
 
+    /**
+     * Obtiene un cliente por su ID.
+     *
+     * @param id el ID del cliente a buscar.
+     * @return un {@link Optional} que contiene el cliente si se encuentra, o un {@link Optional#empty()} si no se encuentra.
+     */
     @Override
     public Optional<Cliente> getById(long id) {
         logger.info("Obteniendo cliente por id...");
@@ -122,6 +154,12 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         return Optional.empty();
     }
 
+    /**
+     * Crea un nuevo cliente en la base de datos.
+     *
+     * @param cliente el cliente a crear.
+     * @return el cliente creado con sus ID asignados.
+     */
     @Override
     public Cliente create(Cliente cliente) {
         logger.info("Creando cliente...");

@@ -11,14 +11,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementación del repositorio remoto para gestionar entidades de tipo Tarjeta.
+ * Proporciona métodos para crear, obtener, actualizar y eliminar tarjetas en la base de datos remota.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
+ */
 public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     private final RemoteDataBaseManager remoteDbManager;
     private final Logger logger = LoggerFactory.getLogger(TarjetaRemoteRepositoryImpl.class);
 
+    /**
+     * Constructor que inicializa el {@link RemoteDataBaseManager} para la conexión a la base de datos.
+     *
+     * @param remoteDbManager el gestor de la base de datos remota
+     */
     public TarjetaRemoteRepositoryImpl(RemoteDataBaseManager remoteDbManager) {
         this.remoteDbManager = remoteDbManager;
     }
 
+    /**
+     * Obtiene todas las tarjetas de la base de datos.
+     *
+     * @return una lista de todas las tarjetas
+     */
     public List<Tarjeta> getAll() {
         logger.info("Obteniendo todas las tarjetas...");
         List<Tarjeta> tarjetas = new ArrayList<>();
@@ -46,6 +63,12 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
         return tarjetas;
     }
 
+    /**
+     * Obtiene una tarjeta específica por su identificador.
+     *
+     * @param id el identificador de la tarjeta a obtener
+     * @return un {@link Optional} que contiene la tarjeta si se encuentra, o vacío si no
+     */
     public Optional<Tarjeta> getById(Long id) {
         logger.info("Obteniendo tarjeta con id: " + id);
         String query = "SELECT * FROM tarjetas WHERE id = ?";
@@ -70,6 +93,12 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
         return Optional.empty();
     }
 
+    /**
+     * Crea una nueva tarjeta en la base de datos.
+     *
+     * @param tarjeta la tarjeta a crear
+     * @return la tarjeta creada, con el identificador generado
+     */
     public Tarjeta create(Tarjeta tarjeta) {
         logger.info("Creando tarjeta...");
         String query = "INSERT INTO tarjetas (nombreTitular, numeroTarjeta, fechaCaducidad, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
@@ -101,6 +130,13 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
         return tarjeta;
     }
 
+    /**
+     * Actualiza una tarjeta existente en la base de datos.
+     *
+     * @param id el identificador de la tarjeta a actualizar
+     * @param tarjeta la tarjeta con los nuevos datos
+     * @return la tarjeta actualizada, o null si no se encontró
+     */
     public Tarjeta update(Long id, Tarjeta tarjeta) {
         logger.info("Actualizando tarjeta...");
         String query = "UPDATE tarjetas SET nombreTitular = ?, numeroTarjeta = ?, fechaCaducidad = ?, updatedAt = ? WHERE id = ?";
@@ -127,6 +163,12 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
         return null;
     }
 
+    /**
+     * Elimina una tarjeta de la base de datos por su identificador.
+     *
+     * @param id el identificador de la tarjeta a eliminar
+     * @return true si la tarjeta fue eliminada, false si no se encontró
+     */
     public Boolean delete(Long id) {
         logger.info("Borrando tarjeta...");
         String query = "DELETE FROM tarjetas WHERE id =?";

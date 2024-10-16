@@ -21,6 +21,15 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+/**
+ * Implementación del servicio de gestión de clientes.
+ * Esta clase proporciona métodos para realizar operaciones CRUD sobre los clientes,
+ * utilizando repositorios y cache para obtener, crear, actualizar y eliminar clientes.
+ * También maneja notificaciones relacionadas con los cambios en los clientes.
+ *
+ * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
+ */
 public class ClienteServiceImpl implements ClienteService {
     private final ClienteNotificacion notification;
     private final UserRemoteRepository userRepository;
@@ -29,6 +38,15 @@ public class ClienteServiceImpl implements ClienteService {
     private final CacheClienteImpl cacheCliente;
     private final Logger logger = LoggerFactory.getLogger(ClienteServiceImpl.class);
 
+    /**
+     * Constructor de la clase ClienteServiceImpl.
+     *
+     * @param userRepository el repositorio para acceder a los usuarios remotos.
+     * @param tarjetaRemoteRepository el repositorio para acceder a las tarjetas remotas.
+     * @param clienteRepository el repositorio para acceder a los clientes.
+     * @param cacheCliente el sistema de cache para los clientes.
+     * @param notification el objeto de notificación para gestionar las notificaciones de clientes.
+     */
     public ClienteServiceImpl(UserRemoteRepository userRepository, TarjetaRemoteRepositoryImpl tarjetaRemoteRepository, ClienteRepository clienteRepository, CacheClienteImpl cacheCliente, ClienteNotificacion notification) {
         this.userRepository = userRepository;
         this.tarjetaRepository = tarjetaRemoteRepository;
@@ -37,6 +55,11 @@ public class ClienteServiceImpl implements ClienteService {
         this.notification = notification;
     }
 
+    /**
+     * Obtiene todos los clientes.
+     *
+     * @return un {@link Either} que contiene un {@link ClienteError} si ocurre un error, o una lista de {@link Cliente} si la operación es exitosa.
+     */
     @Override
     public Either<ClienteError, List<Cliente>> getAll() {
         logger.info("Obteniendo clientes...");
@@ -69,6 +92,12 @@ public class ClienteServiceImpl implements ClienteService {
         }
     }
 
+    /**
+     * Obtiene un cliente por su identificador.
+     *
+     * @param id el identificador del cliente.
+     * @return un {@link Either} que contiene un {@link ClienteError} si ocurre un error, o el {@link Cliente} correspondiente si la operación es exitosa.
+     */
     @Override
     public Either<ClienteError, Cliente> getById(long id) {
         logger.info("Obteniendo cliente por id: {}", id);
@@ -109,6 +138,12 @@ public class ClienteServiceImpl implements ClienteService {
         }
     }
 
+    /**
+     * Crea un nuevo cliente.
+     *
+     * @param cliente el cliente a crear.
+     * @return un {@link Either} que contiene un {@link ClienteError} si ocurre un error, o el {@link Cliente} creado si la operación es exitosa.
+     */
     @Override
     public Either<ClienteError, Cliente> create(Cliente cliente) {
         logger.info("Creando cliente...");
@@ -132,6 +167,13 @@ public class ClienteServiceImpl implements ClienteService {
         }
     }
 
+    /**
+     * Actualiza un cliente existente.
+     *
+     * @param id el identificador del cliente a actualizar.
+     * @param cliente el cliente con los nuevos datos.
+     * @return un {@link Either} que contiene un {@link ClienteError} si ocurre un error, o el {@link Cliente} actualizado si la operación es exitosa.
+     */
     @Override
     public Either<ClienteError, Cliente> update(long id, Cliente cliente) {
         logger.info("Actualizando cliente con id: {}", id);
@@ -167,6 +209,12 @@ public class ClienteServiceImpl implements ClienteService {
         }
     }
 
+    /**
+     * Elimina un cliente por su identificador.
+     *
+     * @param id el identificador del cliente a eliminar.
+     * @return un {@link Either} que contiene un {@link ClienteError} si ocurre un error, o el {@link Cliente} eliminado si la operación es exitosa.
+     */
     @Override
     public Either<ClienteError, Cliente> delete(long id) {
         logger.info("Borrando cliente con id: {}", id);
@@ -196,6 +244,11 @@ public class ClienteServiceImpl implements ClienteService {
         }
     }
 
+    /**
+     * Obtiene las notificaciones de clientes como un flujo.
+     *
+     * @return un {@link Flux} de {@link Notificacion} que contiene las notificaciones de clientes.
+     */
     public Flux<Notificacion<Cliente>> getNotifications() {
         return notification.getNotificationAsFlux();
     }

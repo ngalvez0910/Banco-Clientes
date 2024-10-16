@@ -11,6 +11,7 @@ import org.example.rest.responses.createUpdateDelete.Request;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Clase encargada de mapear entre las entidades Usuario y UsuarioDto,
@@ -20,6 +21,10 @@ import java.time.LocalDateTime;
  * @version 1.0-SNAPSHOT
  */
 public class UsuarioMapper {
+
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+
     /**
      * Convierte un objeto UsuarioDto en un objeto Usuario.
      *
@@ -57,8 +62,12 @@ public class UsuarioMapper {
                 .nombre(usuario.getNombre())
                 .userName(usuario.getUserName())
                 .email(usuario.getEmail())
-                .createdAt(usuario.getCreatedAt().toString())
-                .updatedAt(usuario.getUpdatedAt().toString())
+                .createdAt(usuario.getCreatedAt() != null
+                        ? usuario.getCreatedAt().format(dateTimeFormatter)
+                        : null)
+                .updatedAt(usuario.getUpdatedAt() != null
+                        ? usuario.getUpdatedAt().format(dateTimeFormatter)
+                        : null)
                 .build();
     }
 
