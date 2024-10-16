@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "9d8411e0-9cfe-4978-8cb6-d0db23d76ec1",
+		"_postman_id": "6cf757a3-0304-4ae8-945d-5c8655b634a9",
 		"name": ">Banco-Clientes",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "38663368",
-		"_collection_link": "https://www.postman.com/aerospace-physicist-85610387/workspace/my-workspace/collection/38663368-9d8411e0-9cfe-4978-8cb6-d0db23d76ec1?action=share&source=collection_link&creator=38663368"
+		"_collection_link": "https://www.postman.com/aerospace-physicist-85610387/workspace/my-workspace/collection/38663368-6cf757a3-0304-4ae8-945d-5c8655b634a9?action=share&source=collection_link&creator=38663368"
 	},
 	"item": [
 		{
@@ -256,6 +256,130 @@
 						""
 					]
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update correcto, devuelve 200 OK",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Prueba\",\r\n    \"username\": \"userPrueba\",\r\n    \"email\": \"userPrueba@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/1",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						"1"
+					]
+				},
+				"description": "Update correcto, devuelve 200 OK y un objeto con name, username, email e id "
+			},
+			"response": []
+		},
+		{
+			"name": "Update incorrecto (id no existente), devuelve 500 Int.Server Error",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Prueba\",\r\n    \"username\": \"userPrueba\",\r\n    \"email\": \"userPrueba@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/12",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						"12"
+					]
+				},
+				"description": "Update incorrecto (id no existente), devuelve 500 Int.Server Error"
+			},
+			"response": []
+		},
+		{
+			"name": "Update incorrecto (id no indicado), devuelve 404 Not Found",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Prueba\",\r\n    \"username\": \"userPrueba\",\r\n    \"email\": \"userPrueba@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						""
+					]
+				},
+				"description": "Update incorrecto (id no indicado), devuelve 404 Not Found"
+			},
+			"response": []
+		},
+		{
+			"name": "Update incorrecto (id formato incorrecto), devuelve 500 Int.Server Error",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Prueba\",\r\n    \"username\": \"userPrueba\",\r\n    \"email\": \"userPrueba@mail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/users/cadena",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"users",
+						"cadena"
+					]
+				},
+				"description": "Update incorrecto (id formato incorrecto), devuelve 500 Int.Server Error"
 			},
 			"response": []
 		}
