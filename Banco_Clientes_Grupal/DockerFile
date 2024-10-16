@@ -6,15 +6,17 @@ COPY gradlew .
 COPY gradle gradle
 COPY src src
 
+RUN ls -l gradlew && chmod +x gradlew
+
 ARG DOCKER_HOST_ARG=tcp://host.docker.internal:2375
 ENV DOCKER_HOST=$DOCKER_HOST_ARG
 
-RUN ./gradlew build
+RUN ./gradlew build -x test
 
-FROM eclipse-temurin:21-jre-alpine AS run
+FROM openjdk:21-jdk AS run
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*SNAPSHOT.jar /app/my-app.jar
+COPY --from=build /app/build/libs/banco_clientes.jar /app/banco_clientes.jar
 
-ENTRYPOINT ["java","-jar","/app/my-app.jar"]
+ENTRYPOINT ["java","-jar","/app/banco_clientes.jar"]

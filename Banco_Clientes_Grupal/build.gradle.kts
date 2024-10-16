@@ -1,6 +1,5 @@
 plugins {
     id("java")
-    kotlin("jvm")
     id("io.freefair.lombok") version "8.6"
     id("org.jetbrains.dokka") version "1.9.0"
 }
@@ -78,15 +77,11 @@ dependencies {
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-jackson:2.11.0") // Jackson con Retrofit
-
+    implementation("com.squareup.retrofit2:converter-jackson:2.11.0")
 }
 
 tasks.test {
     useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
 }
 
 tasks.jar {
@@ -94,8 +89,6 @@ tasks.jar {
     manifest {
         attributes["Main-Class"] = "org.example.Main"
     }
-    configurations["compileClasspath"].forEach { file: File ->
-        from(zipTree(file.absoluteFile))
-    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

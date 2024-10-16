@@ -28,6 +28,23 @@ services:
     networks:
       - tarjetas-network
 
+  tarjetas-app:
+    build:
+      context: .
+      dockerfile: DockerFile
+    container_name: tarjetas_app
+    image: openjdk:21
+    restart: always
+    env_file: .env
+    depends_on:
+      - postgres-db
+      - adminer-postgres-db
+    networks:
+      - tarjetas-network
+    volumes:
+      - ./build/libs/banco_clientes.jar:/app/banco_clientes.jar
+    command: [ "java", "-jar", "/app/banco_clientes.jar" ]
+
 networks:
   tarjetas-network:
     external: true
