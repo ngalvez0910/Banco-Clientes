@@ -8,6 +8,7 @@ import java.util.Properties;
  * Clase que gestiona la carga de un archivo de propiedades y permite acceder a sus valores.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class ConfigProperties {
     private final Properties properties = new Properties();

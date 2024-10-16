@@ -8,6 +8,7 @@ package org.example.common;
  * @param <V> El tipo de los valores almacenados en la caché
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public interface Cache<K, V> {
 
