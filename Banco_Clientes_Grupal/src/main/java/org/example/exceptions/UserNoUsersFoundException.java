@@ -5,6 +5,7 @@ package org.example.exceptions;
  * Extiende de UserException, indicando un error específico relacionado con la ausencia de usuarios.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class UserNoUsersFoundException extends UserException {
 
