@@ -5,6 +5,7 @@ package org.example.exceptions;
  * Hereda de UserException, lo que indica que es un tipo específico de error relacionado con usuarios.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
+ * @version 1.0-SNAPSHOT
  */
 public class UserNotFoundException extends UserException {
 
