@@ -2,7 +2,6 @@ package org.example.rest.repository;
 
 import org.example.clientes.mappers.UsuarioMapper;
 import org.example.clientes.model.Usuario;
-import org.example.exceptions.UserNotFoundException;
 import org.example.rest.UserApiRest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
