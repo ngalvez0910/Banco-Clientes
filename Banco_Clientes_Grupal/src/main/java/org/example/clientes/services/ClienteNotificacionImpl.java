@@ -13,8 +13,7 @@ import reactor.core.publisher.FluxSink;
  * @version 1.0-SNAPSHOT
  */
 public class ClienteNotificacionImpl implements ClienteNotificacion {
-    private static ClienteNotificacionImpl INSTANCE = new ClienteNotificacionImpl();
-
+    private static ClienteNotificacionImpl INSTANCE;
     private final Flux<Notificacion<Cliente>> clientesNotificationFlux;
     private FluxSink<Notificacion<Cliente>> clientesNotification;
 
@@ -22,7 +21,9 @@ public class ClienteNotificacionImpl implements ClienteNotificacion {
      * Constructor privado que inicializa el flujo de notificaciones de clientes.
      */
     public ClienteNotificacionImpl() {
-        this.clientesNotificationFlux = Flux.<Notificacion<Cliente>>create(emitter -> this.clientesNotification = emitter).share();
+        this.clientesNotificationFlux = Flux.<Notificacion<Cliente>>create(emitter -> {
+            this.clientesNotification = emitter;
+        }).share();
     }
 
     /**
@@ -30,7 +31,7 @@ public class ClienteNotificacionImpl implements ClienteNotificacion {
      *
      * @return la instancia única de ClienteNotificacionImpl
      */
-    public static ClienteNotificacionImpl getInstance() {
+    public static synchronized ClienteNotificacionImpl getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ClienteNotificacionImpl();
         }
@@ -50,6 +51,10 @@ public class ClienteNotificacionImpl implements ClienteNotificacion {
      */
     @Override
     public void notify(Notificacion<Cliente> notificacion) {
-        clientesNotification.next(notificacion);
+        if (this.clientesNotification != null) {
+            this.clientesNotification.next(notificacion);
+        } else {
+            throw new IllegalStateException("FluxSink not initialized");
+        }
     }
 }
