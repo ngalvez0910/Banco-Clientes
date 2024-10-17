@@ -6,8 +6,6 @@ COPY gradlew .
 COPY gradle gradle
 COPY src src
 
-RUN ls -l gradlew && chmod +x gradlew
-
 ARG DOCKER_HOST_ARG=tcp://host.docker.internal:2375
 ENV DOCKER_HOST=$DOCKER_HOST_ARG
 
