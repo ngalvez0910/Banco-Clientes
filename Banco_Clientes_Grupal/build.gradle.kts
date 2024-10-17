@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("io.freefair.lombok") version "8.6"
     id("org.jetbrains.dokka") version "1.9.0"
+    id("jacoco")
 }
 
 group = "org.example"
@@ -82,6 +83,20 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(false)
+        csv.required.set(false)
+        html.outputLocation.set(file("build/reports/jacoco"))
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestReport)
 }
 
 tasks.jar {
