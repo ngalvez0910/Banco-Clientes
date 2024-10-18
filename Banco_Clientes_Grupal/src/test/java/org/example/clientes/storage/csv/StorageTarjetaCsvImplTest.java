@@ -24,7 +24,7 @@ class StorageTarjetaCsvImplTest {
         storage = new StorageTarjetaCsvImpl();
         testFile = File.createTempFile("StorageTarjetaCsvImplTest", ".csv");
         Files.write(testFile.toPath(),
-                ("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n1,Juan Pérez,4532 4800 1234 5678,2025-12-31,2024-10-01T12:00:00,2024-10-01T12:00:00\n2,Will Smith,5532 4900 1234 5670,2026-11-30,2024-10-01T12:00:00,2024-10-01T12:00:00").getBytes());
+                ("ID,Nombre Titular,Numero Tarjeta,Fecha Caducidad,CreatedAt,UpdatedAt\n1,Juan Perez,4532 4800 1234 5678,2025-12-31,2024-10-01T12:00:00,2024-10-01T12:00:00\n2,Will Smith,5532 4900 1234 5670,2026-11-30,2024-10-01T12:00:00,2024-10-01T12:00:00").getBytes());
     }
 
     @AfterEach
@@ -40,7 +40,7 @@ class StorageTarjetaCsvImplTest {
         assertAll("tarjetas",
                 () -> assertEquals(2, tarjetaList.size()),
                 () -> assertEquals(1L, tarjetaList.getFirst().getId()),
-                () -> assertEquals("Juan Pérez", tarjetaList.get(0).getNombreTitular()),
+                () -> assertEquals("Juan Perez", tarjetaList.get(0).getNombreTitular()),
                 () -> assertEquals(LocalDateTime.parse("2024-10-01T12:00"), tarjetaList.get(0).getCreatedAt()),
                 () -> assertEquals(LocalDateTime.parse("2024-10-01T12:00"), tarjetaList.get(0).getUpdatedAt()),
                 () -> assertEquals(2L, tarjetaList.get(1).getId()),

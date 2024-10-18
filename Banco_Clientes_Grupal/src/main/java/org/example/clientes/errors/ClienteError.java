@@ -31,15 +31,6 @@ public class ClienteError {
     }
 
     /**
-     * Obtiene el código de estado HTTP del error.
-     *
-     * @return Código de estado HTTP
-     */
-    public int getCode() {
-        return code;
-    }
-
-    /**
      * Clase interna para representar el error cuando un cliente no es encontrado.
      */
     public static class ClienteNotFound extends ClienteError {
