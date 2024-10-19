@@ -16,7 +16,7 @@ public class ConfigProperties {
     /**
      * Constructor que carga las propiedades desde el archivo 'application.properties'.
      */
-    public ConfigProperties(String s) {
+    public ConfigProperties() {
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
             if (input == null) {
                 System.out.println("Lo siento, no se pudo encontrar application.properties");
