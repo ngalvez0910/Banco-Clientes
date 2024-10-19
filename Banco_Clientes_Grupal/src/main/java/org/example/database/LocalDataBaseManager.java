@@ -1,7 +1,6 @@
 package org.example.database;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import java.sql.DriverManager;
 import org.example.config.ConfigProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,46 +9,31 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Clase que gestiona las conexiones a la base de datos local utilizando HikariCP como pool de conexiones.
+ * Clase que gestiona las conexiones a la base de datos local.
  * Implementa la interfaz AutoCloseable para asegurar el cierre de recursos.
  *
  * @author Jaime León, Natalia González, German Fernandez, Alba García, Mario de Domingo
  * @version 1.0-SNAPSHOT
  */
 public class LocalDataBaseManager implements AutoCloseable {
-    private static LocalDataBaseManager instance = null;
-    private HikariDataSource dataSource;
-    private final Logger logger = LoggerFactory.getLogger(LocalDataBaseManager.class);
 
-    // Parámetros de configuración por defecto
-    private String DB_URL = "jdbc:sqlite:clients.db";
-    private String DB_USER = "admin";
-    private String DB_PASSWORD = "admin123";
-    private String DB_Timeout = "10000";
+    private static LocalDataBaseManager instance = null;
+    private final Logger logger = LoggerFactory.getLogger(LocalDataBaseManager.class);
     private Connection connection = null;
 
-    /**
-     * Constructor por defecto.
-     */
-    public LocalDataBaseManager() {
-    }
+    private String DB_URL;
+    private String DB_USER;
+    private String DB_PASSWORD;
 
     /**
-     * Constructor que inicializa el gestor de la base de datos con las configuraciones proporcionadas.
+     * Constructor privado que inicializa los parámetros de conexión.
      *
-     * @param config Configuración de propiedades que contiene los detalles de la conexión a la base de datos.
+     * @param config Configuración de propiedades para la conexión.
      */
-    private LocalDataBaseManager(ConfigProperties config) {
-        HikariConfig hikariConfig = new HikariConfig();
-
-        // Configurar Hikari con las propiedades obtenidas del archivo de configuración
-        hikariConfig.setJdbcUrl(config.getProperty("local.database.url", DB_URL));
-        hikariConfig.setUsername(config.getProperty("database.username", DB_USER));
-        hikariConfig.setPassword(config.getProperty("database.password", DB_PASSWORD));
-        hikariConfig.setConnectionTimeout(Long.parseLong(config.getProperty("local.database.timeout", DB_Timeout)));
-
-        this.dataSource = new HikariDataSource(hikariConfig);
-        logger.info("Hikari configurado correctamente");
+    public LocalDataBaseManager(ConfigProperties config) {
+        this.DB_URL = config.getProperty("local.database.url", "jdbc:sqlite:clients.db");
+        this.DB_USER = config.getProperty("database.username", "");
+        this.DB_PASSWORD = config.getProperty("database.password", "");
     }
 
     /**
@@ -72,26 +56,34 @@ public class LocalDataBaseManager implements AutoCloseable {
      * @throws SQLException Si ocurre un error al intentar conectar.
      */
     public Connection connect() throws SQLException {
-        try {
-            return dataSource.getConnection();
-        } catch (SQLException e) {
-            logger.error("Error al conectar a la base de datos local", e);
-            throw new RuntimeException("Error al conectar a la base de datos local", e);
+        if (connection == null || connection.isClosed()) {
+            try {
+                connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                logger.info("Conexión a la base de datos establecida correctamente.");
+            } catch (SQLException e) {
+                logger.error("Error al conectar a la base de datos local", e);
+                throw new RuntimeException("Error al conectar a la base de datos local", e);
+            }
         }
+        return connection;
     }
 
     /**
-     * Desconecta el pool de conexiones cerrando todas las conexiones activas.
+     * Desconecta la base de datos cerrando la conexión activa.
      */
     public void disconnect() {
-        if (dataSource != null) {
-            dataSource.close();
-            logger.info("Desconectado del pool de conexiones...");
+        if (connection != null) {
+            try {
+                connection.close();
+                logger.info("Conexión a la base de datos cerrada.");
+            } catch (SQLException e) {
+                logger.error("Error al cerrar la conexión a la base de datos", e);
+            }
         }
     }
 
     /**
-     * Método que se llama cuando el objeto se cierra, asegurando que las conexiones se liberen.
+     * Método que se llama cuando el objeto se cierra, asegurando que la conexión se libere.
      *
      * @throws Exception Si ocurre un error al cerrar la conexión.
      */

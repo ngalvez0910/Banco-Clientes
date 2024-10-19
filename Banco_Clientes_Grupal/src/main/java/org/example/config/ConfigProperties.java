@@ -14,14 +14,12 @@ public class ConfigProperties {
     private final Properties properties = new Properties();
 
     /**
-     * Constructor que carga las propiedades desde un archivo especificado.
-     *
-     * @param fileName El nombre del archivo de propiedades que se va a cargar.
+     * Constructor que carga las propiedades desde el archivo 'application.properties'.
      */
-    public ConfigProperties(String fileName) {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(fileName)) {
+    public ConfigProperties() {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
             if (input == null) {
-                System.out.println("Lo siento, no se pudo encontrar " + fileName);
+                System.out.println("Lo siento, no se pudo encontrar application.properties");
                 return;
             }
             properties.load(input);
