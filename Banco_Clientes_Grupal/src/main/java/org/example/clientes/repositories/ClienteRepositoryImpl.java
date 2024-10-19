@@ -164,7 +164,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         logger.info("Creando cliente...");
 
         String userQuery = "INSERT INTO Usuario (nombre, userName, email, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
-        String tarjetaQuery = "INSERT INTO Tarjeta (id, numeroTarjeta, nombreTitular, fechaCaducidad, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)";
+        String tarjetaQuery = "INSERT INTO Tarjeta (numeroTarjeta, nombreTitular, fechaCaducidad, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
 
         LocalDateTime timeStamp = LocalDateTime.now();
 
@@ -200,7 +200,6 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                         statementTarjeta.setObject(3, tarjeta.getFechaCaducidad());
                         statementTarjeta.setObject(4, timeStamp);
                         statementTarjeta.setObject(5, timeStamp);
-                        statementTarjeta.setLong(6, cliente.getId());
                         statementTarjeta.executeUpdate();
 
                         try (ResultSet generatedKeys = statementTarjeta.getGeneratedKeys()) {
@@ -257,7 +256,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
                         statementTarjeta.setString(2, tarjeta.getNombreTitular());
                         statementTarjeta.setObject(3, tarjeta.getFechaCaducidad());
                         statementTarjeta.setObject(4, timeStamp);
-                        statementTarjeta.setLong(5, id);
+                        statementTarjeta.setString(5, cliente.getUsuario().getNombre());
                         statementTarjeta.executeUpdate();
                     }
                 }
