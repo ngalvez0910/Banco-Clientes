@@ -8,6 +8,7 @@ import org.example.clientes.repositories.ClienteRepositoryImpl;
 import org.example.clientes.repositories.TarjetaRemoteRepositoryImpl;
 import org.example.clientes.services.ClienteNotificacionImpl;
 import org.example.clientes.services.ClienteServiceImpl;
+import org.example.config.ConfigProperties;
 import org.example.database.LocalDataBaseManager;
 import org.example.database.RemoteDataBaseManager;
 import org.example.rest.RetrofitClient;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class Main {
 
@@ -35,7 +37,8 @@ public class Main {
         UserRemoteRepository userRepository = new UserRemoteRepository(userApiRest);
         var remoteDataBaseManager = new RemoteDataBaseManager();
         TarjetaRemoteRepositoryImpl tarjetaRepository = new TarjetaRemoteRepositoryImpl(remoteDataBaseManager);
-        var localDataBaseManager = new LocalDataBaseManager();
+        var configProperties = new ConfigProperties();
+        var localDataBaseManager = new LocalDataBaseManager(configProperties);
         ClienteRepositoryImpl clienteRepository = new ClienteRepositoryImpl(localDataBaseManager);
         CacheClienteImpl cacheCliente = new CacheClienteImpl();
         ClienteNotificacionImpl notification = new ClienteNotificacionImpl();

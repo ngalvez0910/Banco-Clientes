@@ -27,7 +27,7 @@ public class ClienteRepositoryImplTest {
 
     @BeforeAll
     static void setUpAll() throws SQLException {
-        ConfigProperties properties = new ConfigProperties("application.properties");
+        ConfigProperties properties = new ConfigProperties();
         dataBaseManager = LocalDataBaseManager.getInstance(properties);
         dataBaseManager.connect();
         clienteRepository = new ClienteRepositoryImpl(dataBaseManager);
