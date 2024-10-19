@@ -50,7 +50,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                         .id(resultSet.getLong("id"))
                         .nombreTitular(resultSet.getString("nombreTitular"))
                         .numeroTarjeta(resultSet.getString("numeroTarjeta"))
-                        .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDateTime.class).toLocalDate())
+                        .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
                         .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
                         .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                         .build();
@@ -82,7 +82,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                             .id(resultSet.getLong("id"))
                             .nombreTitular(resultSet.getString("nombreTitular"))
                             .numeroTarjeta(resultSet.getString("numeroTarjeta"))
-                            .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDateTime.class).toLocalDate())
+                            .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
                             .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
                             .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
                             .build());
