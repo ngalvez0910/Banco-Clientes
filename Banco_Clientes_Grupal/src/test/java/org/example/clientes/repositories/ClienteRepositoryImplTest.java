@@ -35,17 +35,22 @@ public class ClienteRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        clienteRepository.deleteAll();
-        var usuario = new Usuario(1L, "Test", "TestUsername", "test@example.com", LocalDateTime.now(), LocalDateTime.now());
-        var tarjeta = new Tarjeta(1L, "1234567890123456", "Test", LocalDate.of(2025, 12, 31), LocalDateTime.now(), LocalDateTime.now());
-        List<Tarjeta> tarjetas = Arrays.asList(tarjeta);
-        var cliente = new Cliente(1L, usuario, tarjetas, LocalDateTime.now(), LocalDateTime.now());
+
+        var usuario = new Usuario(null, "Test", "TestUsername", "test@example.com", LocalDateTime.now(), LocalDateTime.now());
+        var tarjeta = new Tarjeta(null, "1234567890123456", "Test", LocalDate.of(2025, 12, 31), LocalDateTime.now(), LocalDateTime.now());
+        var cliente = new Cliente(null, usuario, List.of(tarjeta), LocalDateTime.now(), LocalDateTime.now());
+
         clienteRepository.create(cliente);
+
+
+        Optional<Cliente> clienteVerificado = clienteRepository.getById(cliente.getId());
+        assertTrue(clienteVerificado.isPresent(), "El cliente no fue creado correctamente.");
     }
 
     @AfterEach
     void tearDown() {
-        clienteRepository.deleteAll();
+        // Limpia los datos después de cada prueba
+       clienteRepository.deleteAll();
     }
 
     @Test
