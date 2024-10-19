@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS Usuario (
 );
 
 CREATE TABLE IF NOT EXISTS Tarjeta (
-    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     numeroTarjeta VARCHAR(16) NOT NULL,
     nombreTitular TEXT NOT NULL,
     fechaCaducidad DATE NOT NULL,

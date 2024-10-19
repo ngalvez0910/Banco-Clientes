@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class Main {
 
@@ -29,7 +28,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Hello world!");
+        logger.info("Hello world!");
         logger.debug("userApiRest: " + UserApiRest.API_USERS_URL);
 
         var retrofit = RetrofitClient.getClient(UserApiRest.API_USERS_URL);
@@ -45,14 +44,12 @@ public class Main {
 
         var service = new ClienteServiceImpl(userRepository, tarjetaRepository, clienteRepository, cacheCliente, notification);
 
-        System.out.println("Sistema de obtención de notificaciones en Tiempo Real");
+        logger.info("Sistema de obtención de notificaciones en Tiempo Real");
         service.getNotifications().subscribe(
-                notificacion -> System.out.println("🟢 Notificación: " + notificacion),
-                error -> System.err.println("Se ha producido un error: " + error),
-                () -> System.out.println("Completado")
+                notificacion -> logger.info("🟢 Notificación: {}", notificacion),
+                error -> logger.info("Se ha producido un error: {}", error.getMessage()),
+                () -> logger.info("Completado")
         );
-
-        //TODO PRUEBAS:
 
         var usuario = new Usuario(1L, "name1", "username1", "email1@email.com", LocalDateTime.now(), LocalDateTime.now());
         var usuario2 = new Usuario(2L, "name2", "username2", "email2@email.com", LocalDateTime.now(), LocalDateTime.now());
@@ -71,22 +68,22 @@ public class Main {
 
         //probando create
         service.create(cliente)
-                .peek(client -> System.out.println("Cliente creado: " + client))
-                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
+                .peek(client -> logger.info("Cliente creado: {}", client))
+                .peekLeft(error -> logger.info("Error: {}", error.getMessage()));
 
         service.create(cliente2)
-                .peek(client -> System.out.println("Cliente creado: " + client))
-                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
+                .peek(client -> logger.info("Cliente creado: {}", client))
+                .peekLeft(error -> logger.info("Error: {}", error.getMessage()));
 
         //probando getAll
         service.getAll()
-                .peek(list -> System.out.println("Listado de clientes: " + list))
-                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
+                .peek(list -> logger.info("Listado de clientes: {}", list))
+                .peekLeft(error -> logger.info("Error: {}", error.getMessage()));
 
         //probando getById
         service.getById(1L)
-                .peek(client -> System.out.println("Cliente con id 1: " + client))
-                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
+                .peek(client -> logger.info("Cliente con id 1: {}", client))
+                .peekLeft(error -> logger.info("Error: {}", error.getMessage()));
 
         //probando update
         var usuarioUpdate = new Usuario(3L, "update", "updateUsername", "emailUpdate@email.com", LocalDateTime.now(), LocalDateTime.now());
@@ -95,13 +92,13 @@ public class Main {
         tarjetas3.add(tarjeta4);
         var clienteUpdate = new Cliente(usuarioUpdate.getId(), usuarioUpdate, tarjetas3, LocalDateTime.now(), LocalDateTime.now());
         service.update(1L, clienteUpdate)
-                .peek(client -> System.out.println("Cliente actualizado: " + client))
-                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
+                .peek(client -> logger.info("Cliente actualizado: {}", client))
+                .peekLeft(error -> logger.info("Error: {}", error.getMessage()));
 
         //probando delete
         service.delete(2L)
-                .peek(client -> System.out.println("Cliente eliminado: " + client))
-                .peekLeft(error -> System.out.println("Error: " + error.getMessage()));
+                .peek(client -> logger.info("Cliente eliminado: {}", client))
+                .peekLeft(error -> logger.info("Error: {}", error.getMessage()));
 
         System.exit(0);
     }
