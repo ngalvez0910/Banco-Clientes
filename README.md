@@ -63,6 +63,11 @@ El proyecto implementa diversas prácticas y herramientas para asegurar la calid
 - *Cobertura de Código*
 
 
+## Enlace al video
+
+*https://youtu.be/cUto9sCNOqo*
+
+
 ## Autores del programa
 
 <table align="center">
@@ -100,13 +105,6 @@ El proyecto implementa diversas prácticas y herramientas para asegurar la calid
         <img src="https://avatars.githubusercontent.com/u/146002100" width="70" height="70" style="border-radius: 50%;" alt="Mario de Domingo Alvarez"/>
         <br/>
         <sub><b>Mario</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/TomasVaquerin">
-        <img src="https://avatars.githubusercontent.com/u/83606915" width="70" height="70" style="border-radius: 50%;" alt="Tomas Vaquerin"/>
-        <br/>
-        <sub><b>Tomas</b></sub>
       </a>
     </td>
   </tr>
