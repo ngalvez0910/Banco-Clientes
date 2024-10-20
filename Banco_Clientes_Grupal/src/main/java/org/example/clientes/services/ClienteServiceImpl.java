@@ -252,4 +252,42 @@ public class ClienteServiceImpl implements ClienteService {
     public Flux<Notificacion<Cliente>> getNotifications() {
         return notification.getNotificationAsFlux();
     }
+
+    /**
+     * Actualiza la base de datos local desde la remota
+     */
+    public void updateLocalBBDD() {
+        try {
+            Optional<List<Usuario>> usuarios = CompletableFuture.supplyAsync(userRepository::getAllSync).get(10000, MILLISECONDS);
+            if (usuarios.isPresent() && !usuarios.get().isEmpty()) {
+                try {
+                    CompletableFuture.runAsync(clienteRepository::deleteAll);
+                } catch (Exception e) {
+                    logger.error("Error al eliminar todos los clientes", e);
+                }
+                List<Tarjeta> tarjetas = CompletableFuture.supplyAsync(tarjetaRepository::getAll).get(10000, MILLISECONDS);
+                for (Usuario usuario : usuarios.get()) {
+                    List<Tarjeta> tarjetasUser = new ArrayList<>();
+                    for (Tarjeta tarjeta : tarjetas) {
+                        if (tarjeta.getNombreTitular().equals(usuario.getNombre())) {
+                            tarjetasUser.add(tarjeta);
+                        }
+                    }
+                    Cliente cliente = new Cliente(usuario.getId(), usuario, tarjetasUser, LocalDateTime.now(), LocalDateTime.now());
+                    CompletableFuture.runAsync(() -> {
+                        try {
+                            clienteRepository.create(cliente);
+                        } catch (Exception e) {
+                            logger.error("Error al crear cliente: {}", cliente.getId(), e);
+                        }
+                    }).join();
+                }
+                logger.info("Base de datos local actualizada correctamente");
+            } else {
+                logger.error("Error al actualizar la base de datos local: no hay usuarios");
+            }
+        } catch (Exception e) {
+            logger.error("Error al actualizar la base de datos local", e);
+        }
+    }
 }
