@@ -1,0 +1,54 @@
+services:
+  postgres-db:
+    container_name: tarjetas-db_postgres
+    image: postgres:12-alpine
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-db-data:/var/lib/postgresql/data
+    networks:
+      - tarjetas-network
+
+  adminer-postgres-db:
+    container_name: tarjetas-db_adminer
+    image: adminer
+    restart: always
+    env_file: .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-db
+    networks:
+      - tarjetas-network
+
+  tarjetas-app:
+    build:
+      context: .
+      dockerfile: DockerFile
+    container_name: tarjetas_app
+    image: openjdk:21
+    restart: always
+    env_file: .env
+    depends_on:
+      - postgres-db
+      - adminer-postgres-db
+    networks:
+      - tarjetas-network
+    volumes:
+      - ./build/libs/banco_clientes.jar:/app/banco_clientes.jar
+    command: [ "java", "-jar", "/app/banco_clientes.jar" ]
+
+networks:
+  tarjetas-network:
+    external: true
+    driver: bridge
+
+volumes:
+  postgres-db-data:
