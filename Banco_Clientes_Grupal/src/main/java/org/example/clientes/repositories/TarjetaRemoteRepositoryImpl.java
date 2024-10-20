@@ -56,6 +56,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                         .build();
                 tarjetas.add(tarjeta);
             }
+            logger.info("Tarjetas obtenidas: {}", tarjetas);
         } catch (SQLException e) {
             logger.error("Error al obtener todas las tarjetas", e);
         }
@@ -78,14 +79,16 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                 statement.setLong(1, id);
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
-                    return Optional.of(Tarjeta.builder()
+                    Tarjeta tarjeta = Tarjeta.builder()
                             .id(resultSet.getLong("id"))
                             .nombreTitular(resultSet.getString("nombreTitular"))
                             .numeroTarjeta(resultSet.getString("numeroTarjeta"))
                             .fechaCaducidad(resultSet.getObject("fechaCaducidad", LocalDate.class))
                             .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
                             .updatedAt(resultSet.getObject("updatedAt", LocalDateTime.class))
-                            .build());
+                            .build();
+                    logger.info("Tarjeta encontrada: {}", tarjeta);
+                    return Optional.of(tarjeta);
                 }
         } catch (SQLException e) {
             logger.error("Error al obtener la tarjeta con id: " + id, e);
@@ -119,6 +122,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                     tarjeta.setId(id);
                     tarjeta.setCreatedAt(timeStamp);
                     tarjeta.setUpdatedAt(timeStamp);
+                    logger.info("Tarjeta creada: {}", tarjeta);
                     return tarjeta;
                 } else {
                     throw new SQLException("No se pudo obtener la clave generada.");
@@ -153,6 +157,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                 int rows = statement.executeUpdate();
                 if (rows > 0) {
                     tarjeta.setUpdatedAt(timeStamp);
+                    logger.info("Tarjeta actualizada: {}", tarjeta);
                     return tarjeta;
                 }
 
@@ -178,6 +183,7 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
                 int rows = statement.executeUpdate();
 
                 if (rows > 0) {
+                    logger.info("Tarjeta con ID {} borrada exitosamente", id);
                     return true;
                 } else {
                     logger.warn("No se ha borrado la tarjeta");
