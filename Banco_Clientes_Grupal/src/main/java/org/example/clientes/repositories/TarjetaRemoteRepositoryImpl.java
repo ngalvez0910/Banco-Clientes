@@ -32,6 +32,22 @@ public class TarjetaRemoteRepositoryImpl implements TarjetaRemoteRepository {
     }
 
     /**
+     * Sentencia que reinicia las ids cada vez que se llama a la sentencia
+     */
+    public void resetIds() {
+        logger.info("Reiniciando IDs de la tabla tarjetas...");
+        String query = "TRUNCATE TABLE tarjetas RESTART IDENTITY";
+
+        try (Connection connection = remoteDbManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.executeUpdate();
+            logger.info("IDs reiniciados exitosamente");
+        } catch (SQLException e) {
+            logger.error("Error al reiniciar los IDs de la tabla tarjetas", e);
+        }
+    }
+
+    /**
      * Obtiene todas las tarjetas de la base de datos.
      *
      * @return una lista de todas las tarjetas
