@@ -9,7 +9,7 @@ COPY src src
 ARG DOCKER_HOST_ARG=tcp://host.docker.internal:2375
 ENV DOCKER_HOST=$DOCKER_HOST_ARG
 
-RUN ./gradlew build -x test
+RUN ./gradlew build
 
 FROM openjdk:21-jdk AS run
 
