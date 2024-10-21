@@ -65,7 +65,7 @@ El proyecto implementa diversas prácticas y herramientas para asegurar la calid
 
 ## Enlace al video
 
-*https://youtu.be/cUto9sCNOqo*
+*https://youtu.be/k4EQtHDkgog*
 
 
 ## Autores del programa
